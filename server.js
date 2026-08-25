@@ -32,11 +32,13 @@ function getLocalIpAddresses() {
 }
 
 const server = http.createServer((req, res) => {
-  let filePath = path.join(PUBLIC_DIR, req.url === '/' ? 'index.html' : req.url.split('?')[0]);
+  const cleanUrl = req.url === '/' ? '/index.html' : req.url.split('?')[0];
+  const safePath = path.normalize(cleanUrl).replace(/^(\.\.[\/\\])+/, '');
+  const filePath = path.resolve(PUBLIC_DIR, '.' + safePath);
   
   // Security check: ensure path is inside PUBLIC_DIR
-  if (!filePath.startsWith(PUBLIC_DIR)) {
-    res.writeHead(403, { 'Content-Type': 'text/plain' });
+  if (!filePath.toLowerCase().startsWith(path.resolve(PUBLIC_DIR).toLowerCase())) {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('403 Forbidden');
     return;
   }
@@ -64,7 +66,7 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, '0.0.0.0', () => {
   const ips = getLocalIpAddresses();
   console.log('\n========================================================');
-  console.log('  ⚡ GASSKEUN WEB SUITE SERVER RUNNING (MOBILE READY)');
+  console.log('  ⚡ OTW KEUN WEB SUITE SERVER RUNNING (MOBILE READY)');
   console.log('========================================================');
   console.log(`\n💻 Akses di Komputer ini (Localhost):`);
   console.log(`   Pelanggan : http://localhost:${PORT}`);

@@ -1,18 +1,18 @@
 {
-  "name": "gasskeun-web-suite",
+  "name": "otwkeun-web-suite",
   "version": "1.0.0",
-  "description": "Gasskeun Mobile Web Application Suite",
+  "description": "OTW keun Mobile Web Application Suite",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "keywords": [
-    "gasskeun",
+    "otwkeun",
     "delivery",
     "pwa",
     "food-delivery",
     "ride-hailing"
   ],
-  "author": "Gasskeun Team",
+  "author": "OTW keun Team",
   "license": "MIT"
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Gasskeun Driver - Mitra Pengemudi & Kurir</title>
+  <title>OTW keun Driver - Mitra Pengemudi & Kurir</title>
   <meta name="theme-color" content="#15803d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
@@ -98,7 +98,7 @@
     <!-- Top Mobile Role Nav -->
     <div class="sm:hidden bg-slate-900 text-white text-[11px] px-3 py-1.5 flex justify-between items-center z-50 border-b border-slate-800">
       <span class="text-emerald-400 font-bold flex items-center gap-1">
-        <i class="fa-solid fa-bolt text-amber-400"></i> Gasskeun Driver
+        <i class="fa-solid fa-bolt text-amber-400"></i> OTW keun Driver
       </span>
       <div class="flex items-center gap-1.5">
         <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">User</a>
@@ -119,79 +119,27 @@
               👨‍✈️
             </div>
             <div>
-              <div class="text-[10px] text-emerald-200 font-bold uppercase tracking-wider">Mitra Driver Ciater</div>
-              <h3 class="text-sm font-black text-white">Dadang Sudrajat</h3>
-              <div class="flex items-center gap-2 text-[10px] text-emerald-100 mt-0.5">
-                <span>⭐ 4.9 (420 trip)</span>
-                <span>•</span>
-                <span>Honda Vario 125</span>
-              </div>
+              <h3 class="font-extrabold text-sm text-white">Dadang Sudrajat</h3>
+              <p class="text-[11px] text-emerald-200">Honda Vario 125 • T 4521 ZK</p>
             </div>
           </div>
-
-          <button onclick="showToast('Notifikasi sistem aktif')" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white text-xs">
-            <i class="fa-solid fa-bell"></i>
-          </button>
+          <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2.5 py-1 rounded-full font-bold">
+            ⭐ 4.9 (Ciater)
+          </span>
         </div>
 
-        <!-- BIG STATUS TOGGLE (ONLINE / OFFLINE) -->
-        <div class="bg-slate-950/40 backdrop-blur-md p-3 rounded-2xl border border-white/15 flex items-center justify-between">
+        <!-- Online / Offline Switch Box -->
+        <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/15 flex items-center justify-between">
           <div class="flex items-center gap-2.5">
             <div id="status-indicator-dot" class="w-3.5 h-3.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse"></div>
             <div>
-              <div class="text-xs font-black text-white" id="driver-status-text">STATUS: SIAP MENERIMA ORDER</div>
-              <div class="text-[10px] text-slate-300" id="driver-status-sub">Wilayah operasi: Ciater & sekitarnya</div>
+              <div class="text-[11px] font-black uppercase tracking-wide text-emerald-100" id="driver-status-text">STATUS: SIAP MENERIMA ORDER</div>
+              <div class="text-[10px] text-emerald-200/70">Radar order Ciater aktif</div>
             </div>
           </div>
-          
-          <button id="btn-toggle-online" onclick="toggleDriverOnline()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black text-xs rounded-xl shadow transition">
+          <button id="btn-toggle-online" onclick="toggleDriverOnline()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition">
             ONLINE
           </button>
-        </div>
-
-        <!-- Today's Earnings Snapshot -->
-        <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-white/10 text-center">
-          <div>
-            <div class="text-[10px] text-emerald-200">Pendapatan Hari Ini</div>
-            <div class="text-sm font-black text-white mt-0.5" id="today-income">Rp 128.000</div>
-          </div>
-          <div>
-            <div class="text-[10px] text-emerald-200">Trip Selesai</div>
-            <div class="text-sm font-black text-white mt-0.5" id="today-trips">8 Trip</div>
-          </div>
-          <div>
-            <div class="text-[10px] text-emerald-200">Performa</div>
-            <div class="text-sm font-black text-amber-300 mt-0.5">100%</div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Radar / Searching simulation area -->
-      <div class="p-4 space-y-4">
-        
-        <div id="radar-box" class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm text-center relative overflow-hidden">
-          
-          <!-- Radar Animation Elements -->
-          <div class="w-24 h-24 mx-auto my-2 relative flex items-center justify-center">
-            <div class="absolute inset-0 rounded-full bg-emerald-500/20 radar-wave"></div>
-            <div class="absolute inset-2 rounded-full bg-emerald-500/30 radar-wave" style="animation-delay: 0.6s"></div>
-            <div class="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl shadow-xl relative z-10">
-              <i class="fa-solid fa-location-crosshairs text-xl animate-spin" style="animation-duration: 6s"></i>
-            </div>
-          </div>
-
-          <h4 class="text-xs font-black text-slate-800">Menunggu Order Baru Terdekat...</h4>
-          <p class="text-[11px] text-slate-500 max-w-xs mx-auto mt-1">
-            Sistem otomatis mencocokkan Anda dengan pesanan CiaterFood, CiaterRide & CiaterKirim.
-          </p>
-
-          <!-- Simulation Button for instant testing -->
-          <div class="mt-4 pt-3 border-t border-slate-100">
-            <button onclick="triggerSimulatedIncomingOrder()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl active:scale-95 transition flex items-center gap-2 mx-auto">
-              <i class="fa-solid fa-bolt text-amber-400"></i> Simulasikan Order Masuk
-            </button>
-          </div>
         </div>
 
         <!-- Quick Action & Info Cards -->
@@ -246,8 +194,8 @@
         <div class="flex items-center gap-2">
           <span class="text-xl" id="active-order-icon">🍔</span>
           <div>
-            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wide" id="active-order-type-badge">GASSFOOD</div>
-            <h3 class="text-xs font-black text-white" id="active-order-code">#GSK-9102</h3>
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wide" id="active-order-type-badge">OTWFOOD</div>
+            <h3 class="text-xs font-black text-white" id="active-order-code">#OTW-9102</h3>
           </div>
         </div>
         <div class="text-right">
@@ -263,15 +211,16 @@
         <!-- Floating Navigation Overlay -->
         <div class="absolute top-3 left-3 right-3 z-10 bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl border border-white/15 text-white shadow-xl flex items-center justify-between">
           <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm shrink-0">
               <i class="fa-solid fa-location-arrow"></i>
             </div>
-            <div>
+            <div class="min-w-0">
               <div class="text-[9px] text-emerald-300 font-extrabold uppercase" id="step-badge">LANGKAH 1 DARI 3</div>
               <div class="text-xs font-black truncate max-w-[200px]" id="nav-instruction-text">Menuju Warung Nasi Bu Tini</div>
+              <div class="text-[10px] text-slate-300 truncate max-w-[200px]" id="nav-location-name">Warung Nasi Liwet Bu Tini (Jl. Raya Ciater No. 45)</div>
             </div>
           </div>
-          <button onclick="showToast('Navigasi GPS Aktif')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-[10px] font-bold">
+          <button onclick="showToast('Navigasi GPS Aktif')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-[10px] font-bold shrink-0">
             GPS ON
           </button>
         </div>
@@ -283,12 +232,12 @@
         <!-- Customer details -->
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center font-bold text-slate-700 text-xs">
+            <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center font-bold text-slate-700 text-xs" id="active-customer-avatar">
               AG
             </div>
             <div>
-              <h4 class="text-xs font-extrabold text-slate-800">Asep Gunawan (Pelanggan)</h4>
-              <p class="text-[10px] text-slate-400">Metode Bayar: <strong class="text-emerald-700">Tunai COD (Rp 35.000)</strong></p>
+              <h4 class="text-xs font-extrabold text-slate-800" id="active-customer-name">Asep Gunawan (Pelanggan)</h4>
+              <p class="text-[10px] text-slate-400" id="active-payment-info">Metode Bayar: <strong class="text-emerald-700">Tunai COD (Rp 35.000)</strong></p>
             </div>
           </div>
           
@@ -321,7 +270,7 @@
         </button>
         <div>
           <h2 class="text-base font-extrabold text-slate-800">💰 Pendapatan & Dompet</h2>
-          <p class="text-[11px] text-slate-400">Rekap penghasilan mitra Gasskeun</p>
+          <p class="text-[11px] text-slate-400">Rekap penghasilan mitra OTW keun</p>
         </div>
       </div>
 
@@ -522,7 +471,7 @@
               <h4 class="text-xs font-black text-white flex items-center gap-1.5">
                 Asep Gunawan (Pelanggan) <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
               </h4>
-              <p class="text-[10px] text-emerald-100 font-medium">Order #CTG-9102 • Palasari Ciater</p>
+              <p class="text-[10px] text-emerald-100 font-medium">Order #OTW-9102 • Palasari Ciater</p>
             </div>
           </div>
           <button onclick="closeDriverChatModal()" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white text-xs">
@@ -599,6 +548,9 @@
       if (target) {
         target.classList.remove('hidden');
         window.scrollTo(0, 0);
+        if (screenId === 'driver-screen-active' && driverMapInstance) {
+          setTimeout(() => driverMapInstance.invalidateSize(), 250);
+        }
       }
     }
 
@@ -627,7 +579,7 @@
 
     function handleIncomingSyncOrder(order) {
       currentHandlingOrder = order;
-      document.getElementById('incoming-service-badge').innerText = `PESANAN ${order.serviceName || order.service || 'GASSKEUN'}`;
+      document.getElementById('incoming-service-badge').innerText = `PESANAN ${order.serviceName || order.service || 'OTW KEUN'}`;
       document.getElementById('incoming-title').innerText = order.title || order.merchantName || 'Pesanan Baru';
       document.getElementById('incoming-fare').innerText = `Rp ${((order.total || 30000) * 0.35).toLocaleString('id-ID')} (Ongkos Bersih)`;
       document.getElementById('incoming-pickup').innerText = order.pickupLocation || order.merchantName || 'Titik Penjemputan';
@@ -703,6 +655,21 @@
       clearInterval(incomingTimerInterval);
       document.getElementById('modal-incoming-order').classList.add('hidden');
       orderStep = 1;
+      
+      if (currentHandlingOrder) {
+        document.getElementById('active-order-code').innerText = '#' + currentHandlingOrder.id;
+        const fare = currentHandlingOrder.deliveryFee || Math.round((currentHandlingOrder.total || 30000) * 0.35);
+        document.getElementById('active-order-fare').innerText = 'Rp ' + (fare || 12000).toLocaleString('id-ID');
+        document.getElementById('active-order-type-badge').innerText = (currentHandlingOrder.serviceName || currentHandlingOrder.service || 'OTWFOOD').toUpperCase();
+        document.getElementById('active-order-icon').innerText = currentHandlingOrder.service === 'FOOD' ? '🍔' : currentHandlingOrder.service === 'RIDE' ? '🏍️' : '📦';
+        if (currentHandlingOrder.customerName) {
+          document.getElementById('active-customer-name').innerText = currentHandlingOrder.customerName + ' (Pelanggan)';
+        }
+        if (currentHandlingOrder.paymentMethod) {
+          document.getElementById('active-payment-info').innerHTML = `Metode Bayar: <strong class="text-emerald-700">${currentHandlingOrder.paymentMethod} (Rp ${(currentHandlingOrder.total || 0).toLocaleString('id-ID')})</strong>`;
+        }
+      }
+
       updateOrderStepUI();
       document.getElementById('driver-order-dot').classList.remove('hidden');
 
@@ -733,8 +700,8 @@
         }
 
         const driverCoords = [-6.7360, 107.6570];
-        const storeCoords = [-6.7350, 107.6580];
-        const customerCoords = [-6.7412, 107.6534];
+        const storeCoords = currentHandlingOrder?.pickupCoords || [-6.7350, 107.6580];
+        const customerCoords = currentHandlingOrder?.dropCoords || [-6.7412, 107.6534];
 
         driverMapInstance = L.map('driver-live-map', {
           zoomControl: false,
@@ -742,7 +709,8 @@
         }).setView(driverCoords, 15);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-          maxZoom: 19
+          maxZoom: 19,
+          subdomains: 'abcd'
         }).addTo(driverMapInstance);
 
         const driverIcon = L.divIcon({
@@ -763,8 +731,11 @@
           iconSize: [32, 32]
         });
 
-        L.marker(storeCoords, { icon: storeIcon }).addTo(driverMapInstance).bindPopup('<b>Warung Bu Tini</b><br>Ambil Makanan');
-        L.marker(customerCoords, { icon: userIcon }).addTo(driverMapInstance).bindPopup('<b>Asep Gunawan (Pelanggan)</b><br>Tujuan Antar');
+        const pickupLabel = currentHandlingOrder?.pickupLocation || currentHandlingOrder?.merchantName || 'Titik Jemput';
+        const dropLabel = currentHandlingOrder?.customerName ? `${currentHandlingOrder.customerName} (Tujuan Antar)` : 'Tujuan Antar';
+
+        L.marker(storeCoords, { icon: storeIcon }).addTo(driverMapInstance).bindPopup(`<b>${pickupLabel}</b><br>Titik Pengambilan`);
+        L.marker(customerCoords, { icon: userIcon }).addTo(driverMapInstance).bindPopup(`<b>${dropLabel}</b><br>Tujuan Antar`);
         driverCurrentMarker = L.marker(driverCoords, { icon: driverIcon }).addTo(driverMapInstance);
 
         const route = L.polyline([driverCoords, storeCoords, [-6.7380, 107.6560], customerCoords], {
@@ -775,6 +746,7 @@
         }).addTo(driverMapInstance);
 
         driverMapInstance.fitBounds(route.getBounds(), { padding: [35, 35] });
+        driverMapInstance.invalidateSize();
       }, 300);
     }
 
@@ -796,7 +768,7 @@
       const container = document.getElementById('driver-chat-messages-container');
       if (!container) return;
 
-      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'CTG-9102';
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'OTW-9102';
       const messages = window.CiaterSync ? CiaterSync.getChatMessages(orderId) : [];
 
       container.innerHTML = messages.map(msg => `
@@ -816,7 +788,7 @@
       const text = input.value.trim();
       if (!text) return;
 
-      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'CTG-9102';
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'OTW-9102';
       if (window.CiaterSync) {
         CiaterSync.sendChatMessage(orderId, 'Dadang Sudrajat (Driver)', 'driver', text);
       }
@@ -825,7 +797,7 @@
     }
 
     function sendDriverQuickReply(text) {
-      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'CTG-9102';
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'OTW-9102';
       if (window.CiaterSync) {
         CiaterSync.sendChatMessage(orderId, 'Dadang Sudrajat (Driver)', 'driver', text);
       }
@@ -864,21 +836,24 @@
       const navLoc = document.getElementById('nav-location-name');
       const btnText = document.getElementById('btn-advance-text');
 
+      const pickupName = currentHandlingOrder ? (currentHandlingOrder.pickupLocation || currentHandlingOrder.merchantName || 'Titik Penjemputan') : 'Warung Nasi Liwet Bu Tini (Jl. Raya Ciater No. 45)';
+      const dropName = currentHandlingOrder ? (currentHandlingOrder.dropLocation || currentHandlingOrder.customerLocation || 'Desa Palasari RT 02/03') : 'Desa Palasari RT 02/03, Ciater';
+
       if (orderStep === 1) {
-        stepBadge.innerText = 'LANGKAH 1 DARI 3';
-        navInst.innerText = 'Menuju Titik Penjemputan / Warung';
-        navLoc.innerText = 'Warung Nasi Liwet Bu Tini (Jl. Raya Ciater No. 45)';
-        btnText.innerText = 'Saya Sudah Tiba di Warung';
+        if (stepBadge) stepBadge.innerText = 'LANGKAH 1 DARI 3';
+        if (navInst) navInst.innerText = 'Menuju Titik Penjemputan / Warung';
+        if (navLoc) navLoc.innerText = pickupName;
+        if (btnText) btnText.innerText = 'Saya Sudah Tiba di Titik Jemput';
       } else if (orderStep === 2) {
-        stepBadge.innerText = 'LANGKAH 2 DARI 3';
-        navInst.innerText = 'Konfirmasi Pengambilan Pesanan';
-        navLoc.innerText = 'Pastikan pesanan sesuai: 1x Paket Liwet Komplit';
-        btnText.innerText = 'Pesanan Sudah Diambil ➔ Mulai Antar';
+        if (stepBadge) stepBadge.innerText = 'LANGKAH 2 DARI 3';
+        if (navInst) navInst.innerText = 'Konfirmasi Pengambilan Pesanan';
+        if (navLoc) navLoc.innerText = 'Pastikan pesanan sesuai rincian';
+        if (btnText) btnText.innerText = 'Pesanan Sudah Diambil ➔ Mulai Antar';
       } else if (orderStep === 3) {
-        stepBadge.innerText = 'LANGKAH 3 DARI 3';
-        navInst.innerText = 'Antar ke Alamat Pelanggan';
-        navLoc.innerText = 'Desa Palasari RT 02/03 (Dekat Masjid Al-Ikhlas)';
-        btnText.innerText = 'Selesaikan Pesanan & Terima Uang COD';
+        if (stepBadge) stepBadge.innerText = 'LANGKAH 3 DARI 3';
+        if (navInst) navInst.innerText = 'Antar ke Alamat Pelanggan';
+        if (navLoc) navLoc.innerText = dropName;
+        if (btnText) btnText.innerText = 'Selesaikan Pesanan & Terima Pembayaran';
       }
     }
 

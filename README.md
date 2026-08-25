@@ -1,8 +1,8 @@
-# ⚡ Gasskeun — Hyperlocal Super App Suite (Web & PWA)
+# ⚡ OTW keun — Hyperlocal Super App Suite (Web & PWA)
 
-Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk layanan **Pesan Antar Makanan (GassFood)**, **Ojek Online (GassRide)**, dan **Pengantaran Barang & Dokumen (GassKirim)** di wilayah **Kecamatan Ciater, Kabupaten Subang dan Sekitarnya** *(Sari Ater, Palasari, Cisaat, Jalancagak, Sagalaherang, Cisalak)*.
+Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk layanan **Pesan Antar Makanan (OTWFood)**, **Ojek Online (OTWRide)**, dan **Pengantaran Barang & Dokumen (OTWKirim)** di wilayah **Kecamatan Ciater, Kabupaten Subang dan Sekitarnya** *(Sari Ater, Palasari, Cisaat, Jalancagak, Sagalaherang, Cisalak)*.
 
-![Gasskeun App Suite](https://img.shields.io/badge/Gasskeun-PWA%20Ready-16a34a?style=for-the-badge&logo=pwa)
+![OTW keun App Suite](https://img.shields.io/badge/OTW%20keun-PWA%20Ready-16a34a?style=for-the-badge&logo=pwa)
 ![Realtime Sync](https://img.shields.io/badge/Sync-BroadcastChannel-blue?style=for-the-badge)
 ![Maps](https://img.shields.io/badge/Maps-Leaflet%20OSM-emerald?style=for-the-badge)
 
@@ -12,13 +12,13 @@ Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk lay
 
 - **👤 1. Aplikasi Pelanggan (`index.html`)**:
   - PWA Installable ke homescreen HP Android & iOS (*Add to Home Screen*).
-  - Pesan Makanan (*GassFood*) dari warung nasi liwet, sate maranggi, kedai kopi, & oleh-oleh nanas khas Subang.
-  - Ojek & Mobil (*GassRide*) dengan tarif zonasi per-km lokal.
-  - Kirim Paket & Dokumen (*GassKirim*) antar desa & villa.
+  - Pesan Makanan (*OTWFood*) dari warung nasi liwet, sate maranggi, kedai kopi, & oleh-oleh nanas khas Subang.
+  - Ojek & Mobil (*OTWRide*) dengan tarif zonasi per-km lokal.
+  - Kirim Paket & Dokumen (*OTWKirim*) antar desa & villa.
   - **Peta Interaktif Real-Time (Leaflet OSM)** berpusat di Ciater dengan live driver movement GPS tracking.
   - **In-App Chat Real-Time** dengan Driver partner dilengkapi quick reply chips.
   - Voucher & Promo system (`CIATERKULINER`, `RIDEHEMAT`, `GRATISONGKIR`).
-  - Dompet digital GassPay + COD (Bayar di Tempat) + QRIS.
+  - Dompet digital OTWPay + COD (Bayar di Tempat) + QRIS.
 
 - **🏍️ 2. Aplikasi Mitra Driver (`driver.html`)**:
   - Tombol toggle Online/Offline instan.

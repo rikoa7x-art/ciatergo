@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gasskeun-v1';
+const CACHE_NAME = 'otwkeun-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -38,7 +38,8 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((response) => {
       return response || fetch(event.request).catch(() => {
         // Fallback for html navigation if offline
-        if (event.request.headers.get('accept').includes('text/html')) {
+        const accept = event.request.headers.get('accept');
+        if (accept && accept.includes('text/html')) {
           return caches.match('./index.html');
         }
       });

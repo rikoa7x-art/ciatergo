@@ -1,6 +1,6 @@
 {
-  "name": "Gasskeun - Layanan Antar Makanan, Ojek & Kirim Barang",
-  "short_name": "Gasskeun",
+  "name": "OTW keun - Layanan Antar Makanan, Ojek & Kirim Barang",
+  "short_name": "OTW keun",
   "description": "Aplikasi pesan makanan, ojek, dan kirim barang cepat wilayah Ciater dan sekitarnya",
   "start_url": "./index.html",
   "display": "standalone",

@@ -1,19 +1,19 @@
 /**
- * Gasskeun Shared Sync Bus
+ * OTW keun Shared Sync Bus
  * Menghubungkan komunikasi real-time antar tab/layar (Pelanggan, Driver, Merchant, Admin)
  * Menggunakan BroadcastChannel API dan localStorage.
  */
 
-const SYNC_CHANNEL_NAME = 'gasskeun_bus';
+const SYNC_CHANNEL_NAME = 'otwkeun_bus';
 const syncBus = ('BroadcastChannel' in window) ? new BroadcastChannel(SYNC_CHANNEL_NAME) : null;
 
 // Initial state helpers
 const STORAGE_KEYS = {
-  ORDERS: 'gasskeun_orders_db',
-  DRIVERS: 'gasskeun_drivers_db',
-  MERCHANTS: 'gasskeun_merchants_db',
-  CHATS: 'gasskeun_chats_db',
-  USER: 'gasskeun_current_user'
+  ORDERS: 'otwkeun_orders_db',
+  DRIVERS: 'otwkeun_drivers_db',
+  MERCHANTS: 'otwkeun_merchants_db',
+  CHATS: 'otwkeun_chats_db',
+  USER: 'otwkeun_current_user'
 };
 
 // Event Types
@@ -46,13 +46,13 @@ const CIATER_LOCATIONS = {
 
 // Initial Seed Data
 function getStoredOrders() {
-  const data = localStorage.getItem(STORAGE_KEYS.ORDERS);
+  const data = localStorage.getItem(STORAGE_KEYS.ORDERS) || localStorage.getItem('gasskeun_orders_db');
   if (!data) {
     const defaultOrders = [
       {
-        id: 'GSK-9102',
+        id: 'OTW-9102',
         service: 'FOOD',
-        serviceName: 'GassFood',
+        serviceName: 'OTWFood',
         merchantId: 'resto-1',
         merchantName: 'Warung Nasi Liwet Bu Tini',
         merchantLocation: 'Jl. Raya Ciater No. 45',
@@ -79,9 +79,9 @@ function getStoredOrders() {
         timeDisplay: '15 mnt lalu'
       },
       {
-        id: 'GSK-8911',
+        id: 'OTW-8911',
         service: 'RIDE',
-        serviceName: 'GassRide',
+        serviceName: 'OTWRide',
         customerName: 'Hendra Setiawan',
         customerPhone: '+62 812-3344-5566',
         pickupLocation: 'Pemandian Air Panas Sari Ater',
@@ -92,7 +92,7 @@ function getStoredOrders() {
         driverName: 'Ujang Berkah',
         driverPhone: '+62 812-7788-9900',
         total: 10000,
-        paymentMethod: 'GassPay',
+        paymentMethod: 'OTWPay',
         status: 'COMPLETED',
         createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
         timeDisplay: '1 jam lalu'
@@ -127,7 +127,14 @@ function updateOrderStatus(orderId, newStatus, extraData = {}) {
     orders[index].status = newStatus;
     Object.assign(orders[index], extraData);
     saveOrders(orders);
-    broadcastEvent('STATUS_UPDATED', { orderId, status: newStatus, order: orders[index], ...extraData });
+    const payload = { orderId, status: newStatus, order: orders[index], ...extraData };
+    broadcastEvent('STATUS_UPDATED', payload);
+    if (newStatus === 'COOKING') broadcastEvent(SYNC_EVENTS.ORDER_COOKING, payload);
+    if (newStatus === 'READY') broadcastEvent(SYNC_EVENTS.ORDER_READY_FOR_PICKUP, payload);
+    if (newStatus === 'DRIVER_ASSIGNED' || newStatus === 'ACCEPTED') broadcastEvent(SYNC_EVENTS.ORDER_ACCEPTED_DRIVER, payload);
+    if (newStatus === 'DRIVER_ARRIVED_PICKUP') broadcastEvent(SYNC_EVENTS.ORDER_DRIVER_ARRIVED_PICKUP, payload);
+    if (newStatus === 'DRIVER_ON_WAY' || newStatus === 'DRIVER_PICKED_UP') broadcastEvent(SYNC_EVENTS.ORDER_DRIVER_ON_WAY, payload);
+    if (newStatus === 'COMPLETED' || newStatus === 'SELESAI') broadcastEvent(SYNC_EVENTS.ORDER_DELIVERED, payload);
     return orders[index];
   }
   return null;
@@ -135,7 +142,7 @@ function updateOrderStatus(orderId, newStatus, extraData = {}) {
 
 // IN-APP CHAT HELPERS
 function getChatMessages(orderId) {
-  const allChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || '{}');
+  const allChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || localStorage.getItem('gasskeun_chats_db') || '{}');
   return allChats[orderId] || [
     {
       id: 'msg-1',
@@ -148,7 +155,7 @@ function getChatMessages(orderId) {
 }
 
 function sendChatMessage(orderId, sender, role, text) {
-  const allChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || '{}');
+  const allChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || localStorage.getItem('gasskeun_chats_db') || '{}');
   if (!allChats[orderId]) {
     allChats[orderId] = getChatMessages(orderId);
   }
@@ -170,6 +177,7 @@ function broadcastEvent(type, payload) {
     syncBus.postMessage({ type, payload, timestamp: Date.now() });
   }
   // Trigger local storage event for older browser tabs
+  localStorage.setItem('otwkeun_last_event', JSON.stringify({ type, payload, timestamp: Date.now() }));
   localStorage.setItem('gasskeun_last_event', JSON.stringify({ type, payload, timestamp: Date.now() }));
 }
 
@@ -182,7 +190,7 @@ function listenSyncEvents(callback) {
     };
   }
   window.addEventListener('storage', (e) => {
-    if ((e.key === 'gasskeun_last_event' || e.key === 'ciatergo_last_event') && e.newValue) {
+    if ((e.key === 'otwkeun_last_event' || e.key === 'gasskeun_last_event' || e.key === 'ciatergo_last_event') && e.newValue) {
       try {
         const data = JSON.parse(e.newValue);
         callback(data.type, data.payload);
@@ -205,5 +213,7 @@ const SyncObject = {
   SYNC_EVENTS
 };
 
-window.GasskeunSync = SyncObject;
+window.OTWkeunSync = SyncObject;
+window.OtwSync = SyncObject;
+window.GasskeunSync = SyncObject; // Compatibility alias
 window.CiaterSync = SyncObject; // Compatibility alias

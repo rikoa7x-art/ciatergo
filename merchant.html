@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Gasskeun Merchant - Mitra Warung & Resto</title>
+  <title>OTW keun Merchant - Mitra Warung & Resto</title>
   <meta name="theme-color" content="#ea580c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
@@ -85,7 +85,7 @@
     <!-- Top Mobile Role Nav -->
     <div class="sm:hidden bg-slate-900 text-white text-[11px] px-3 py-1.5 flex justify-between items-center z-50 border-b border-slate-800">
       <span class="text-orange-400 font-bold flex items-center gap-1">
-        <i class="fa-solid fa-bolt text-amber-400"></i> Gasskeun Warung
+        <i class="fa-solid fa-bolt text-amber-400"></i> OTW keun Warung
       </span>
       <div class="flex items-center gap-1.5">
         <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">User</a>
@@ -341,14 +341,54 @@
       <span id="toast-text">Notifikasi</span>
     </div>
 
+    <!-- MODAL: TAMBAH MENU BARU -->
+    <div id="modal-add-menu" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[440px] rounded-t-[32px] sm:rounded-[32px] p-5 space-y-4 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="text-sm font-extrabold text-slate-800">Tambah Menu Makanan / Minuman</h3>
+          <button onclick="closeAddMenuModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nama Menu</label>
+            <input id="input-menu-name" type="text" placeholder="Misal: Sambal Dadak Terasi Khas Sunda" class="w-full border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-orange-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Harga (Rp)</label>
+            <input id="input-menu-price" type="number" placeholder="Misal: 15000" class="w-full border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-orange-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Pilih Icon Emoji</label>
+            <div class="flex gap-2 text-xl">
+              <button type="button" onclick="selectMenuEmoji('🥘', this)" class="menu-emoji-btn p-2 rounded-xl border-2 border-orange-500 bg-orange-50">🥘</button>
+              <button type="button" onclick="selectMenuEmoji('🍗', this)" class="menu-emoji-btn p-2 rounded-xl border border-slate-200 hover:bg-slate-50">🍗</button>
+              <button type="button" onclick="selectMenuEmoji('🍜', this)" class="menu-emoji-btn p-2 rounded-xl border border-slate-200 hover:bg-slate-50">🍜</button>
+              <button type="button" onclick="selectMenuEmoji('🧋', this)" class="menu-emoji-btn p-2 rounded-xl border border-slate-200 hover:bg-slate-50">🧋</button>
+              <button type="button" onclick="selectMenuEmoji('☕', this)" class="menu-emoji-btn p-2 rounded-xl border border-slate-200 hover:bg-slate-50">☕</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button onclick="saveNewMenu()" class="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-xs rounded-xl shadow transition">
+            Simpan Menu Baru
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- JAVASCRIPT LOGIC FOR MERCHANT APP -->
   <script>
     let isStoreOpen = true;
+    let selectedEmoji = '🥘';
     let merchantOrders = [
       {
-        id: 'CTG-9102',
+        id: 'OTW-9102',
         customer: 'Asep Gunawan',
         status: 'NEW', // NEW, COOKING, READY
         time: 'Baru saja',
@@ -397,19 +437,26 @@
       if (window.CiaterSync) {
         const stored = CiaterSync.getStoredOrders();
         // Filter food orders or orders for this merchant
-        const foodOrders = stored.filter(o => o.service === 'FOOD' || o.serviceName === 'GassFood' || o.serviceName === 'CiaterFood' || !o.service);
-        if (foodOrders.length > 0) {
-          merchantOrders = foodOrders.map(o => ({
+        const foodOrders = stored.filter(o => o.service === 'FOOD' || o.serviceName === 'OTWFood' || o.serviceName === 'GassFood' || o.serviceName === 'CiaterFood' || !o.service);
+        merchantOrders = foodOrders.map(o => {
+          let kitchenStatus = 'NEW';
+          if (o.status === 'PENDING') kitchenStatus = 'NEW';
+          else if (o.status === 'COOKING') kitchenStatus = 'COOKING';
+          else if (o.status === 'READY' || o.status === 'DRIVER_ARRIVED_PICKUP' || o.status === 'DRIVER_ASSIGNED') kitchenStatus = 'READY';
+          else if (o.status === 'DRIVER_ON_WAY' || o.status === 'DRIVER_PICKED_UP' || o.status === 'COMPLETED' || o.status === 'SELESAI') kitchenStatus = 'COMPLETED';
+          else kitchenStatus = 'NEW';
+
+          return {
             id: o.id,
             customer: o.customerName || 'Pelanggan Ciater',
-            status: o.status === 'PENDING' ? 'NEW' : o.status === 'COOKING' ? 'COOKING' : o.status === 'READY' ? 'READY' : 'READY',
+            status: kitchenStatus,
             rawStatus: o.status,
             time: o.timeDisplay || 'Baru saja',
             items: Array.isArray(o.items) ? o.items : [{ name: o.items || 'Menu Pilihan', qty: 1 }],
             total: o.total || 35000,
             driver: o.driverName ? `${o.driverName} (Mitra Driver)` : 'Mencari driver...'
-          }));
-        }
+          };
+        });
       }
       renderMerchantOrders(currentActiveMerchantTab);
       updateNewOrderBadge();
@@ -441,7 +488,7 @@
         text.innerText = 'TOKO BUKA (TERIMA ORDER)';
         btn.innerText = 'BUKA';
         btn.className = 'px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition';
-        showToast('🟢 Warung Anda aktif di GassFood');
+        showToast('🟢 Warung Anda aktif di OTWFood');
         if (window.CiaterSync) {
           CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.MERCHANT_STATUS_CHANGE, { merchant: 'Warung Bu Tini', status: 'OPEN' });
         }
@@ -559,7 +606,7 @@
 
     function triggerSimulatedKitchenOrder() {
       const newOrd = {
-        id: 'CTG-' + Math.floor(1000 + Math.random() * 9000),
+        id: 'OTW-' + Math.floor(1000 + Math.random() * 9000),
         customer: 'Bu Rina (Villa Ciater)',
         status: 'NEW',
         time: 'Baru saja',
@@ -629,7 +676,49 @@
     }
 
     function openAddMenuModal() {
-      showToast('Form tambah menu baru dapat diisi dengan nama, foto & harga');
+      document.getElementById('modal-add-menu')?.classList.remove('hidden');
+    }
+
+    function closeAddMenuModal() {
+      document.getElementById('modal-add-menu')?.classList.add('hidden');
+    }
+
+    function selectMenuEmoji(emoji, btn) {
+      selectedEmoji = emoji;
+      document.querySelectorAll('.menu-emoji-btn').forEach(b => {
+        b.className = 'menu-emoji-btn p-2 rounded-xl border border-slate-200 hover:bg-slate-50';
+      });
+      btn.className = 'menu-emoji-btn p-2 rounded-xl border-2 border-orange-500 bg-orange-50';
+    }
+
+    function saveNewMenu() {
+      const nameInput = document.getElementById('input-menu-name');
+      const priceInput = document.getElementById('input-menu-price');
+
+      const name = nameInput.value.trim();
+      const price = Number(priceInput.value);
+
+      if (!name || !price || price <= 0) {
+        showToast('Mohon masukkan nama menu dan harga yang valid!');
+        return;
+      }
+
+      const newMenu = {
+        id: 'm' + Date.now(),
+        name: name,
+        price: price,
+        emoji: selectedEmoji || '🥘',
+        isAvailable: true
+      };
+
+      merchantMenus.unshift(newMenu);
+      renderMerchantMenus();
+      closeAddMenuModal();
+
+      nameInput.value = '';
+      priceInput.value = '';
+
+      showToast(`🎉 Menu baru "${name}" berhasil ditambahkan!`);
     }
 
     let toastTimeout;
