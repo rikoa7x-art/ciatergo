@@ -81,7 +81,30 @@ Untuk menguji langsung di smartphone, pastikan laptop dan HP terhubung ke Wi-Fi 
 
 ---
 
-## 🌐 Deploy ke GitHub Pages
+## 🌐 Cara Deploy ke Vercel
+
+Aplikasi ini sudah dikonfigurasi dengan `vercel.json` dan siap dideploy ke Vercel secara gratis dalam hitungan detik.
+
+### Cara 1: Menggunakan Vercel Dashboard (Rekomendasi)
+1. Buka [vercel.com](https://vercel.com) dan login (dengan akun GitHub).
+2. Klik tombol **"Add New..."** ➔ **"Project"**.
+3. Pilih repository GitHub: **`rikoa7x-art/ciatergo`** (atau nama repository Anda).
+4. Klik **"Deploy"** (Semua pengaturan otomatis terdeteksi).
+5. Selesai! Web app Anda akan langsung live dengan HTTPS gratis dan domain seperti `https://ciatergo.vercel.app`.
+
+### Cara 2: Menggunakan Vercel CLI (Lewat Terminal)
+1. Login ke Vercel di terminal:
+   ```bash
+   npx vercel login
+   ```
+2. Jalankan perintah deploy:
+   ```bash
+   npx vercel --prod
+   ```
+
+---
+
+## 🌐 Deploy ke GitHub Pages (Alternatif)
 
 Aplikasi ini 100% Client-Side static web app, sehingga dapat di-host langsung di GitHub Pages secara gratis dengan dukungan HTTPS:
 
