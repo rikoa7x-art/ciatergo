@@ -593,14 +593,12 @@
       const dot = document.getElementById('status-indicator-dot');
       const text = document.getElementById('driver-status-text');
       const btn = document.getElementById('btn-toggle-online');
-      const radar = document.getElementById('radar-box');
 
       if (isDriverOnline) {
         dot.className = 'w-3.5 h-3.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse';
         text.innerText = 'STATUS: SIAP MENERIMA ORDER';
         btn.innerText = 'ONLINE';
         btn.className = 'px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition';
-        radar.classList.remove('opacity-50');
         showToast('🟢 Anda sekarang Online & siap menerima order');
         if (window.CiaterSync) {
           CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, { driver: 'Dadang Sudrajat', status: 'ONLINE' });
@@ -610,7 +608,6 @@
         text.innerText = 'STATUS: SEDANG ISTIRAHAT (OFFLINE)';
         btn.innerText = 'OFFLINE';
         btn.className = 'px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-black text-xs rounded-xl shadow transition';
-        radar.classList.add('opacity-50');
         showToast('⚪ Anda sekarang Offline');
         if (window.CiaterSync) {
           CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, { driver: 'Dadang Sudrajat', status: 'OFFLINE' });
@@ -811,14 +808,14 @@
         if (currentHandlingOrder && window.CiaterSync) {
           CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ARRIVED_PICKUP');
         }
-        showToast('Pesanan telah diambil dari warung/resto.');
+        showToast('📍 Anda telah tiba di titik penjemputan. Ambil pesanan!');
       } else if (orderStep === 2) {
         orderStep = 3;
         updateOrderStepUI();
         if (currentHandlingOrder && window.CiaterSync) {
           CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ON_WAY');
         }
-        showToast('Sedang dalam perjalanan ke alamat pelanggan.');
+        showToast('🛵 Pesanan diambil! Sedang dalam perjalanan ke alamat pelanggan.');
       } else if (orderStep === 3) {
         // Finished
         if (currentHandlingOrder && window.CiaterSync) {

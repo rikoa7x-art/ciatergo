@@ -2,8 +2,12 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>OTW keun Admin - Central Dispatcher & Management Panel</title>
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   
   <script src="shared-sync.js"></script>
@@ -197,7 +201,7 @@
           <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-5 shadow-sm space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="font-extrabold text-sm text-slate-800">Pesanan Masuk Terbaru</h3>
-              <button onclick="adminNav('panel-orders')" class="text-xs font-bold text-emerald-600 hover:underline">Lihat Semua</button>
+              <button onclick="adminNav('panel-orders', document.querySelector('.admin-nav-btn:nth-child(2)'))" class="text-xs font-bold text-emerald-600 hover:underline">Lihat Semua</button>
             </div>
 
             <div class="overflow-x-auto">
@@ -226,7 +230,7 @@
             <div class="space-y-3 pt-2 text-xs">
               <div>
                 <div class="flex justify-between font-bold mb-1">
-                  <span>🍔 CiaterFood</span>
+                  <span>🍔 OTWFood</span>
                   <span class="text-orange-600">62%</span>
                 </div>
                 <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
@@ -468,7 +472,7 @@
       <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
         <div>
           <span class="text-[10px] text-slate-400 block">Layanan:</span>
-          <span class="font-black text-slate-800" id="modal-order-service">CiaterFood</span>
+          <span class="font-black text-slate-800" id="modal-order-service">OTWFood</span>
         </div>
         <div>
           <span class="text-[10px] text-slate-400 block">Status:</span>
@@ -516,6 +520,11 @@
     let allOrdersCache = [];
 
     window.addEventListener('DOMContentLoaded', () => {
+      // Register service worker for offline capability
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg Error:', err));
+      }
+
       renderAdminOrders();
 
       if (window.CiaterSync) {
@@ -543,8 +552,15 @@
       const totalGmv = allOrdersCache.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
       const commission = Math.round(totalGmv * 0.15);
 
-      const kpiOrderElem = document.querySelector('#panel-overview .text-2xl');
-      if (kpiOrderElem) kpiOrderElem.innerText = `${totalOrderCount} Order`;
+      // Update all 4 stat cards using querySelectorAll for robustness
+      const kpiCards = document.querySelectorAll('#panel-overview .text-2xl');
+      if (kpiCards[0]) kpiCards[0].innerText = `${totalOrderCount} Order`;
+      if (kpiCards[1]) {
+        kpiCards[1].innerText = `Rp ${totalGmv.toLocaleString('id-ID')}`;
+        // Update commission sub-text in same card
+        const commEl = kpiCards[1].nextElementSibling;
+        if (commEl) commEl.innerText = `Komisi: Rp ${commission.toLocaleString('id-ID')}`;
+      }
 
       // Render Recent Orders (Top 5)
       const recentTbody = document.getElementById('admin-recent-orders-tbody');

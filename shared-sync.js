@@ -142,20 +142,12 @@ function updateOrderStatus(orderId, newStatus, extraData = {}) {
 
 // IN-APP CHAT HELPERS
 function getChatMessages(orderId) {
-  const allChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || localStorage.getItem('gasskeun_chats_db') || '{}');
-  return allChats[orderId] || [
-    {
-      id: 'msg-1',
-      sender: 'Dadang Sudrajat (Driver)',
-      role: 'driver',
-      text: 'Halo kak, pesanan sudah saya ambil dan segera meluncur ya!',
-      time: 'Baru saja'
-    }
-  ];
+  const allChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || '{}');
+  return allChats[orderId] || [];
 }
 
 function sendChatMessage(orderId, sender, role, text) {
-  const allChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || localStorage.getItem('gasskeun_chats_db') || '{}');
+  const allChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || '{}');
   if (!allChats[orderId]) {
     allChats[orderId] = getChatMessages(orderId);
   }
@@ -178,19 +170,18 @@ function broadcastEvent(type, payload) {
   }
   // Trigger local storage event for older browser tabs
   localStorage.setItem('otwkeun_last_event', JSON.stringify({ type, payload, timestamp: Date.now() }));
-  localStorage.setItem('gasskeun_last_event', JSON.stringify({ type, payload, timestamp: Date.now() }));
 }
 
 function listenSyncEvents(callback) {
   if (syncBus) {
-    syncBus.onmessage = (event) => {
+    syncBus.addEventListener('message', (event) => {
       if (event.data && event.data.type) {
         callback(event.data.type, event.data.payload);
       }
-    };
+    });
   }
   window.addEventListener('storage', (e) => {
-    if ((e.key === 'otwkeun_last_event' || e.key === 'gasskeun_last_event' || e.key === 'ciatergo_last_event') && e.newValue) {
+    if (e.key === 'otwkeun_last_event' && e.newValue) {
       try {
         const data = JSON.parse(e.newValue);
         callback(data.type, data.payload);

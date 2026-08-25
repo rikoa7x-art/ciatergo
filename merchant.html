@@ -163,7 +163,7 @@
         <!-- Order Tabs -->
         <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold text-slate-600">
           <button onclick="filterMerchantOrderTab('new', this)" class="flex-1 py-1.5 bg-white text-orange-700 rounded-lg shadow-sm">
-            Baru <span class="bg-orange-600 text-white text-[9px] px-1.5 py-0.2 rounded-full ml-1" id="badge-new-count">1</span>
+            Baru <span class="bg-orange-600 text-white text-[9px] px-1.5 py-0.5 rounded-full ml-1" id="badge-new-count">1</span>
           </button>
           <button onclick="filterMerchantOrderTab('cooking', this)" class="flex-1 py-1.5 rounded-lg">
             Sedang Dimasak
@@ -437,7 +437,7 @@
       if (window.CiaterSync) {
         const stored = CiaterSync.getStoredOrders();
         // Filter food orders or orders for this merchant
-        const foodOrders = stored.filter(o => o.service === 'FOOD' || o.serviceName === 'OTWFood' || o.serviceName === 'GassFood' || o.serviceName === 'CiaterFood' || !o.service);
+        const foodOrders = stored.filter(o => o.service === 'FOOD' || o.serviceName === 'OTWFood');
         merchantOrders = foodOrders.map(o => {
           let kitchenStatus = 'NEW';
           if (o.status === 'PENDING') kitchenStatus = 'NEW';
