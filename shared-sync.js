@@ -1,19 +1,19 @@
 /**
- * CiaterGo Shared Sync Bus
+ * Gasskeun Shared Sync Bus
  * Menghubungkan komunikasi real-time antar tab/layar (Pelanggan, Driver, Merchant, Admin)
  * Menggunakan BroadcastChannel API dan localStorage.
  */
 
-const SYNC_CHANNEL_NAME = 'ciatergo_bus';
+const SYNC_CHANNEL_NAME = 'gasskeun_bus';
 const syncBus = ('BroadcastChannel' in window) ? new BroadcastChannel(SYNC_CHANNEL_NAME) : null;
 
 // Initial state helpers
 const STORAGE_KEYS = {
-  ORDERS: 'ciatergo_orders_db',
-  DRIVERS: 'ciatergo_drivers_db',
-  MERCHANTS: 'ciatergo_merchants_db',
-  CHATS: 'ciatergo_chats_db',
-  USER: 'ciatergo_current_user'
+  ORDERS: 'gasskeun_orders_db',
+  DRIVERS: 'gasskeun_drivers_db',
+  MERCHANTS: 'gasskeun_merchants_db',
+  CHATS: 'gasskeun_chats_db',
+  USER: 'gasskeun_current_user'
 };
 
 // Event Types
@@ -50,9 +50,9 @@ function getStoredOrders() {
   if (!data) {
     const defaultOrders = [
       {
-        id: 'CTG-9102',
+        id: 'GSK-9102',
         service: 'FOOD',
-        serviceName: 'CiaterFood',
+        serviceName: 'GassFood',
         merchantId: 'resto-1',
         merchantName: 'Warung Nasi Liwet Bu Tini',
         merchantLocation: 'Jl. Raya Ciater No. 45',
@@ -79,9 +79,9 @@ function getStoredOrders() {
         timeDisplay: '15 mnt lalu'
       },
       {
-        id: 'CTG-8911',
+        id: 'GSK-8911',
         service: 'RIDE',
-        serviceName: 'CiaterRide',
+        serviceName: 'GassRide',
         customerName: 'Hendra Setiawan',
         customerPhone: '+62 812-3344-5566',
         pickupLocation: 'Pemandian Air Panas Sari Ater',
@@ -92,7 +92,7 @@ function getStoredOrders() {
         driverName: 'Ujang Berkah',
         driverPhone: '+62 812-7788-9900',
         total: 10000,
-        paymentMethod: 'CiaterPay',
+        paymentMethod: 'GassPay',
         status: 'COMPLETED',
         createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
         timeDisplay: '1 jam lalu'
@@ -170,7 +170,7 @@ function broadcastEvent(type, payload) {
     syncBus.postMessage({ type, payload, timestamp: Date.now() });
   }
   // Trigger local storage event for older browser tabs
-  localStorage.setItem('ciatergo_last_event', JSON.stringify({ type, payload, timestamp: Date.now() }));
+  localStorage.setItem('gasskeun_last_event', JSON.stringify({ type, payload, timestamp: Date.now() }));
 }
 
 function listenSyncEvents(callback) {
@@ -182,7 +182,7 @@ function listenSyncEvents(callback) {
     };
   }
   window.addEventListener('storage', (e) => {
-    if (e.key === 'ciatergo_last_event' && e.newValue) {
+    if ((e.key === 'gasskeun_last_event' || e.key === 'ciatergo_last_event') && e.newValue) {
       try {
         const data = JSON.parse(e.newValue);
         callback(data.type, data.payload);
@@ -192,7 +192,7 @@ function listenSyncEvents(callback) {
 }
 
 // Export to global scope
-window.CiaterSync = {
+const SyncObject = {
   getStoredOrders,
   saveOrders,
   addOrder,
@@ -204,3 +204,6 @@ window.CiaterSync = {
   CIATER_LOCATIONS,
   SYNC_EVENTS
 };
+
+window.GasskeunSync = SyncObject;
+window.CiaterSync = SyncObject; // Compatibility alias

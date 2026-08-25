@@ -63,23 +63,23 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   const ips = getLocalIpAddresses();
-  console.log('\n======================================================');
-  console.log('  🛵 CIATERGO WEB SUITE SERVER RUNNING (MOBILE READY)');
-  console.log('======================================================');
-  console.log(`\n  👉 Akses di Komputer ini (Localhost):`);
-  console.log(`     http://localhost:${PORT}`);
-  console.log(`     http://localhost:${PORT}/driver.html`);
-  console.log(`     http://localhost:${PORT}/merchant.html`);
-  console.log(`     http://localhost:${PORT}/admin.html`);
+  console.log('\n========================================================');
+  console.log('  ⚡ GASSKEUN WEB SUITE SERVER RUNNING (MOBILE READY)');
+  console.log('========================================================');
+  console.log(`\n💻 Akses di Komputer ini (Localhost):`);
+  console.log(`   Pelanggan : http://localhost:${PORT}`);
+  console.log(`   Driver    : http://localhost:${PORT}/driver.html`);
+  console.log(`   Warung    : http://localhost:${PORT}/merchant.html`);
+  console.log(`   Admin     : http://localhost:${PORT}/admin.html`);
   
   if (ips.length > 0) {
-    console.log(`\n  📱 Buka di Smartphone Anda (Pastikan 1 Wi-Fi yang sama):`);
+    console.log(`\n📱 Akses di HP / Smartphone (Satu Jaringan Wi-Fi):`);
     ips.forEach(ip => {
-      console.log(`     🌐 Pelanggan : http://${ip}:${PORT}`);
-      console.log(`     🛵 Driver    : http://${ip}:${PORT}/driver.html`);
-      console.log(`     🏪 Warung    : http://${ip}:${PORT}/merchant.html`);
-      console.log(`     ⚙️ Admin     : http://${ip}:${PORT}/admin.html`);
+      console.log(`   Pelanggan : http://${ip}:${PORT}`);
+      console.log(`   Driver    : http://${ip}:${PORT}/driver.html`);
+      console.log(`   Warung    : http://${ip}:${PORT}/merchant.html`);
+      console.log(`   Admin     : http://${ip}:${PORT}/admin.html`);
     });
   }
-  console.log('\n======================================================\n');
+  console.log('\nTekan CTRL + C untuk menghentikan server.\n');
 });

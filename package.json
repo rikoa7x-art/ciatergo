@@ -1,12 +1,18 @@
 {
-  "name": "ciatergo-web-suite",
+  "name": "gasskeun-web-suite",
   "version": "1.0.0",
-  "description": "CiaterGo Mobile Web Application Suite",
+  "description": "Gasskeun Mobile Web Application Suite",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["ciater", "subang", "delivery", "transportation", "pwa"],
-  "author": "CiaterGo Team",
+  "keywords": [
+    "gasskeun",
+    "delivery",
+    "pwa",
+    "food-delivery",
+    "ride-hailing"
+  ],
+  "author": "Gasskeun Team",
   "license": "MIT"
 }

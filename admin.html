@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CiaterGo Admin - Central Dispatcher & Management Panel</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+  <title>Gasskeun Admin - Central Dispatcher & Management Panel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   
   <script src="shared-sync.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -48,10 +48,10 @@
       <div class="p-5 flex items-center justify-between border-b border-slate-800">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center text-xl shadow-lg">
-            🛵
+            ⚡
           </div>
           <div>
-            <h1 class="text-base font-black tracking-tight leading-none text-white">Ciater<span class="text-amber-400">Go</span></h1>
+            <h1 class="text-base font-black tracking-tight leading-none text-white">Gass<span class="text-amber-400">keun</span></h1>
             <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Admin Console</span>
           </div>
         </div>
@@ -123,7 +123,7 @@
     <!-- Top Bar -->
     <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
       <div>
-        <h2 class="text-lg font-black text-slate-800" id="admin-page-title">Ringkasan Operasional CiaterGo</h2>
+        <h2 class="text-lg font-black text-slate-800" id="admin-page-title">Ringkasan Operasional Gasskeun</h2>
         <p class="text-xs text-slate-400">Wilayah: Kecamatan Ciater & Sekitarnya (Jalancagak, Sagalaherang, Cisalak)</p>
       </div>
 
@@ -397,7 +397,7 @@
             <div class="text-xl font-black text-slate-900 mt-1">Rp 48.500.000</div>
           </div>
           <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
-            <span class="text-[10px] font-bold text-emerald-700 uppercase">Pendapatan Platform CiaterGo</span>
+            <span class="text-[10px] font-bold text-emerald-700 uppercase">Pendapatan Platform Gasskeun</span>
             <div class="text-xl font-black text-emerald-700 mt-1">Rp 7.275.000</div>
           </div>
           <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200">
@@ -413,7 +413,7 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div class="p-4 rounded-2xl border border-slate-200 space-y-3">
-            <h4 class="font-bold text-slate-800 uppercase">🛵 Tarif CiaterRide (Ojek)</h4>
+            <h4 class="font-bold text-slate-800 uppercase">🛵 Tarif GassRide (Ojek)</h4>
             <div>
               <label class="block text-slate-500 mb-1">Tarif Dasar (0-2 km pertama)</label>
               <input type="text" value="Rp 8.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
@@ -425,7 +425,7 @@
           </div>
 
           <div class="p-4 rounded-2xl border border-slate-200 space-y-3">
-            <h4 class="font-bold text-slate-800 uppercase">🍔 Biaya Layanan CiaterFood</h4>
+            <h4 class="font-bold text-slate-800 uppercase">🍔 Biaya Layanan GassFood</h4>
             <div>
               <label class="block text-slate-500 mb-1">Ongkir Dasar Pengiriman Makanan</label>
               <input type="text" value="Rp 5.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
@@ -637,7 +637,7 @@
       if (!ord) return;
 
       document.getElementById('modal-order-id').innerText = '#' + ord.id;
-      document.getElementById('modal-order-service').innerText = ord.serviceName || ord.service || 'CiaterGo';
+      document.getElementById('modal-order-service').innerText = ord.serviceName || ord.service || 'Gasskeun';
       document.getElementById('modal-order-status').innerText = ord.status;
       document.getElementById('modal-order-customer').innerText = ord.customerName || 'Pelanggan';
       document.getElementById('modal-order-driver').innerText = ord.driverName || 'Menunggu Driver';
@@ -669,7 +669,7 @@
       if (target) target.classList.remove('hidden');
 
       const titles = {
-        'panel-overview': 'Ringkasan Operasional CiaterGo',
+        'panel-overview': 'Ringkasan Operasional Gasskeun',
         'panel-orders': 'Manajemen Pesanan & Transaksi Live',
         'panel-drivers': 'Verifikasi & Manajemen Mitra Driver',
         'panel-merchants': 'Kelola Warung, Resto & Oleh-Oleh Ciater',

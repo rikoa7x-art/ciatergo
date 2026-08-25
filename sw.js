@@ -1,12 +1,12 @@
-const CACHE_NAME = 'ciatergo-v1';
+const CACHE_NAME = 'gasskeun-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './driver.html',
   './merchant.html',
   './admin.html',
-  './shared-sync.js',
-  './manifest.json'
+  './manifest.json',
+  './shared-sync.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -35,10 +35,12 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request).catch(() => {
-        // Fallback if offline
-        return caches.match('./index.html');
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request).catch(() => {
+        // Fallback for html navigation if offline
+        if (event.request.headers.get('accept').includes('text/html')) {
+          return caches.match('./index.html');
+        }
       });
     })
   );

@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>CiaterGo Merchant - Mitra Warung & Resto Ciater</title>
+  <title>Gasskeun Merchant - Mitra Warung & Resto</title>
   <meta name="theme-color" content="#ea580c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏪</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   
   <script src="shared-sync.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -85,7 +85,7 @@
     <!-- Top Mobile Role Nav -->
     <div class="sm:hidden bg-slate-900 text-white text-[11px] px-3 py-1.5 flex justify-between items-center z-50 border-b border-slate-800">
       <span class="text-orange-400 font-bold flex items-center gap-1">
-        <i class="fa-solid fa-store"></i> CiaterGo Warung
+        <i class="fa-solid fa-bolt text-amber-400"></i> Gasskeun Warung
       </span>
       <div class="flex items-center gap-1.5">
         <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">User</a>
@@ -397,7 +397,7 @@
       if (window.CiaterSync) {
         const stored = CiaterSync.getStoredOrders();
         // Filter food orders or orders for this merchant
-        const foodOrders = stored.filter(o => o.service === 'FOOD' || o.serviceName === 'CiaterFood' || !o.service);
+        const foodOrders = stored.filter(o => o.service === 'FOOD' || o.serviceName === 'GassFood' || o.serviceName === 'CiaterFood' || !o.service);
         if (foodOrders.length > 0) {
           merchantOrders = foodOrders.map(o => ({
             id: o.id,
@@ -441,7 +441,7 @@
         text.innerText = 'TOKO BUKA (TERIMA ORDER)';
         btn.innerText = 'BUKA';
         btn.className = 'px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition';
-        showToast('🟢 Warung Anda aktif di CiaterFood');
+        showToast('🟢 Warung Anda aktif di GassFood');
         if (window.CiaterSync) {
           CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.MERCHANT_STATUS_CHANGE, { merchant: 'Warung Bu Tini', status: 'OPEN' });
         }
