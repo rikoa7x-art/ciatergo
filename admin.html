@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CiaterGo Admin - Central Dispatcher & Management Panel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+  
+  <script src="shared-sync.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            admin: {
+              50: '#f8fafc',
+              800: '#1e293b',
+              900: '#0f172a',
+              brand: '#16a34a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f1f5f9;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row text-slate-800">
+
+  <!-- ==================== SIDEBAR NAVIGATION ==================== -->
+  <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col justify-between shrink-0 border-r border-slate-800">
+    
+    <div>
+      <!-- Brand Logo Header -->
+      <div class="p-5 flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center text-xl shadow-lg">
+            🛵
+          </div>
+          <div>
+            <h1 class="text-base font-black tracking-tight leading-none text-white">Ciater<span class="text-amber-400">Go</span></h1>
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Admin Console</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-3 space-y-1 text-xs font-semibold">
+        <button onclick="adminNav('panel-overview', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold transition">
+          <i class="fa-solid fa-chart-pie w-4 text-center"></i>
+          <span>Ringkasan Dashboard</span>
+        </button>
+
+        <button onclick="adminNav('panel-orders', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-box-open w-4 text-center"></i>
+          <span>Semua Pesanan (Live)</span>
+        </button>
+
+        <button onclick="adminNav('panel-drivers', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-motorcycle w-4 text-center"></i>
+          <span>Kelola Mitra Driver</span>
+        </button>
+
+        <button onclick="adminNav('panel-merchants', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-store w-4 text-center"></i>
+          <span>Kelola Warung & Resto</span>
+        </button>
+
+        <button onclick="adminNav('panel-finance', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-file-invoice-dollar w-4 text-center"></i>
+          <span>Keuangan & Komisi</span>
+        </button>
+
+        <button onclick="adminNav('panel-settings', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-sliders w-4 text-center"></i>
+          <span>Tarif & Zona Ciater</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Bottom Role Links & Admin Profile -->
+    <div class="p-4 border-t border-slate-800 space-y-3">
+      <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700 text-xs">
+        <div class="text-[10px] text-slate-400 font-bold uppercase mb-1">Buka Aplikasi Demo:</div>
+        <div class="grid grid-cols-3 gap-1 text-center font-bold">
+          <a href="index.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white">User</a>
+          <a href="driver.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white">Driver</a>
+          <a href="merchant.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white">Resto</a>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-amber-400 text-slate-900 font-black flex items-center justify-center">
+            ADM
+          </div>
+          <div>
+            <div class="font-bold text-white leading-tight">Super Admin</div>
+            <div class="text-[10px] text-emerald-400">Online • Ciater Hub</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <main class="flex-1 flex flex-col min-h-screen overflow-y-auto">
+    
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+      <div>
+        <h2 class="text-lg font-black text-slate-800" id="admin-page-title">Ringkasan Operasional CiaterGo</h2>
+        <p class="text-xs text-slate-400">Wilayah: Kecamatan Ciater & Sekitarnya (Jalancagak, Sagalaherang, Cisalak)</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="refreshAdminData()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-arrows-rotate text-xs"></i> Refresh
+        </button>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></span>
+      </div>
+    </header>
+
+    <!-- CONTENT PANELS -->
+    <div class="p-6 space-y-6 flex-1">
+      
+      <!-- ==================== PANEL 1: OVERVIEW ==================== -->
+      <div id="panel-overview" class="admin-panel space-y-6">
+        
+        <!-- 4 Stat Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold text-slate-400 uppercase">Total Pesanan Hari Ini</span>
+              <h3 class="text-2xl font-black text-slate-800 mt-1">128 Order</h3>
+              <span class="text-[10px] text-emerald-600 font-bold">↑ 18% dari kemarin</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold text-slate-400 uppercase">Gross Revenue (GMV)</span>
+              <h3 class="text-2xl font-black text-slate-800 mt-1">Rp 4.250.000</h3>
+              <span class="text-[10px] text-emerald-600 font-bold">Komisi: Rp 637.500</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-sack-dollar"></i>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold text-slate-400 uppercase">Driver Aktif Online</span>
+              <h3 class="text-2xl font-black text-slate-800 mt-1">14 Driver</h3>
+              <span class="text-[10px] text-slate-400 font-medium">dari 20 terdaftar</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-motorcycle"></i>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold text-slate-400 uppercase">Warung / Resto Buka</span>
+              <h3 class="text-2xl font-black text-slate-800 mt-1">28 Mitra</h3>
+              <span class="text-[10px] text-emerald-600 font-bold">100% Responsif</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-store"></i>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Service Breakdown Chart & Live Dispatcher Table -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Live Orders Table (2 Cols) -->
+          <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-extrabold text-sm text-slate-800">Pesanan Masuk Terbaru</h3>
+              <button onclick="adminNav('panel-orders')" class="text-xs font-bold text-emerald-600 hover:underline">Lihat Semua</button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left text-slate-600">
+                <thead class="text-[10px] uppercase font-bold text-slate-400 bg-slate-50 border-y border-slate-100">
+                  <tr>
+                    <th class="py-2.5 px-3">ID Order</th>
+                    <th class="py-2.5 px-3">Layanan</th>
+                    <th class="py-2.5 px-3">Pelanggan</th>
+                    <th class="py-2.5 px-3">Driver</th>
+                    <th class="py-2.5 px-3">Total</th>
+                    <th class="py-2.5 px-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-recent-orders-tbody" class="divide-y divide-slate-100 font-medium">
+                  <!-- Rendered dynamically by CiaterSync -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Service Share Distribution -->
+          <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm space-y-4">
+            <h3 class="font-extrabold text-sm text-slate-800">Distribusi Layanan Ciater</h3>
+            
+            <div class="space-y-3 pt-2 text-xs">
+              <div>
+                <div class="flex justify-between font-bold mb-1">
+                  <span>🍔 CiaterFood</span>
+                  <span class="text-orange-600">62%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-orange-500 h-full rounded-full" style="width: 62%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between font-bold mb-1">
+                  <span>🏍️ CiaterRide</span>
+                  <span class="text-emerald-600">26%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-emerald-500 h-full rounded-full" style="width: 26%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between font-bold mb-1">
+                  <span>📦 CiaterKirim</span>
+                  <span class="text-blue-600">12%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-blue-500 h-full rounded-full" style="width: 12%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-slate-50 rounded-2xl text-[11px] text-slate-500 mt-4 border border-slate-200">
+              💡 <strong>Tips Operasional:</strong> Jam sibuk kuliner terjadi pukul 11:30–13:30 dan 18:00–20:00 WIB.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ==================== PANEL 2: ORDERS MANAGEMENT ==================== -->
+      <div id="panel-orders" class="admin-panel hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-extrabold text-sm text-slate-800">Daftar Transaksi Lengkap</h3>
+          <input type="text" oninput="searchAdminOrders(this.value)" placeholder="Cari ID pesanan, nama pelanggan..." class="text-xs bg-slate-100 px-3 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left text-slate-600">
+            <thead class="text-[10px] uppercase font-bold text-slate-400 bg-slate-50 border-y border-slate-100">
+              <tr>
+                <th class="py-3 px-4">Order ID</th>
+                <th class="py-3 px-4">Waktu</th>
+                <th class="py-3 px-4">Layanan</th>
+                <th class="py-3 px-4">Pelanggan</th>
+                <th class="py-3 px-4">Mitra / Driver</th>
+                <th class="py-3 px-4">Metode Bayar</th>
+                <th class="py-3 px-4">Total</th>
+                <th class="py-3 px-4">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="admin-all-orders-tbody" class="divide-y divide-slate-100 font-medium">
+              <!-- Rendered dynamically by CiaterSync -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== PANEL 3: DRIVERS MANAGEMENT ==================== -->
+      <div id="panel-drivers" class="admin-panel hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-extrabold text-sm text-slate-800">Manajemen Mitra Pengemudi & Kurir</h3>
+            <p class="text-xs text-slate-400">Total 20 Driver Terdaftar di Kecamatan Ciater</p>
+          </div>
+          <button onclick="showAdminToast('Form pendaftaran driver baru dibuka')" class="px-3.5 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow">
+            + Tambah Driver Baru
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left text-slate-600">
+            <thead class="text-[10px] uppercase font-bold text-slate-400 bg-slate-50 border-y border-slate-100">
+              <tr>
+                <th class="py-3 px-4">Nama Driver</th>
+                <th class="py-3 px-4">Kontak HP</th>
+                <th class="py-3 px-4">Kendaraan</th>
+                <th class="py-3 px-4">Rating</th>
+                <th class="py-3 px-4">Total Trip</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium">
+              <tr>
+                <td class="py-3 px-4 font-bold text-slate-800">Dadang Sudrajat</td>
+                <td class="py-3 px-4">0821-4455-6677</td>
+                <td class="py-3 px-4">Honda Vario (T 4521 ZK)</td>
+                <td class="py-3 px-4 text-amber-500 font-bold">⭐ 4.9</td>
+                <td class="py-3 px-4 font-bold">420 Trip</td>
+                <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Online</span></td>
+                <td class="py-3 px-4">
+                  <button onclick="showAdminToast('Akun driver diverifikasi')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-bold">Kelola</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-bold text-slate-800">Ujang Berkah</td>
+                <td class="py-3 px-4">0812-7788-9900</td>
+                <td class="py-3 px-4">Yamaha NMAX (T 3311 AA)</td>
+                <td class="py-3 px-4 text-amber-500 font-bold">⭐ 4.8</td>
+                <td class="py-3 px-4 font-bold">310 Trip</td>
+                <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Online</span></td>
+                <td class="py-3 px-4">
+                  <button onclick="showAdminToast('Akun driver diverifikasi')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-bold">Kelola</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== PANEL 4: MERCHANTS MANAGEMENT ==================== -->
+      <div id="panel-merchants" class="admin-panel hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-extrabold text-sm text-slate-800">Mitra Warung & Kuliner Lokal</h3>
+            <p class="text-xs text-slate-400">Warung makan, oleh-oleh nanas & kedai kopi</p>
+          </div>
+          <button onclick="showAdminToast('Verifikasi merchant baru')" class="px-3.5 py-2 bg-orange-600 text-white font-bold text-xs rounded-xl shadow">
+            + Verifikasi Merchant Baru
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex justify-between items-start">
+              <h4 class="font-black text-slate-800">Warung Nasi Liwet Bu Tini</h4>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-bold">Buka</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Palasari, Ciater • 14 Menu Aktif</p>
+            <div class="text-slate-700 font-bold">Komisi: 10%</div>
+          </div>
+
+          <div class="p-4 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex justify-between items-start">
+              <h4 class="font-black text-slate-800">Sate Maranggi Mang Ocid</h4>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-bold">Buka</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Sari Ater, Ciater • 8 Menu Aktif</p>
+            <div class="text-slate-700 font-bold">Komisi: 10%</div>
+          </div>
+
+          <div class="p-4 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex justify-between items-start">
+              <h4 class="font-black text-slate-800">Oleh-Oleh Nanas Madu Subang</h4>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-bold">Buka</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Cisaat, Ciater • 6 Menu Aktif</p>
+            <div class="text-slate-700 font-bold">Komisi: 10%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PANEL 5: FINANCE ==================== -->
+      <div id="panel-finance" class="admin-panel hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <h3 class="font-extrabold text-sm text-slate-800">Laporan Finansial & Pembagian Hasil</h3>
+        
+        <div class="grid grid-cols-3 gap-4 text-center">
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Total Omzet (Bulan Ini)</span>
+            <div class="text-xl font-black text-slate-900 mt-1">Rp 48.500.000</div>
+          </div>
+          <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
+            <span class="text-[10px] font-bold text-emerald-700 uppercase">Pendapatan Platform CiaterGo</span>
+            <div class="text-xl font-black text-emerald-700 mt-1">Rp 7.275.000</div>
+          </div>
+          <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200">
+            <span class="text-[10px] font-bold text-blue-700 uppercase">Pencairan Mitra Driver & Resto</span>
+            <div class="text-xl font-black text-blue-700 mt-1">Rp 41.225.000</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PANEL 6: SETTINGS (TARIF & ZONA) ==================== -->
+      <div id="panel-settings" class="admin-panel hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <h3 class="font-extrabold text-sm text-slate-800">Pengaturan Tarif Wilayah Kecamatan Ciater</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-2xl border border-slate-200 space-y-3">
+            <h4 class="font-bold text-slate-800 uppercase">🛵 Tarif CiaterRide (Ojek)</h4>
+            <div>
+              <label class="block text-slate-500 mb-1">Tarif Dasar (0-2 km pertama)</label>
+              <input type="text" value="Rp 8.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1">Tarif per Kilometer berikutnya</label>
+              <input type="text" value="Rp 2.500 / km" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl border border-slate-200 space-y-3">
+            <h4 class="font-bold text-slate-800 uppercase">🍔 Biaya Layanan CiaterFood</h4>
+            <div>
+              <label class="block text-slate-500 mb-1">Ongkir Dasar Pengiriman Makanan</label>
+              <input type="text" value="Rp 5.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1">Biaya Layanan Platform per Transaksi</label>
+              <input type="text" value="Rp 1.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+            </div>
+          </div>
+        </div>
+
+        <button onclick="showAdminToast('Pengaturan tarif berhasil disimpan')" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">
+          Simpan Konfigurasi Tarif
+        </button>
+      </div>
+
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="admin-toast" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-2">
+      <i class="fa-solid fa-circle-check text-emerald-400"></i>
+  <!-- ==================== MODAL: ORDER DETAIL FOR ADMIN ==================== -->
+  <div id="admin-order-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4 text-xs">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase">Detail Transaksi</span>
+          <h3 class="text-base font-black text-slate-800" id="modal-order-id">#CTG-9102</h3>
+        </div>
+        <button onclick="closeAdminOrderModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
+        <div>
+          <span class="text-[10px] text-slate-400 block">Layanan:</span>
+          <span class="font-black text-slate-800" id="modal-order-service">CiaterFood</span>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 block">Status:</span>
+          <span class="font-black text-emerald-600" id="modal-order-status">DRIVER_ON_WAY</span>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 block">Pelanggan:</span>
+          <span class="font-bold text-slate-800" id="modal-order-customer">Asep Gunawan</span>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 block">Driver:</span>
+          <span class="font-bold text-slate-800" id="modal-order-driver">Dadang Sudrajat</span>
+        </div>
+        <div class="col-span-2">
+          <span class="text-[10px] text-slate-400 block">Alamat / Lokasi:</span>
+          <span class="font-medium text-slate-700" id="modal-order-location">Desa Palasari RT 02/03, Ciater</span>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-extrabold text-slate-800 mb-1.5 uppercase text-[10px]">Rincian Item</h4>
+        <div id="modal-order-items" class="space-y-1.5 p-3 rounded-2xl border border-slate-100 bg-white">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100 font-bold">
+        <span class="text-slate-600">Total Pembayaran:</span>
+        <span class="text-base text-emerald-600 font-black" id="modal-order-total">Rp 40.000</span>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="showAdminToast('Link struk WhatsApp disalin'); closeAdminOrderModal();" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-center">
+          Kirim Struk WA
+        </button>
+        <button onclick="closeAdminOrderModal()" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-center">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC FOR ADMIN CONSOLE -->
+  <script>
+    let allOrdersCache = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAdminOrders();
+
+      if (window.CiaterSync) {
+        CiaterSync.listenSyncEvents((type, payload) => {
+          console.log('[Admin Panel] Sync Event:', type, payload);
+          renderAdminOrders();
+          if (type === 'ORDER_CREATED') {
+            showAdminToast(`🔔 Pesanan Baru: #${payload.id} (${payload.serviceName || payload.service || 'Order'})`);
+          }
+        });
+      }
+    });
+
+    function refreshAdminData() {
+      renderAdminOrders();
+      showAdminToast('✅ Data operasional berhasil diperbarui');
+    }
+
+    function renderAdminOrders() {
+      if (!window.CiaterSync) return;
+      allOrdersCache = CiaterSync.getStoredOrders();
+
+      // Update KPI Statistics
+      const totalOrderCount = allOrdersCache.length;
+      const totalGmv = allOrdersCache.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
+      const commission = Math.round(totalGmv * 0.15);
+
+      const kpiOrderElem = document.querySelector('#panel-overview .text-2xl');
+      if (kpiOrderElem) kpiOrderElem.innerText = `${totalOrderCount} Order`;
+
+      // Render Recent Orders (Top 5)
+      const recentTbody = document.getElementById('admin-recent-orders-tbody');
+      if (recentTbody) {
+        if (allOrdersCache.length === 0) {
+          recentTbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Belum ada pesanan aktif</td></tr>`;
+        } else {
+          recentTbody.innerHTML = allOrdersCache.slice(0, 5).map(o => `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3 px-3 font-black text-slate-800">#${o.id}</td>
+              <td class="py-3 px-3">
+                <span class="px-2 py-0.5 rounded font-bold text-[10px] ${o.service === 'FOOD' ? 'bg-orange-100 text-orange-700' : o.service === 'RIDE' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}">
+                  ${o.service === 'FOOD' ? '🍔 FOOD' : o.service === 'RIDE' ? '🏍️ RIDE' : '📦 KIRIM'}
+                </span>
+              </td>
+              <td class="py-3 px-3 font-semibold text-slate-700">${o.customerName || 'Pelanggan'}</td>
+              <td class="py-3 px-3 text-slate-600">${o.driverName || 'Mencari Driver...'}</td>
+              <td class="py-3 px-3 font-bold text-slate-900">Rp ${(o.total || 0).toLocaleString('id-ID')}</td>
+              <td class="py-3 px-3">
+                <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${o.status === 'COMPLETED' || o.status === 'SELESAI' ? 'bg-emerald-100 text-emerald-800' : o.status === 'PENDING' ? 'bg-amber-100 text-amber-800 animate-pulse' : 'bg-blue-100 text-blue-800'}">
+                  ${o.status}
+                </span>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      // Render All Orders Table
+      const allTbody = document.getElementById('admin-all-orders-tbody');
+      if (allTbody) {
+        if (allOrdersCache.length === 0) {
+          allTbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">Belum ada data pesanan</td></tr>`;
+        } else {
+          allTbody.innerHTML = allOrdersCache.map(o => `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3.5 px-4 font-black text-slate-800">#${o.id}</td>
+              <td class="py-3.5 px-4 text-slate-500">${o.timeDisplay || 'Baru saja'}</td>
+              <td class="py-3.5 px-4">
+                <span class="px-2 py-0.5 rounded font-bold text-[10px] ${o.service === 'FOOD' ? 'bg-orange-100 text-orange-700' : o.service === 'RIDE' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}">
+                  ${o.serviceName || o.service || 'FOOD'}
+                </span>
+              </td>
+              <td class="py-3.5 px-4 font-semibold text-slate-800">${o.customerName || 'Pelanggan'}</td>
+              <td class="py-3.5 px-4 text-slate-600">${o.driverName || 'Menunggu Driver'}</td>
+              <td class="py-3.5 px-4 font-medium text-slate-600">${o.paymentMethod || 'COD'}</td>
+              <td class="py-3.5 px-4 font-black text-slate-900">Rp ${(o.total || 0).toLocaleString('id-ID')}</td>
+              <td class="py-3.5 px-4">
+                <button onclick="viewOrderDetail('${o.id}')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg font-bold text-[11px] border border-emerald-200">
+                  Detail
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
+
+    function searchAdminOrders(query) {
+      const q = query.toLowerCase().trim();
+      const allTbody = document.getElementById('admin-all-orders-tbody');
+      if (!allTbody) return;
+
+      const filtered = allOrdersCache.filter(o => 
+        (o.id && o.id.toLowerCase().includes(q)) ||
+        (o.customerName && o.customerName.toLowerCase().includes(q)) ||
+        (o.driverName && o.driverName.toLowerCase().includes(q)) ||
+        (o.serviceName && o.serviceName.toLowerCase().includes(q))
+      );
+
+      allTbody.innerHTML = filtered.map(o => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-3.5 px-4 font-black text-slate-800">#${o.id}</td>
+          <td class="py-3.5 px-4 text-slate-500">${o.timeDisplay || 'Baru saja'}</td>
+          <td class="py-3.5 px-4">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] ${o.service === 'FOOD' ? 'bg-orange-100 text-orange-700' : o.service === 'RIDE' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}">
+              ${o.serviceName || o.service || 'FOOD'}
+            </span>
+          </td>
+          <td class="py-3.5 px-4 font-semibold text-slate-800">${o.customerName || 'Pelanggan'}</td>
+          <td class="py-3.5 px-4 text-slate-600">${o.driverName || 'Menunggu Driver'}</td>
+          <td class="py-3.5 px-4 font-medium text-slate-600">${o.paymentMethod || 'COD'}</td>
+          <td class="py-3.5 px-4 font-black text-slate-900">Rp ${(o.total || 0).toLocaleString('id-ID')}</td>
+          <td class="py-3.5 px-4">
+            <button onclick="viewOrderDetail('${o.id}')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg font-bold text-[11px] border border-emerald-200">
+              Detail
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function viewOrderDetail(orderId) {
+      const ord = allOrdersCache.find(o => o.id === orderId);
+      if (!ord) return;
+
+      document.getElementById('modal-order-id').innerText = '#' + ord.id;
+      document.getElementById('modal-order-service').innerText = ord.serviceName || ord.service || 'CiaterGo';
+      document.getElementById('modal-order-status').innerText = ord.status;
+      document.getElementById('modal-order-customer').innerText = ord.customerName || 'Pelanggan';
+      document.getElementById('modal-order-driver').innerText = ord.driverName || 'Menunggu Driver';
+      document.getElementById('modal-order-location').innerText = ord.customerLocation || ord.dropLocation || 'Kecamatan Ciater';
+      document.getElementById('modal-order-total').innerText = 'Rp ' + (ord.total || 0).toLocaleString('id-ID');
+
+      const itemsContainer = document.getElementById('modal-order-items');
+      if (Array.isArray(ord.items)) {
+        itemsContainer.innerHTML = ord.items.map(it => `
+          <div class="flex justify-between items-center text-slate-700">
+            <span>${it.qty || 1}x ${it.name}</span>
+            <span class="font-bold">Rp ${((it.price || 0) * (it.qty || 1)).toLocaleString('id-ID')}</span>
+          </div>
+        `).join('');
+      } else {
+        itemsContainer.innerHTML = `<div class="text-slate-700">${ord.items || '1x Layanan Transportasi/Kirim'}</div>`;
+      }
+
+      document.getElementById('admin-order-modal').classList.remove('hidden');
+    }
+
+    function closeAdminOrderModal() {
+      document.getElementById('admin-order-modal').classList.add('hidden');
+    }
+
+    function adminNav(panelId, btn) {
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
+      const target = document.getElementById(panelId);
+      if (target) target.classList.remove('hidden');
+
+      const titles = {
+        'panel-overview': 'Ringkasan Operasional CiaterGo',
+        'panel-orders': 'Manajemen Pesanan & Transaksi Live',
+        'panel-drivers': 'Verifikasi & Manajemen Mitra Driver',
+        'panel-merchants': 'Kelola Warung, Resto & Oleh-Oleh Ciater',
+        'panel-finance': 'Laporan Finansial & Bagi Hasil',
+        'panel-settings': 'Konfigurasi Tarif & Zonasi Wilayah Ciater'
+      };
+      const titleElem = document.getElementById('admin-page-title');
+      if (titleElem && titles[panelId]) {
+        titleElem.innerText = titles[panelId];
+      }
+
+      if (btn) {
+        document.querySelectorAll('.admin-nav-btn').forEach(b => {
+          b.classList.remove('bg-emerald-600', 'text-white', 'font-bold');
+          b.classList.add('text-slate-400');
+        });
+        btn.classList.add('bg-emerald-600', 'text-white', 'font-bold');
+        btn.classList.remove('text-slate-400');
+      }
+    }
+
+    let toastTimer;
+    function showAdminToast(msg) {
+      const toast = document.getElementById('admin-toast');
+      const text = document.getElementById('admin-toast-text');
+      if (!toast || !text) return;
+      text.innerText = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+  </script>
+</body>
+</html>

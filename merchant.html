@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CiaterGo Merchant - Mitra Warung & Resto Ciater</title>
+  <meta name="theme-color" content="#ea580c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏪</text></svg>">
+  
+  <script src="shared-sync.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            merchant: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              dark: '#431407'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #2c1204;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    
+    .app-viewport {
+      max-width: 440px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #f8fafc;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      position: relative;
+      margin: 0 auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:py-6 sm:px-4 bg-slate-950">
+
+  <!-- Desktop Role Switcher -->
+  <div class="hidden sm:flex fixed top-3 right-3 z-50 items-center gap-1.5 bg-slate-900/90 text-white p-2 rounded-2xl shadow-2xl border border-slate-700/60 text-xs backdrop-blur-md">
+    <span class="text-slate-400 font-semibold px-2">Demo Role:</span>
+    <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
+      <i class="fa-solid fa-user text-green-400"></i> Pelanggan
+    </a>
+    <a href="driver.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
+      <i class="fa-solid fa-motorcycle text-emerald-400"></i> Driver
+    </a>
+    <a href="merchant.html" class="bg-orange-600 text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+      <i class="fa-solid fa-store"></i> Warung/Resto
+    </a>
+    <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
+      <i class="fa-solid fa-shield-halved text-blue-400"></i> Admin
+    </a>
+  </div>
+
+  <div class="app-viewport w-full flex-1 sm:rounded-[36px] border sm:border-slate-800">
+    
+    <!-- Top Mobile Role Nav -->
+    <div class="sm:hidden bg-slate-900 text-white text-[11px] px-3 py-1.5 flex justify-between items-center z-50 border-b border-slate-800">
+      <span class="text-orange-400 font-bold flex items-center gap-1">
+        <i class="fa-solid fa-store"></i> CiaterGo Warung
+      </span>
+      <div class="flex items-center gap-1.5">
+        <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">User</a>
+        <a href="driver.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Driver</a>
+        <a href="admin.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Admin</a>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 1: MERCHANT DASHBOARD & ORDERS ==================== -->
+    <div id="merchant-screen-orders" class="screen flex-1 flex flex-col pb-24">
+      
+      <!-- Top Merchant Banner -->
+      <div class="bg-gradient-to-br from-merchant-600 via-merchant-700 to-merchant-800 text-white p-5 rounded-b-[32px] shadow-lg">
+        
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20">
+              🥘
+            </div>
+            <div>
+              <div class="text-[10px] text-orange-200 font-bold uppercase tracking-wider">Mitra Kuliner Ciater</div>
+              <h3 class="text-sm font-black text-white">Warung Nasi Liwet Bu Tini</h3>
+              <div class="text-[10px] text-orange-100 mt-0.5">⭐ 4.9 • 240 Ulasan Pelanggan</div>
+            </div>
+          </div>
+
+          <button onclick="showToast('Notifikasi pesanan aktif')" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white text-xs">
+            <i class="fa-solid fa-bell"></i>
+          </button>
+        </div>
+
+        <!-- STORE OPEN / CLOSE STATUS TOGGLE -->
+        <div class="bg-slate-950/40 backdrop-blur-md p-3 rounded-2xl border border-white/15 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div id="store-status-dot" class="w-3.5 h-3.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse"></div>
+            <div>
+              <div class="text-xs font-black text-white" id="store-status-text">TOKO BUKA (TERIMA ORDER)</div>
+              <div class="text-[10px] text-slate-300">Jam Operasional: 08:00 - 21:00 WIB</div>
+            </div>
+          </div>
+          
+          <button id="btn-toggle-store" onclick="toggleStoreStatus()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition">
+            BUKA
+          </button>
+        </div>
+
+        <!-- Income Metrics -->
+        <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-white/10 text-center">
+          <div>
+            <div class="text-[10px] text-orange-200">Penjualan Hari Ini</div>
+            <div class="text-sm font-black text-white mt-0.5" id="merchant-today-income">Rp 385.000</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-orange-200">Pesanan Masuk</div>
+            <div class="text-sm font-black text-white mt-0.5">14 Order</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-orange-200">Menu Terlaris</div>
+            <div class="text-sm font-black text-amber-300 mt-0.5">Nasi Liwet</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- KITCHEN ORDER QUEUE TABS -->
+      <div class="p-4 space-y-3">
+        
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-black text-slate-800 uppercase tracking-wide">Antrean Dapur & Pesanan</h4>
+          <button onclick="triggerSimulatedKitchenOrder()" class="text-xs bg-orange-100 hover:bg-orange-200 text-orange-800 font-bold px-2.5 py-1 rounded-lg">
+            + Simulasikan Pesanan
+          </button>
+        </div>
+
+        <!-- Order Tabs -->
+        <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-bold text-slate-600">
+          <button onclick="filterMerchantOrderTab('new', this)" class="flex-1 py-1.5 bg-white text-orange-700 rounded-lg shadow-sm">
+            Baru <span class="bg-orange-600 text-white text-[9px] px-1.5 py-0.2 rounded-full ml-1" id="badge-new-count">1</span>
+          </button>
+          <button onclick="filterMerchantOrderTab('cooking', this)" class="flex-1 py-1.5 rounded-lg">
+            Sedang Dimasak
+          </button>
+          <button onclick="filterMerchantOrderTab('ready', this)" class="flex-1 py-1.5 rounded-lg">
+            Siap Diambil
+          </button>
+        </div>
+
+        <!-- Orders Queue Container -->
+        <div id="merchant-orders-container" class="space-y-3">
+          <!-- Rendered by JS -->
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 2: MENU MANAGEMENT ==================== -->
+    <div id="merchant-screen-menu" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <div class="bg-white p-4 border-b border-slate-200 sticky top-0 z-30 flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-extrabold text-slate-800">📋 Kelola Menu Warung</h2>
+          <p class="text-[11px] text-slate-400">Atur ketersediaan & harga menu</p>
+        </div>
+        <button onclick="openAddMenuModal()" class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl shadow-sm">
+          + Tambah Menu
+        </button>
+      </div>
+
+      <div id="merchant-menu-list" class="p-4 space-y-3">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 3: SALES REPORT ==================== -->
+    <div id="merchant-screen-report" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <div class="bg-white p-4 border-b border-slate-200 sticky top-0 z-30">
+        <h2 class="text-base font-extrabold text-slate-800">📊 Laporan & Keuangan</h2>
+        <p class="text-[11px] text-slate-400">Rekap transaksi warung</p>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Revenue Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-3xl shadow-lg">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Saldo Penjualan Siap Cair</span>
+              <h3 class="text-2xl font-black text-amber-400 mt-1">Rp 1.420.000</h3>
+            </div>
+            <button onclick="showToast('Pencairan dana otomatis setiap hari pukul 23:00')" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs rounded-xl shadow transition">
+              Cairkan
+            </button>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-300">
+            Pencairan ke rekening BRI ***9012 a/n Bu Tini
+          </div>
+        </div>
+
+        <!-- Weekly Performance Bars -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Tren Penjualan Mingguan</h4>
+          
+          <div class="flex items-end justify-between h-32 pt-6 pb-2 gap-2 text-center text-[10px] font-bold text-slate-400">
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-orange-200 rounded-t-lg h-16"></div>
+              <span>Sen</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-orange-300 rounded-t-lg h-24"></div>
+              <span>Sel</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-orange-200 rounded-t-lg h-14"></div>
+              <span>Rab</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-orange-400 rounded-t-lg h-28"></div>
+              <span>Kam</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-orange-500 rounded-t-lg h-32"></div>
+              <span>Jum</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-orange-600 rounded-t-lg h-32 shadow-sm"></div>
+              <span class="text-orange-700 font-black">Sab</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-orange-400 rounded-t-lg h-26"></div>
+              <span>Min</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 4: MERCHANT PROFILE ==================== -->
+    <div id="merchant-screen-profile" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <div class="bg-white p-5 border-b border-slate-200 flex items-center gap-3.5">
+        <div class="w-14 h-14 rounded-2xl bg-orange-600 text-white text-2xl font-black flex items-center justify-center shadow-lg">
+          🏪
+        </div>
+        <div>
+          <h3 class="font-black text-base text-slate-800">Warung Nasi Liwet Bu Tini</h3>
+          <p class="text-xs text-slate-500">Jl. Raya Ciater No. 45, Palasari</p>
+          <span class="inline-block mt-1 text-[10px] bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-extrabold">
+            Status: Warung Rekomendasi Ciater
+          </span>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-4">
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 text-xs">
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">Pemilik Warung</span>
+            <span class="font-bold text-slate-800">Ibu Tini Hartati</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">Kontak WhatsApp</span>
+            <span class="font-bold text-slate-800">+62 813-8822-9900</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">Izin Usaha / NIB</span>
+            <span class="font-bold text-emerald-600">✅ Terdaftar Resmi</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">Komisi Platform</span>
+            <span class="font-bold text-slate-800">10% (Promo UMKM Ciater)</span>
+          </div>
+        </div>
+
+        <button onclick="showToast('Kembali ke mode istirahat')" class="w-full py-3 bg-red-50 text-red-600 text-xs font-bold rounded-2xl border border-red-200 hover:bg-red-100 transition">
+          Tutup Toko Sementara
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ==================== BOTTOM MERCHANT NAVIGATION ==================== -->
+    <div class="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2 flex justify-between items-center z-40 sm:rounded-b-[36px]">
+      
+      <button onclick="merchantNavigate('merchant-screen-orders')" class="m-nav-item flex flex-col items-center gap-1 text-orange-600 py-1 flex-1">
+        <i class="fa-solid fa-fire-burner text-base"></i>
+        <span class="text-[10px] font-bold">Pesanan</span>
+      </button>
+
+      <button onclick="merchantNavigate('merchant-screen-menu')" class="m-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1">
+        <i class="fa-solid fa-book-open text-base"></i>
+        <span class="text-[10px] font-medium">Menu</span>
+      </button>
+
+      <button onclick="merchantNavigate('merchant-screen-report')" class="m-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1">
+        <i class="fa-solid fa-chart-line text-base"></i>
+        <span class="text-[10px] font-medium">Laporan</span>
+      </button>
+
+      <button onclick="merchantNavigate('merchant-screen-profile')" class="m-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1">
+        <i class="fa-solid fa-store text-base"></i>
+        <span class="text-[10px] font-medium">Profil</span>
+      </button>
+
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-msg" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-xs bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-2">
+      <i class="fa-solid fa-circle-check text-orange-400"></i>
+      <span id="toast-text">Notifikasi</span>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC FOR MERCHANT APP -->
+  <script>
+    let isStoreOpen = true;
+    let merchantOrders = [
+      {
+        id: 'CTG-9102',
+        customer: 'Asep Gunawan',
+        status: 'NEW', // NEW, COOKING, READY
+        time: 'Baru saja',
+        items: [
+          { name: 'Paket Liwet Komplit Ayam Bakar', qty: 1, note: 'Sambal dipisah ya bu' },
+          { name: 'Es Teh Manis Melati', qty: 1, note: 'Manis sedang' }
+        ],
+        total: 33000,
+        driver: 'Dadang Sudrajat (OTW Jemput)'
+      }
+    ];
+
+    let merchantMenus = [
+      { id: 'm1', name: 'Paket Liwet Komplit Ayam Bakar', price: 28000, emoji: '🍗', isAvailable: true },
+      { id: 'm2', name: 'Nasi Liwet Kastrol Kasturi (2 Porsi)', price: 45000, emoji: '🥘', isAvailable: true },
+      { id: 'm3', name: 'Gurame Bakar Sambal Cobek', price: 42000, emoji: '🐟', isAvailable: true },
+      { id: 'm4', name: 'Karedok Leunca Khas Ciater', price: 12000, emoji: '🥗', isAvailable: false },
+      { id: 'm5', name: 'Es Teh Manis Melati', price: 5000, emoji: '🧋', isAvailable: true }
+    ];
+
+    let currentActiveMerchantTab = 'new';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg Error:', err));
+      }
+
+      loadMerchantOrdersFromSync();
+      renderMerchantMenus();
+
+      if (window.CiaterSync) {
+        CiaterSync.listenSyncEvents((type, payload) => {
+          console.log('[Merchant App] Event:', type, payload);
+          if (type === 'ORDER_CREATED' || type === 'STATUS_UPDATED') {
+            loadMerchantOrdersFromSync();
+            if (type === 'ORDER_CREATED' && (payload.service === 'FOOD' || !payload.service)) {
+              playMerchantChime();
+              showToast('🔔 Pesanan Makanan Baru Masuk dari Pelanggan!');
+            }
+          }
+        });
+      }
+    });
+
+    function loadMerchantOrdersFromSync() {
+      if (window.CiaterSync) {
+        const stored = CiaterSync.getStoredOrders();
+        // Filter food orders or orders for this merchant
+        const foodOrders = stored.filter(o => o.service === 'FOOD' || o.serviceName === 'CiaterFood' || !o.service);
+        if (foodOrders.length > 0) {
+          merchantOrders = foodOrders.map(o => ({
+            id: o.id,
+            customer: o.customerName || 'Pelanggan Ciater',
+            status: o.status === 'PENDING' ? 'NEW' : o.status === 'COOKING' ? 'COOKING' : o.status === 'READY' ? 'READY' : 'READY',
+            rawStatus: o.status,
+            time: o.timeDisplay || 'Baru saja',
+            items: Array.isArray(o.items) ? o.items : [{ name: o.items || 'Menu Pilihan', qty: 1 }],
+            total: o.total || 35000,
+            driver: o.driverName ? `${o.driverName} (Mitra Driver)` : 'Mencari driver...'
+          }));
+        }
+      }
+      renderMerchantOrders(currentActiveMerchantTab);
+      updateNewOrderBadge();
+    }
+
+    function updateNewOrderBadge() {
+      const newCount = merchantOrders.filter(o => o.status === 'NEW').length;
+      const badge = document.getElementById('badge-new-count');
+      if (badge) badge.innerText = newCount;
+    }
+
+    function merchantNavigate(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.remove('hidden');
+        window.scrollTo(0, 0);
+      }
+    }
+
+    function toggleStoreStatus() {
+      isStoreOpen = !isStoreOpen;
+      const dot = document.getElementById('store-status-dot');
+      const text = document.getElementById('store-status-text');
+      const btn = document.getElementById('btn-toggle-store');
+
+      if (isStoreOpen) {
+        dot.className = 'w-3.5 h-3.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse';
+        text.innerText = 'TOKO BUKA (TERIMA ORDER)';
+        btn.innerText = 'BUKA';
+        btn.className = 'px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition';
+        showToast('🟢 Warung Anda aktif di CiaterFood');
+        if (window.CiaterSync) {
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.MERCHANT_STATUS_CHANGE, { merchant: 'Warung Bu Tini', status: 'OPEN' });
+        }
+      } else {
+        dot.className = 'w-3.5 h-3.5 rounded-full bg-slate-400 ring-4 ring-slate-400/30';
+        text.innerText = 'TOKO TUTUP SEMENTARA';
+        btn.innerText = 'TUTUP';
+        btn.className = 'px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-black text-xs rounded-xl shadow transition';
+        showToast('⚪ Warung Anda ditutup sementara');
+        if (window.CiaterSync) {
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.MERCHANT_STATUS_CHANGE, { merchant: 'Warung Bu Tini', status: 'CLOSED' });
+        }
+      }
+    }
+
+    function renderMerchantOrders(tabStatus) {
+      currentActiveMerchantTab = tabStatus;
+      const container = document.getElementById('merchant-orders-container');
+      if (!container) return;
+
+      const filtered = merchantOrders.filter(o => {
+        if (tabStatus === 'new') return o.status === 'NEW';
+        if (tabStatus === 'cooking') return o.status === 'COOKING';
+        if (tabStatus === 'ready') return o.status === 'READY';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 bg-white rounded-2xl border border-slate-200">
+            <div class="text-3xl mb-2">🧑‍🍳</div>
+            <h4 class="text-xs font-bold text-slate-700">Tidak ada antrean pesanan di tab ini</h4>
+            <p class="text-[11px] text-slate-400">Pesanan baru akan otomatis muncul di sini</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(ord => `
+        <div class="bg-white p-4 rounded-2xl border-2 ${ord.status === 'NEW' ? 'border-orange-500 animate-pulse' : 'border-slate-200'} shadow-sm space-y-3">
+          <div class="flex justify-between items-start pb-2 border-b border-slate-100">
+            <div>
+              <span class="text-[10px] font-black text-orange-600 uppercase tracking-wide">ORDER #${ord.id}</span>
+              <h4 class="text-xs font-black text-slate-800 mt-0.5">${ord.customer}</h4>
+              <span class="text-[10px] text-slate-400">${ord.time}</span>
+            </div>
+            <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${ord.status === 'NEW' ? 'bg-orange-100 text-orange-800' : ord.status === 'COOKING' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+              ${ord.status === 'NEW' ? 'Perlu Konfirmasi' : ord.status === 'COOKING' ? 'Sedang Dimasak' : 'Siap Diambil Driver'}
+            </span>
+          </div>
+
+          <!-- Items list -->
+          <div class="space-y-1.5 text-xs text-slate-700">
+            ${ord.items.map(it => `
+              <div class="flex justify-between">
+                <span><strong>${it.qty || 1}x</strong> ${it.name || it}</span>
+              </div>
+              ${it.note ? `<div class="text-[10px] text-orange-600 italic bg-orange-50 px-2 py-0.5 rounded">Catatan: "${it.note}"</div>` : ''}
+            `).join('')}
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-800">Total: Rp ${(ord.total || 0).toLocaleString('id-ID')}</span>
+            <div class="text-[11px] text-slate-500">🛵 Driver: <strong>${ord.driver}</strong></div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="pt-1">
+            ${ord.status === 'NEW' ? `
+              <button onclick="acceptCookingOrder('${ord.id}')" class="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs rounded-xl shadow transition">
+                🍳 Terima & Mulai Masak
+              </button>
+            ` : ord.status === 'COOKING' ? `
+              <button onclick="markOrderReady('${ord.id}')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow transition">
+                ✅ Makanan Selesai Dimasak (Siap Diambil)
+              </button>
+            ` : `
+              <div class="text-center py-2 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-xl border border-emerald-200">
+                Menunggu Driver Mengambil Pesanan
+              </div>
+            `}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterMerchantOrderTab(status, btn) {
+      btn.parentElement.querySelectorAll('button').forEach(b => {
+        b.classList.remove('bg-white', 'text-orange-700', 'shadow-sm');
+        b.classList.add('text-slate-600');
+      });
+      btn.classList.add('bg-white', 'text-orange-700', 'shadow-sm');
+      renderMerchantOrders(status);
+    }
+
+    function acceptCookingOrder(orderId) {
+      const ord = merchantOrders.find(o => o.id === orderId);
+      if (ord) ord.status = 'COOKING';
+      if (window.CiaterSync) {
+        CiaterSync.updateOrderStatus(orderId, 'COOKING');
+      }
+      showToast('🍳 Pesanan diterima & mulai proses memasak!');
+      renderMerchantOrders('cooking');
+    }
+
+    function markOrderReady(orderId) {
+      const ord = merchantOrders.find(o => o.id === orderId);
+      if (ord) ord.status = 'READY';
+      if (window.CiaterSync) {
+        CiaterSync.updateOrderStatus(orderId, 'READY');
+      }
+      showToast('✅ Driver diberi notifikasi bahwa makanan sudah siap diambil.');
+      renderMerchantOrders('ready');
+    }
+
+    function triggerSimulatedKitchenOrder() {
+      const newOrd = {
+        id: 'CTG-' + Math.floor(1000 + Math.random() * 9000),
+        customer: 'Bu Rina (Villa Ciater)',
+        status: 'NEW',
+        time: 'Baru saja',
+        items: [
+          { name: 'Sate Maranggi Sapi (10 Tusuk)', qty: 2, note: 'Pedas sedang' },
+          { name: 'Ketan Bakar Oncom', qty: 2, note: '' }
+        ],
+        total: 90000,
+        driver: 'Mencari driver...'
+      };
+      merchantOrders.unshift(newOrd);
+      playMerchantChime();
+      showToast('🔔 Pesanan Baru Masuk ke Dapur!');
+      renderMerchantOrders('new');
+    }
+
+    function playMerchantChime() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+        osc.frequency.setValueAtTime(987.77, audioCtx.currentTime + 0.12); // B5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {}
+    }
+
+    // MENU MANAGEMENT
+    function renderMerchantMenus() {
+      const container = document.getElementById('merchant-menu-list');
+      if (!container) return;
+
+      container.innerHTML = merchantMenus.map(menu => `
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl">
+              ${menu.emoji}
+            </div>
+            <div>
+              <h4 class="text-xs font-black text-slate-800">${menu.name}</h4>
+              <div class="text-xs font-extrabold text-orange-600 mt-0.5">Rp ${menu.price.toLocaleString('id-ID')}</div>
+            </div>
+          </div>
+
+          <!-- Availability switch -->
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-bold ${menu.isAvailable ? 'text-emerald-600' : 'text-slate-400'}">
+              ${menu.isAvailable ? 'Tersedia' : 'Habis'}
+            </span>
+            <input type="checkbox" ${menu.isAvailable ? 'checked' : ''} onchange="toggleMenuAvailability('${menu.id}', this.checked)" class="w-5 h-5 accent-orange-600 rounded cursor-pointer">
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleMenuAvailability(menuId, isAvailable) {
+      const m = merchantMenus.find(item => item.id === menuId);
+      if (m) m.isAvailable = isAvailable;
+      renderMerchantMenus();
+      showToast(`Status menu ${m.name} diubah menjadi: ${isAvailable ? 'Tersedia' : 'Habis'}`);
+    }
+
+    function openAddMenuModal() {
+      showToast('Form tambah menu baru dapat diisi dengan nama, foto & harga');
+    }
+
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      const text = document.getElementById('toast-text');
+      text.innerText = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+  </script>
+</body>
+</html>

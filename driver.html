@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CiaterGo Driver - Mitra Pengemudi & Kurir Ciater</title>
+  <meta name="theme-color" content="#15803d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏍️</text></svg>">
+  
+  <script src="shared-sync.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Leaflet Maps CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            driver: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              dark: '#052e16'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #022c22;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    
+    .app-viewport {
+      max-width: 440px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #f8fafc;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      position: relative;
+      margin: 0 auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @keyframes radar-sweep {
+      0% { transform: scale(0.8); opacity: 0.9; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+    .radar-wave {
+      animation: radar-sweep 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:py-6 sm:px-4 bg-slate-950">
+
+  <!-- Desktop Role Switcher -->
+  <div class="hidden sm:flex fixed top-3 right-3 z-50 items-center gap-1.5 bg-slate-900/90 text-white p-2 rounded-2xl shadow-2xl border border-slate-700/60 text-xs backdrop-blur-md">
+    <span class="text-slate-400 font-semibold px-2">Demo Role:</span>
+    <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
+      <i class="fa-solid fa-user text-green-400"></i> Pelanggan
+    </a>
+    <a href="driver.html" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+      <i class="fa-solid fa-motorcycle"></i> Driver
+    </a>
+    <a href="merchant.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
+      <i class="fa-solid fa-store text-orange-400"></i> Warung/Resto
+    </a>
+    <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
+      <i class="fa-solid fa-shield-halved text-blue-400"></i> Admin
+    </a>
+  </div>
+
+  <div class="app-viewport w-full flex-1 sm:rounded-[36px] border sm:border-slate-800">
+    
+    <!-- Top Mobile Role Nav -->
+    <div class="sm:hidden bg-slate-900 text-white text-[11px] px-3 py-1.5 flex justify-between items-center z-50 border-b border-slate-800">
+      <span class="text-emerald-400 font-bold flex items-center gap-1">
+        <i class="fa-solid fa-motorcycle"></i> CiaterGo Driver
+      </span>
+      <div class="flex items-center gap-1.5">
+        <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">User</a>
+        <a href="merchant.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Resto</a>
+        <a href="admin.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Admin</a>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 1: DRIVER DASHBOARD ==================== -->
+    <div id="driver-screen-dashboard" class="screen flex-1 flex flex-col pb-24">
+      
+      <!-- Top Driver Header & Online Toggle -->
+      <div class="bg-gradient-to-br from-driver-700 via-driver-800 to-driver-900 text-white p-5 rounded-b-[32px] shadow-lg">
+        
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20">
+              👨‍✈️
+            </div>
+            <div>
+              <div class="text-[10px] text-emerald-200 font-bold uppercase tracking-wider">Mitra Driver Ciater</div>
+              <h3 class="text-sm font-black text-white">Dadang Sudrajat</h3>
+              <div class="flex items-center gap-2 text-[10px] text-emerald-100 mt-0.5">
+                <span>⭐ 4.9 (420 trip)</span>
+                <span>•</span>
+                <span>Honda Vario 125</span>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="showToast('Notifikasi sistem aktif')" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white text-xs">
+            <i class="fa-solid fa-bell"></i>
+          </button>
+        </div>
+
+        <!-- BIG STATUS TOGGLE (ONLINE / OFFLINE) -->
+        <div class="bg-slate-950/40 backdrop-blur-md p-3 rounded-2xl border border-white/15 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div id="status-indicator-dot" class="w-3.5 h-3.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse"></div>
+            <div>
+              <div class="text-xs font-black text-white" id="driver-status-text">STATUS: SIAP MENERIMA ORDER</div>
+              <div class="text-[10px] text-slate-300" id="driver-status-sub">Wilayah operasi: Ciater & sekitarnya</div>
+            </div>
+          </div>
+          
+          <button id="btn-toggle-online" onclick="toggleDriverOnline()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black text-xs rounded-xl shadow transition">
+            ONLINE
+          </button>
+        </div>
+
+        <!-- Today's Earnings Snapshot -->
+        <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-white/10 text-center">
+          <div>
+            <div class="text-[10px] text-emerald-200">Pendapatan Hari Ini</div>
+            <div class="text-sm font-black text-white mt-0.5" id="today-income">Rp 128.000</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-emerald-200">Trip Selesai</div>
+            <div class="text-sm font-black text-white mt-0.5" id="today-trips">8 Trip</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-emerald-200">Performa</div>
+            <div class="text-sm font-black text-amber-300 mt-0.5">100%</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Radar / Searching simulation area -->
+      <div class="p-4 space-y-4">
+        
+        <div id="radar-box" class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm text-center relative overflow-hidden">
+          
+          <!-- Radar Animation Elements -->
+          <div class="w-24 h-24 mx-auto my-2 relative flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full bg-emerald-500/20 radar-wave"></div>
+            <div class="absolute inset-2 rounded-full bg-emerald-500/30 radar-wave" style="animation-delay: 0.6s"></div>
+            <div class="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl shadow-xl relative z-10">
+              <i class="fa-solid fa-location-crosshairs text-xl animate-spin" style="animation-duration: 6s"></i>
+            </div>
+          </div>
+
+          <h4 class="text-xs font-black text-slate-800">Menunggu Order Baru Terdekat...</h4>
+          <p class="text-[11px] text-slate-500 max-w-xs mx-auto mt-1">
+            Sistem otomatis mencocokkan Anda dengan pesanan CiaterFood, CiaterRide & CiaterKirim.
+          </p>
+
+          <!-- Simulation Button for instant testing -->
+          <div class="mt-4 pt-3 border-t border-slate-100">
+            <button onclick="triggerSimulatedIncomingOrder()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl active:scale-95 transition flex items-center gap-2 mx-auto">
+              <i class="fa-solid fa-bolt text-amber-400"></i> Simulasikan Order Masuk
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Action & Info Cards -->
+        <div class="grid grid-cols-2 gap-3">
+          <div onclick="driverNavigate('driver-screen-earnings')" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm cursor-pointer hover:border-emerald-500 transition">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-sm mb-2">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="text-xs font-extrabold text-slate-800">Dompet & Tarik Tunai</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Saldo: Rp 450.000</div>
+          </div>
+
+          <div onclick="showToast('Area ramai: Sari Ater & Cisaat')" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm cursor-pointer hover:border-emerald-500 transition">
+            <div class="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-sm mb-2">
+              <i class="fa-solid fa-fire"></i>
+            </div>
+            <div class="text-xs font-extrabold text-slate-800">Zona Ramai Ciater</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Potensi order tinggi 🔥</div>
+          </div>
+        </div>
+
+        <!-- Recent Trips Log -->
+        <div>
+          <h4 class="text-xs font-extrabold text-slate-800 mb-2.5 px-1">Aktivitas Trip Hari Ini</h4>
+          <div class="bg-white rounded-2xl border border-slate-200/80 divide-y divide-slate-100 overflow-hidden text-xs">
+            <div class="p-3 flex items-center justify-between">
+              <div>
+                <div class="font-bold text-slate-800">🍔 Antar Makanan (Warung Bu Tini)</div>
+                <div class="text-[10px] text-slate-400">13:10 • 1.2 km • Selesai</div>
+              </div>
+              <span class="font-black text-emerald-600">+Rp 8.000</span>
+            </div>
+            <div class="p-3 flex items-center justify-between">
+              <div>
+                <div class="font-bold text-slate-800">🏍️ Ojek Penumpang (Sari Ater)</div>
+                <div class="text-[10px] text-slate-400">11:45 • 2.5 km • Selesai</div>
+              </div>
+              <span class="font-black text-emerald-600">+Rp 12.000</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 2: ACTIVE ORDER EXECUTION ==================== -->
+    <div id="driver-screen-active" class="screen hidden flex-1 flex flex-col bg-slate-900 text-white relative">
+      
+      <!-- Top Order Type Bar -->
+      <div class="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl" id="active-order-icon">🍔</span>
+          <div>
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wide" id="active-order-type-badge">CIATERFOOD</div>
+            <h3 class="text-xs font-black text-white" id="active-order-code">#CTG-9102</h3>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-[10px] text-slate-400">Ongkos Bersih</div>
+          <div class="text-sm font-black text-emerald-400" id="active-order-fare">Rp 12.000</div>
+        </div>
+      </div>
+
+      <!-- Navigation & Step Progress Real Leaflet Map -->
+      <div class="flex-1 bg-slate-950 relative overflow-hidden min-h-[300px]">
+        <div id="driver-live-map" class="w-full h-full min-h-[300px] z-0"></div>
+        
+        <!-- Floating Navigation Overlay -->
+        <div class="absolute top-3 left-3 right-3 z-10 bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl border border-white/15 text-white shadow-xl flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-location-arrow"></i>
+            </div>
+            <div>
+              <div class="text-[9px] text-emerald-300 font-extrabold uppercase" id="step-badge">LANGKAH 1 DARI 3</div>
+              <div class="text-xs font-black truncate max-w-[200px]" id="nav-instruction-text">Menuju Warung Nasi Bu Tini</div>
+            </div>
+          </div>
+          <button onclick="showToast('Navigasi GPS Aktif')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-[10px] font-bold">
+            GPS ON
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Customer / Order Card & Action Buttons -->
+      <div class="bg-white text-slate-800 rounded-t-[32px] p-5 shadow-2xl space-y-4 z-20">
+        
+        <!-- Customer details -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center font-bold text-slate-700 text-xs">
+              AG
+            </div>
+            <div>
+              <h4 class="text-xs font-extrabold text-slate-800">Asep Gunawan (Pelanggan)</h4>
+              <p class="text-[10px] text-slate-400">Metode Bayar: <strong class="text-emerald-700">Tunai COD (Rp 35.000)</strong></p>
+            </div>
+          </div>
+          
+          <div class="flex gap-2">
+            <button onclick="showToast('Menghubungi pelanggan...')" class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-phone"></i>
+            </button>
+            <button onclick="openDriverChatModal()" class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center text-xs">
+              <i class="fa-solid fa-comment"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Big Action Advance Button -->
+        <button id="btn-advance-order" onclick="advanceOrderStatus()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-2xl shadow-xl shadow-emerald-600/30 flex items-center justify-center gap-2 active:scale-98 transition">
+          <span id="btn-advance-text">Saya Sudah Tiba di Titik Jemput</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 3: EARNINGS & WALLET ==================== -->
+    <div id="driver-screen-earnings" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <div class="bg-white p-4 border-b border-slate-200 sticky top-0 z-30 flex items-center gap-3">
+        <button onclick="driverNavigate('driver-screen-dashboard')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+        </button>
+        <div>
+          <h2 class="text-base font-extrabold text-slate-800">💰 Pendapatan & Dompet</h2>
+          <p class="text-[11px] text-slate-400">Rekap penghasilan mitra CiaterGo</p>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Total Balance Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-3xl shadow-lg">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Saldo Dompet Driver</span>
+              <h3 class="text-2xl font-black text-emerald-400 mt-1">Rp 450.000</h3>
+            </div>
+            <button onclick="withdrawDriverEarnings()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs rounded-xl shadow transition">
+              Tarik Saldo
+            </button>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-300 flex justify-between">
+            <span>Rekening: BCA ***8821 (Dadang)</span>
+            <span class="text-emerald-400 font-bold">Bebas Biaya Admin</span>
+          </div>
+        </div>
+
+        <!-- Weekly Chart Simulation (CSS Bars) -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Pendapatan 7 Hari Terakhir</h4>
+            <span class="text-xs font-black text-emerald-600">Rp 820.000</span>
+          </div>
+
+          <div class="flex items-end justify-between h-32 pt-6 pb-2 gap-2 text-center text-[10px] font-bold text-slate-400">
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-100 rounded-t-lg h-16"></div>
+              <span>Sen</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-200 rounded-t-lg h-20"></div>
+              <span>Sel</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-300 rounded-t-lg h-14"></div>
+              <span>Rab</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-400 rounded-t-lg h-24"></div>
+              <span>Kam</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-500 rounded-t-lg h-28"></div>
+              <span>Jum</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-600 rounded-t-lg h-32 shadow-sm"></div>
+              <span class="text-emerald-700 font-black">Sab</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-400 rounded-t-lg h-20"></div>
+              <span>Min</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 4: DRIVER PROFILE ==================== -->
+    <div id="driver-screen-profile" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <div class="bg-white p-5 border-b border-slate-200 flex items-center gap-3.5">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white text-2xl font-black flex items-center justify-center shadow-lg">
+          👨‍✈️
+        </div>
+        <div>
+          <h3 class="font-black text-base text-slate-800">Dadang Sudrajat</h3>
+          <p class="text-xs text-slate-500">+62 821-4455-6677 • ID #DRV-042</p>
+          <span class="inline-block mt-1 text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-extrabold">
+            Status: Terverifikasi Aktif
+          </span>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Vehicle & Docs Info -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 text-xs">
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">Kendaraan Terdaftar</span>
+            <span class="font-bold text-slate-800">Honda Vario 125 (T 4521 ZK)</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">KTP & SIM C</span>
+            <span class="font-bold text-emerald-600">✅ Terverifikasi</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">STNK & Pajak Kendaraan</span>
+            <span class="font-bold text-emerald-600">✅ Aktif s/d 2028</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">Wilayah Pangkalan</span>
+            <span class="font-bold text-slate-800">Kecamatan Ciater Subang</span>
+          </div>
+        </div>
+
+        <button onclick="showToast('Kembali ke mode offline')" class="w-full py-3 bg-red-50 text-red-600 text-xs font-bold rounded-2xl border border-red-200 hover:bg-red-100 transition">
+          Keluar dari Aplikasi Driver
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== MODAL: INCOMING ORDER RADAR POPUP ==================== -->
+    <div id="modal-incoming-order" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[420px] rounded-t-[36px] sm:rounded-[36px] p-6 space-y-4 animate-bounce-once border-2 border-emerald-500 shadow-2xl">
+        
+        <!-- Order Header & Timer Bar -->
+        <div class="text-center space-y-1">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl mx-auto shadow-inner">
+            🔔
+          </div>
+          <span class="text-[10px] bg-orange-100 text-orange-700 font-extrabold px-3 py-1 rounded-full uppercase" id="incoming-service-badge">
+            PESANAN CIATERFOOD
+          </span>
+          <h3 class="text-lg font-black text-slate-900 mt-2" id="incoming-title">Warung Nasi Liwet Bu Tini</h3>
+          <div class="text-xl font-black text-emerald-600" id="incoming-fare">Rp 12.000 (Ongkos Anda)</div>
+        </div>
+
+        <!-- Route Details -->
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="text-slate-500">Ambil: <strong class="text-slate-800" id="incoming-pickup">Warung Bu Tini (0.5 km)</strong></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="text-slate-500">Antar: <strong class="text-slate-800" id="incoming-drop">Desa Palasari RT 02 (1.2 km)</strong></span>
+          </div>
+        </div>
+
+        <!-- Timer bar countdown -->
+        <div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div id="incoming-timer-bar" class="bg-emerald-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+          </div>
+          <div class="text-[10px] text-center text-slate-400 mt-1">Terima dalam <span id="countdown-num" class="font-bold text-slate-700">20</span> detik</div>
+        </div>
+
+        <!-- Action Buttons: Reject vs Accept -->
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <button onclick="rejectIncomingOrder()" class="py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-2xl transition">
+            ❌ Tolak Order
+          </button>
+          <button onclick="acceptIncomingOrder()" class="py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-1.5">
+            ✅ Terima Order
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== BOTTOM DRIVER NAVIGATION ==================== -->
+    <div id="driver-bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2 flex justify-between items-center z-40 sm:rounded-b-[36px]">
+      
+      <button onclick="driverNavigate('driver-screen-dashboard')" class="d-nav-item flex flex-col items-center gap-1 text-emerald-600 py-1 flex-1">
+        <i class="fa-solid fa-gauge-high text-base"></i>
+        <span class="text-[10px] font-bold">Beranda</span>
+      </button>
+
+      <button onclick="driverNavigate('driver-screen-active')" class="d-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1 relative">
+        <i class="fa-solid fa-route text-base"></i>
+        <span class="text-[10px] font-medium">Trip Aktif</span>
+        <span id="driver-order-dot" class="hidden absolute top-0 right-4 w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+      </button>
+
+      <button onclick="driverNavigate('driver-screen-earnings')" class="d-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1">
+        <i class="fa-solid fa-wallet text-base"></i>
+        <span class="text-[10px] font-medium">Dompet</span>
+      </button>
+
+      <button onclick="driverNavigate('driver-screen-profile')" class="d-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1">
+        <i class="fa-solid fa-id-card text-base"></i>
+        <span class="text-[10px] font-medium">Profil</span>
+      </button>
+
+    </div>
+
+    <!-- ==================== MODAL: IN-APP CHAT WITH CUSTOMER ==================== -->
+    <div id="modal-driver-chat" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[440px] rounded-t-[32px] sm:rounded-[32px] flex flex-col h-[80vh] max-h-[600px] overflow-hidden shadow-2xl">
+        
+        <!-- Chat Header -->
+        <div class="p-4 bg-emerald-600 text-white flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl">
+              👤
+            </div>
+            <div>
+              <h4 class="text-xs font-black text-white flex items-center gap-1.5">
+                Asep Gunawan (Pelanggan) <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
+              </h4>
+              <p class="text-[10px] text-emerald-100 font-medium">Order #CTG-9102 • Palasari Ciater</p>
+            </div>
+          </div>
+          <button onclick="closeDriverChatModal()" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white text-xs">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Messages Bubble Area -->
+        <div id="driver-chat-messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-xs">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Quick Reply Chips for Driver -->
+        <div class="px-3 py-2 bg-white border-t border-slate-100 flex gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+          <button onclick="sendDriverQuickReply('Halo kak, saya sudah di warung menunggu makanan ya')" class="bg-slate-100 hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            🍳 Sudah di warung
+          </button>
+          <button onclick="sendDriverQuickReply('Pesanan sudah saya bawa dan sedang meluncur ke alamat!')" class="bg-slate-100 hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            🛵 Sedang meluncur
+          </button>
+          <button onclick="sendDriverQuickReply('Saya sudah sampai di depan lokasi ya kak')" class="bg-slate-100 hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            📍 Sudah sampai di depan
+          </button>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+          <input id="driver-chat-text-input" type="text" placeholder="Tulis pesan ke pelanggan..." class="flex-1 text-xs bg-slate-100 px-3.5 py-2.5 rounded-2xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500 font-medium" onkeydown="if(event.key==='Enter') sendDriverChat()">
+          <button onclick="sendDriverChat()" class="w-10 h-10 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center active:scale-95 transition shadow-md shadow-emerald-600/30">
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-msg" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-xs bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-2">
+      <i class="fa-solid fa-circle-check text-emerald-400"></i>
+      <span id="toast-text">Notifikasi</span>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC FOR DRIVER APP -->
+  <script>
+    let isDriverOnline = true;
+    let orderStep = 1; // 1: go to pickup, 2: pick up confirm, 3: deliver & finish
+    let incomingTimerInterval = null;
+
+    // SYNTHESIZE CHIME SOUND USING WEB AUDIO API (NO EXTERNAL ASSETS NEEDED)
+    function playOrderChime() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.15); // A5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {
+        console.log('Audio not allowed without gesture', e);
+      }
+    }
+
+    function driverNavigate(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.remove('hidden');
+        window.scrollTo(0, 0);
+      }
+    }
+
+    let currentHandlingOrder = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg Error:', err));
+      }
+
+      if (window.CiaterSync) {
+        CiaterSync.listenSyncEvents((type, payload) => {
+          console.log('[Driver App] Event Received:', type, payload);
+          if ((type === 'ORDER_CREATED' || type === 'ORDER_READY_FOR_PICKUP') && isDriverOnline) {
+            handleIncomingSyncOrder(payload);
+          } else if (type === 'CHAT_MESSAGE') {
+            renderDriverChatMessages();
+            if (payload.message && payload.message.role === 'customer') {
+              playOrderChime();
+              showToast(`💬 Pesan Pelanggan: "${payload.message.text}"`);
+            }
+          }
+        });
+      }
+    });
+
+    function handleIncomingSyncOrder(order) {
+      currentHandlingOrder = order;
+      document.getElementById('incoming-service-badge').innerText = `PESANAN ${order.serviceName || order.service || 'CIATERGO'}`;
+      document.getElementById('incoming-title').innerText = order.title || order.merchantName || 'Pesanan Ciater';
+      document.getElementById('incoming-fare').innerText = `Rp ${((order.total || 30000) * 0.35).toLocaleString('id-ID')} (Ongkos Bersih)`;
+      document.getElementById('incoming-pickup').innerText = order.pickupLocation || order.merchantName || 'Titik Penjemputan';
+      document.getElementById('incoming-drop').innerText = order.dropLocation || order.customerLocation || 'Desa Palasari';
+      
+      triggerSimulatedIncomingOrder(true);
+    }
+
+    function toggleDriverOnline() {
+      isDriverOnline = !isDriverOnline;
+      const dot = document.getElementById('status-indicator-dot');
+      const text = document.getElementById('driver-status-text');
+      const btn = document.getElementById('btn-toggle-online');
+      const radar = document.getElementById('radar-box');
+
+      if (isDriverOnline) {
+        dot.className = 'w-3.5 h-3.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse';
+        text.innerText = 'STATUS: SIAP MENERIMA ORDER';
+        btn.innerText = 'ONLINE';
+        btn.className = 'px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition';
+        radar.classList.remove('opacity-50');
+        showToast('🟢 Anda sekarang Online & siap menerima order');
+        if (window.CiaterSync) {
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, { driver: 'Dadang Sudrajat', status: 'ONLINE' });
+        }
+      } else {
+        dot.className = 'w-3.5 h-3.5 rounded-full bg-slate-400 ring-4 ring-slate-400/30';
+        text.innerText = 'STATUS: SEDANG ISTIRAHAT (OFFLINE)';
+        btn.innerText = 'OFFLINE';
+        btn.className = 'px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-black text-xs rounded-xl shadow transition';
+        radar.classList.add('opacity-50');
+        showToast('⚪ Anda sekarang Offline');
+        if (window.CiaterSync) {
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, { driver: 'Dadang Sudrajat', status: 'OFFLINE' });
+        }
+      }
+    }
+
+    function triggerSimulatedIncomingOrder(isSync = false) {
+      if (!isDriverOnline) {
+        showToast('Nyalakan status ONLINE terlebih dahulu!');
+        return;
+      }
+      playOrderChime();
+      const modal = document.getElementById('modal-incoming-order');
+      modal.classList.remove('hidden');
+
+      let seconds = 20;
+      const bar = document.getElementById('incoming-timer-bar');
+      const num = document.getElementById('countdown-num');
+      bar.style.width = '100%';
+      num.innerText = seconds;
+
+      clearInterval(incomingTimerInterval);
+      incomingTimerInterval = setInterval(() => {
+        seconds--;
+        num.innerText = seconds;
+        bar.style.width = (seconds / 20 * 100) + '%';
+        if (seconds <= 0) {
+          clearInterval(incomingTimerInterval);
+          rejectIncomingOrder();
+        }
+      }, 1000);
+    }
+
+    function rejectIncomingOrder() {
+      clearInterval(incomingTimerInterval);
+      document.getElementById('modal-incoming-order').classList.add('hidden');
+      showToast('Pesanan dilewati. Mencari pesanan berikutnya...');
+    }
+
+    function acceptIncomingOrder() {
+      clearInterval(incomingTimerInterval);
+      document.getElementById('modal-incoming-order').classList.add('hidden');
+      orderStep = 1;
+      updateOrderStepUI();
+      document.getElementById('driver-order-dot').classList.remove('hidden');
+
+      if (currentHandlingOrder && window.CiaterSync) {
+        CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ASSIGNED', {
+          driverName: 'Dadang Sudrajat',
+          driverPhone: '+62 821-4455-6677'
+        });
+      }
+
+      showToast('🎉 Order Diterima! Silakan menuju titik penjemputan.');
+      driverNavigate('driver-screen-active');
+      initDriverLiveMap();
+    }
+
+    // REAL LEAFLET MAP ON DRIVER SCREEN
+    let driverMapInstance = null;
+    let driverCurrentMarker = null;
+
+    function initDriverLiveMap() {
+      setTimeout(() => {
+        const mapDiv = document.getElementById('driver-live-map');
+        if (!mapDiv || typeof L === 'undefined') return;
+
+        if (driverMapInstance) {
+          driverMapInstance.remove();
+          driverMapInstance = null;
+        }
+
+        const driverCoords = [-6.7360, 107.6570];
+        const storeCoords = [-6.7350, 107.6580];
+        const customerCoords = [-6.7412, 107.6534];
+
+        driverMapInstance = L.map('driver-live-map', {
+          zoomControl: false,
+          attributionControl: false
+        }).setView(driverCoords, 15);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          maxZoom: 19
+        }).addTo(driverMapInstance);
+
+        const driverIcon = L.divIcon({
+          className: 'd-driver-icon',
+          html: `<div class="w-10 h-10 rounded-2xl bg-emerald-600 border-2 border-white shadow-xl flex items-center justify-center text-xl text-white transform -translate-x-1/2 -translate-y-1/2 animate-bounce">🛵</div>`,
+          iconSize: [40, 40]
+        });
+
+        const storeIcon = L.divIcon({
+          className: 'd-store-icon',
+          html: `<div class="w-8 h-8 rounded-full bg-orange-500 border-2 border-white shadow-lg flex items-center justify-center text-sm text-white transform -translate-x-1/2 -translate-y-1/2">🥘</div>`,
+          iconSize: [32, 32]
+        });
+
+        const userIcon = L.divIcon({
+          className: 'd-user-icon',
+          html: `<div class="w-8 h-8 rounded-full bg-red-500 border-2 border-white shadow-lg flex items-center justify-center text-sm text-white transform -translate-x-1/2 -translate-y-1/2">📍</div>`,
+          iconSize: [32, 32]
+        });
+
+        L.marker(storeCoords, { icon: storeIcon }).addTo(driverMapInstance).bindPopup('<b>Warung Bu Tini</b><br>Ambil Makanan');
+        L.marker(customerCoords, { icon: userIcon }).addTo(driverMapInstance).bindPopup('<b>Asep Gunawan (Pelanggan)</b><br>Tujuan Antar');
+        driverCurrentMarker = L.marker(driverCoords, { icon: driverIcon }).addTo(driverMapInstance);
+
+        const route = L.polyline([driverCoords, storeCoords, [-6.7380, 107.6560], customerCoords], {
+          color: '#059669',
+          weight: 5,
+          opacity: 0.85,
+          dashArray: '6, 6'
+        }).addTo(driverMapInstance);
+
+        driverMapInstance.fitBounds(route.getBounds(), { padding: [35, 35] });
+      }, 300);
+    }
+
+    // DRIVER IN-APP CHAT CONTROLLER
+    function openDriverChatModal() {
+      const modal = document.getElementById('modal-driver-chat');
+      if (modal) {
+        modal.classList.remove('hidden');
+        renderDriverChatMessages();
+      }
+    }
+
+    function closeDriverChatModal() {
+      const modal = document.getElementById('modal-driver-chat');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderDriverChatMessages() {
+      const container = document.getElementById('driver-chat-messages-container');
+      if (!container) return;
+
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'CTG-9102';
+      const messages = window.CiaterSync ? CiaterSync.getChatMessages(orderId) : [];
+
+      container.innerHTML = messages.map(msg => `
+        <div class="flex flex-col ${msg.role === 'driver' ? 'items-end' : 'items-start'}">
+          <div class="max-w-[78%] p-3 rounded-2xl ${msg.role === 'driver' ? 'bg-emerald-600 text-white rounded-br-none shadow-sm' : 'bg-white text-slate-800 rounded-bl-none border border-slate-200 shadow-sm'}">
+            <p class="font-medium leading-relaxed">${msg.text}</p>
+          </div>
+          <span class="text-[9px] text-slate-400 mt-1 px-1">${msg.time}</span>
+        </div>
+      `).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendDriverChat() {
+      const input = document.getElementById('driver-chat-text-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'CTG-9102';
+      if (window.CiaterSync) {
+        CiaterSync.sendChatMessage(orderId, 'Dadang Sudrajat (Driver)', 'driver', text);
+      }
+      input.value = '';
+      renderDriverChatMessages();
+    }
+
+    function sendDriverQuickReply(text) {
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'CTG-9102';
+      if (window.CiaterSync) {
+        CiaterSync.sendChatMessage(orderId, 'Dadang Sudrajat (Driver)', 'driver', text);
+      }
+      renderDriverChatMessages();
+    }
+
+    function advanceOrderStatus() {
+      if (orderStep === 1) {
+        orderStep = 2;
+        updateOrderStepUI();
+        if (currentHandlingOrder && window.CiaterSync) {
+          CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ARRIVED_PICKUP');
+        }
+        showToast('Pesanan telah diambil dari warung/resto.');
+      } else if (orderStep === 2) {
+        orderStep = 3;
+        updateOrderStepUI();
+        if (currentHandlingOrder && window.CiaterSync) {
+          CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ON_WAY');
+        }
+        showToast('Sedang dalam perjalanan ke alamat pelanggan.');
+      } else if (orderStep === 3) {
+        // Finished
+        if (currentHandlingOrder && window.CiaterSync) {
+          CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'COMPLETED');
+        }
+        document.getElementById('driver-order-dot').classList.add('hidden');
+        showToast('✅ Trip Selesai! Saldo +Rp 12.000 masuk ke dompet Anda.');
+        driverNavigate('driver-screen-dashboard');
+      }
+    }
+
+    function updateOrderStepUI() {
+      const stepBadge = document.getElementById('step-badge');
+      const navInst = document.getElementById('nav-instruction-text');
+      const navLoc = document.getElementById('nav-location-name');
+      const btnText = document.getElementById('btn-advance-text');
+
+      if (orderStep === 1) {
+        stepBadge.innerText = 'LANGKAH 1 DARI 3';
+        navInst.innerText = 'Menuju Titik Penjemputan / Warung';
+        navLoc.innerText = 'Warung Nasi Liwet Bu Tini (Jl. Raya Ciater No. 45)';
+        btnText.innerText = 'Saya Sudah Tiba di Warung';
+      } else if (orderStep === 2) {
+        stepBadge.innerText = 'LANGKAH 2 DARI 3';
+        navInst.innerText = 'Konfirmasi Pengambilan Pesanan';
+        navLoc.innerText = 'Pastikan pesanan sesuai: 1x Paket Liwet Komplit';
+        btnText.innerText = 'Pesanan Sudah Diambil ➔ Mulai Antar';
+      } else if (orderStep === 3) {
+        stepBadge.innerText = 'LANGKAH 3 DARI 3';
+        navInst.innerText = 'Antar ke Alamat Pelanggan';
+        navLoc.innerText = 'Desa Palasari RT 02/03 (Dekat Masjid Al-Ikhlas)';
+        btnText.innerText = 'Selesaikan Pesanan & Terima Uang COD';
+      }
+    }
+
+    function withdrawDriverEarnings() {
+      showToast('💸 Penarikan Rp 450.000 ke BCA Pak Dadang sedang diproses (instan)');
+    }
+
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      const text = document.getElementById('toast-text');
+      text.innerText = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+  </script>
+</body>
+</html>

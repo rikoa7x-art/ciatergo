@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CiaterGo - Layanan Antar Makanan, Ojek & Pengiriman Ciater</title>
+  <meta name="theme-color" content="#16a34a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛵</text></svg>">
+  
+  <!-- Shared Realtime Sync Bus -->
+  <script src="shared-sync.js"></script>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Leaflet Maps CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              dark: '#052e16'
+            },
+            accent: {
+              500: '#f97316',
+              600: '#ea580c',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Mobile app container styles */
+    body {
+      background-color: #0f172a;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    
+    .app-viewport {
+      max-width: 440px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: #f8fafc;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin: 0 auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Hide scrollbars but keep scrolling */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Pulse animation */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 0.4; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* App switch bar */
+    .role-switcher {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:py-6 sm:px-4 bg-slate-950">
+
+  <!-- Floating Role Switcher for Testing -->
+  <div class="role-switcher hidden sm:flex items-center gap-1.5 bg-slate-900/90 text-white p-2 rounded-2xl shadow-2xl border border-slate-700/60 backdrop-blur-md text-xs">
+    <span class="text-slate-400 font-semibold px-2">Demo Role:</span>
+    <a href="index.html" class="bg-brand-600 text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
+      <i class="fa-solid fa-user"></i> Pelanggan
+    </a>
+    <a href="driver.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-motorcycle text-green-400"></i> Driver
+    </a>
+    <a href="merchant.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-store text-orange-400"></i> Warung/Resto
+    </a>
+    <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-shield-halved text-blue-400"></i> Admin
+    </a>
+    <button onclick="openQrModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow transition">
+      <i class="fa-solid fa-qrcode"></i> Buka di HP
+    </button>
+  </div>
+
+  <!-- Mobile Screen Container -->
+  <div class="app-viewport w-full flex-1 sm:rounded-[36px] border sm:border-slate-800">
+
+    <!-- TOP ROLE SWITCHER DRAWER FOR MOBILE DEVICES -->
+    <div class="sm:hidden bg-slate-900 text-white text-[11px] px-3 py-1.5 flex justify-between items-center z-50 border-b border-slate-800">
+      <span class="text-brand-400 font-bold flex items-center gap-1">
+        <i class="fa-solid fa-circle-nodes"></i> CiaterGo App Suite
+      </span>
+      <div class="flex items-center gap-1.5">
+        <a href="driver.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Driver</a>
+        <a href="merchant.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Resto</a>
+        <a href="admin.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Admin</a>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 1: SPLASH SCREEN ==================== -->
+    <div id="screen-splash" class="screen absolute inset-0 z-50 bg-gradient-to-br from-brand-600 to-brand-700 flex flex-col items-center justify-between p-8 text-white">
+      <div class="w-full"></div>
+      <div class="text-center flex flex-col items-center">
+        <div class="w-24 h-24 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-xl border border-white/30 animate-bounce">
+          🛵
+        </div>
+        <h1 class="text-3xl font-black tracking-tight mb-2">Ciater<span class="text-accent-500">Go</span></h1>
+        <p class="text-brand-100 text-sm max-w-xs leading-relaxed font-medium">
+          Layanan Cepat Makanan, Ojek & Antar Paket se-Kecamatan Ciater Subang
+        </p>
+      </div>
+      <div class="w-full flex flex-col items-center gap-3">
+        <div class="flex items-center gap-2 text-xs text-brand-200">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+          <span>Menyiapkan layanan lokal...</span>
+        </div>
+        <button onclick="navigate('screen-home')" class="w-full py-3.5 bg-white text-brand-700 font-bold rounded-2xl shadow-lg hover:bg-brand-50 active:scale-95 transition">
+          Mulai Sekarang <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 2: AUTH / LOGIN ==================== -->
+    <div id="screen-auth" class="screen hidden min-h-screen bg-white flex flex-col justify-between p-6">
+      <div>
+        <button onclick="navigate('screen-home')" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-6">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="mb-8">
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">Akun CiaterGo</span>
+          <h2 class="text-2xl font-extrabold text-slate-800 mt-3">Masuk / Daftar</h2>
+          <p class="text-slate-500 text-xs mt-1">Gunakan nomor WhatsApp aktif Anda untuk kemudahan komunikasi driver.</p>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor Handphone / WhatsApp</label>
+            <div class="flex items-center border-2 border-slate-200 focus-within:border-brand-600 rounded-2xl overflow-hidden px-3 py-1 transition">
+              <span class="text-sm font-bold text-slate-500 pr-2 border-r border-slate-200">🇮🇩 +62</span>
+              <input id="auth-phone" type="tel" placeholder="812-3456-7890" value="82119887766" class="w-full py-2.5 px-3 text-slate-800 font-semibold focus:outline-none text-sm">
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-amber-50 rounded-2xl border border-amber-200/80 text-amber-800 text-xs flex items-start gap-2.5">
+            <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5 text-sm"></i>
+            <p>Kode OTP simulasi adalah <strong class="underline font-bold">123456</strong> untuk keperluan demo ini.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6">
+        <button onclick="handleRequestOtp()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition active:scale-98">
+          <span>Kirim Kode OTP</span>
+          <i class="fa-solid fa-paper-plane text-xs"></i>
+        </button>
+        <p class="text-[11px] text-center text-slate-400 mt-3">
+          Dengan masuk, Anda menyetujui Ketentuan Layanan & Kebijakan Privasi CiaterGo.
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 3: OTP VERIFICATION ==================== -->
+    <div id="screen-otp" class="screen hidden min-h-screen bg-white flex flex-col justify-between p-6">
+      <div>
+        <button onclick="navigate('screen-auth')" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-6">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        
+        <div class="mb-6">
+          <h2 class="text-2xl font-extrabold text-slate-800">Verifikasi OTP</h2>
+          <p class="text-slate-500 text-xs mt-1">
+            Kode 6-digit dikirim via WhatsApp ke <span id="otp-phone-display" class="font-bold text-slate-700">+62 821-1988-7766</span>
+          </p>
+        </div>
+
+        <!-- 6 OTP Input Boxes -->
+        <div class="flex justify-between gap-2 my-6">
+          <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black border-2 border-slate-200 focus:border-brand-600 rounded-2xl focus:outline-none bg-slate-50 focus:bg-white transition" value="1">
+          <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black border-2 border-slate-200 focus:border-brand-600 rounded-2xl focus:outline-none bg-slate-50 focus:bg-white transition" value="2">
+          <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black border-2 border-slate-200 focus:border-brand-600 rounded-2xl focus:outline-none bg-slate-50 focus:bg-white transition" value="3">
+          <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black border-2 border-slate-200 focus:border-brand-600 rounded-2xl focus:outline-none bg-slate-50 focus:bg-white transition" value="4">
+          <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black border-2 border-slate-200 focus:border-brand-600 rounded-2xl focus:outline-none bg-slate-50 focus:bg-white transition" value="5">
+          <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black border-2 border-slate-200 focus:border-brand-600 rounded-2xl focus:outline-none bg-slate-50 focus:bg-white transition" value="6">
+        </div>
+
+        <p class="text-center text-xs text-slate-400">
+          Kirim ulang kode dalam <span id="otp-timer" class="font-bold text-brand-600">00:45</span>
+        </p>
+      </div>
+
+      <div>
+        <button onclick="handleVerifyOtp()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl shadow-lg shadow-brand-600/30 transition">
+          Verifikasi & Masuk
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 4: HOME SCREEN ==================== -->
+    <div id="screen-home" class="screen flex-1 flex flex-col pb-24">
+      
+      <!-- Top Header Gradient -->
+      <div class="bg-gradient-to-br from-brand-600 via-brand-700 to-brand-800 text-white p-5 rounded-b-[32px] shadow-lg">
+        
+        <!-- Location Picker Header -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2" onclick="openLocationModal()">
+            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-location-dot text-amber-300"></i>
+            </div>
+            <div>
+              <div class="text-[10px] text-brand-200 font-semibold tracking-wide uppercase">Lokasi Anda Saat Ini</div>
+              <div class="text-xs font-bold flex items-center gap-1.5 text-white">
+                <span id="current-location-text">Desa Palasari, Kec. Ciater</span>
+                <i class="fa-solid fa-chevron-down text-[10px] text-brand-200"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="navigate('screen-promo')" class="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white hover:bg-white/25 transition">
+              <i class="fa-solid fa-percent text-xs"></i>
+            </button>
+            <button onclick="navigate('screen-profile')" class="w-9 h-9 rounded-full bg-amber-400 text-slate-900 font-extrabold flex items-center justify-center text-xs shadow">
+              AG
+            </button>
+          </div>
+        </div>
+
+        <!-- CiaterPay Quick Bar -->
+        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3.5 flex items-center justify-between border border-white/20 mb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-brand-500 text-white flex items-center justify-center text-sm font-bold shadow-inner">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div>
+              <div class="text-[10px] text-brand-100 font-medium">Saldo CiaterPay</div>
+              <div class="text-sm font-black text-white" id="user-balance-display">Rp 85.000</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="topUpCiaterPay()" class="px-3 py-1.5 bg-white text-brand-700 text-xs font-bold rounded-xl shadow hover:bg-brand-50 transition flex items-center gap-1">
+              <i class="fa-solid fa-plus text-[10px]"></i> Top Up
+            </button>
+            <button onclick="showToast('Riwayat transaksi saldo diperbarui')" class="w-8 h-8 bg-white/15 text-white text-xs font-bold rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-clock-rotate-left text-[11px]"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative" onclick="navigate('screen-food')">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+          <input type="text" placeholder="Cari sate maranggi, bakso, atau warung..." readonly class="w-full bg-white text-slate-800 placeholder-slate-400 text-xs font-medium pl-9 pr-4 py-3 rounded-2xl shadow-sm focus:outline-none cursor-pointer">
+        </div>
+      </div>
+
+      <div class="p-4 space-y-6">
+        
+        <!-- 3 MAIN SERVICES GRID -->
+        <div>
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5 px-1">Layanan Utama</h3>
+          <div class="grid grid-cols-3 gap-3">
+            
+            <!-- Service 1: Food -->
+            <div onclick="navigate('screen-food')" class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer flex flex-col items-center text-center group">
+              <div class="w-14 h-14 rounded-2xl bg-orange-100 flex items-center justify-center text-2xl mb-2 group-hover:scale-110 transition shadow-inner">
+                🍔
+              </div>
+              <span class="text-xs font-extrabold text-slate-800">CiaterFood</span>
+              <span class="text-[10px] text-slate-400 mt-0.5">Antar Makanan</span>
+            </div>
+
+            <!-- Service 2: Ride -->
+            <div onclick="navigate('screen-ride')" class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer flex flex-col items-center text-center group">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl mb-2 group-hover:scale-110 transition shadow-inner">
+                🏍️
+              </div>
+              <span class="text-xs font-extrabold text-slate-800">CiaterRide</span>
+              <span class="text-[10px] text-slate-400 mt-0.5">Ojek & Mobil</span>
+            </div>
+
+            <!-- Service 3: Kirim -->
+            <div onclick="navigate('screen-kirim')" class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer flex flex-col items-center text-center group">
+              <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl mb-2 group-hover:scale-110 transition shadow-inner">
+                📦
+              </div>
+              <span class="text-xs font-extrabold text-slate-800">CiaterKirim</span>
+              <span class="text-[10px] text-slate-400 mt-0.5">Antar Paket</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PROMO BANNERS CAROUSEL -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5 px-1">
+            <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-fire text-amber-500"></i> Promo Spesial Ciater
+            </h3>
+            <button onclick="navigate('screen-promo')" class="text-[11px] font-bold text-brand-600 hover:underline">Lihat Semua</button>
+          </div>
+          
+          <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+            <!-- Promo 1 -->
+            <div onclick="usePromo('GRATISONGKIR')" class="min-w-[260px] bg-gradient-to-r from-orange-500 to-amber-500 text-white p-4 rounded-2xl shadow-sm cursor-pointer flex justify-between items-center">
+              <div>
+                <span class="text-[9px] bg-white/20 px-2 py-0.5 rounded-full font-bold uppercase">Promo Kuliner</span>
+                <h4 class="font-extrabold text-sm mt-1">Gratis Ongkir 3km</h4>
+                <p class="text-[10px] text-orange-100">Kode: <strong class="font-mono bg-black/20 px-1.5 py-0.5 rounded">CIATERKULINER</strong></p>
+              </div>
+              <div class="text-3xl">🍲</div>
+            </div>
+
+            <!-- Promo 2 -->
+            <div onclick="usePromo('DISKON30')" class="min-w-[260px] bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-2xl shadow-sm cursor-pointer flex justify-between items-center">
+              <div>
+                <span class="text-[9px] bg-white/20 px-2 py-0.5 rounded-full font-bold uppercase">CiaterRide Hemat</span>
+                <h4 class="font-extrabold text-sm mt-1">Diskon 30% Ke Pasar</h4>
+                <p class="text-[10px] text-emerald-100">Semua rute dalam kecamatan</p>
+              </div>
+              <div class="text-3xl">🛵</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- POPULAR MERCHANTS LIST -->
+        <div>
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-800">Warung & Resto Terpopuler</h3>
+              <p class="text-[11px] text-slate-400">Pilihan favorit warga & wisatawan Ciater</p>
+            </div>
+            <button onclick="navigate('screen-food')" class="text-xs font-bold text-brand-600">Semua</button>
+          </div>
+
+          <div id="home-merchant-list" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 5: CIATERFOOD RESTAURANT LIST ==================== -->
+    <div id="screen-food" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <!-- Food Header -->
+      <div class="bg-white border-b border-slate-200 sticky top-0 z-30 p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <button onclick="navigate('screen-home')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+            <i class="fa-solid fa-arrow-left text-sm"></i>
+          </button>
+          <div class="flex-1">
+            <h2 class="text-base font-extrabold text-slate-800 flex items-center gap-1.5">
+              🍔 CiaterFood <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Lokal</span>
+            </h2>
+            <p class="text-[11px] text-slate-400">Pesan makanan favorit seputar Ciater</p>
+          </div>
+        </div>
+
+        <!-- Search input -->
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+          <input id="food-search-input" oninput="handleFoodSearch()" type="text" placeholder="Cari nama menu atau warung..." class="w-full bg-slate-100 text-xs font-medium pl-9 pr-4 py-2.5 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 transition">
+        </div>
+
+        <!-- Category Chips -->
+        <div class="flex gap-2 overflow-x-auto no-scrollbar pt-3 text-xs">
+          <button onclick="filterFoodCategory('all', this)" class="category-chip bg-brand-600 text-white font-bold px-3.5 py-1.5 rounded-xl whitespace-nowrap">Semua</button>
+          <button onclick="filterFoodCategory('sunda', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🥘 Masakan Sunda</button>
+          <button onclick="filterFoodCategory('bakso', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍜 Bakso & Mie</button>
+          <button onclick="filterFoodCategory('ayam', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍗 Ayam & Bebek</button>
+          <button onclick="filterFoodCategory('minuman', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🧋 Minuman</button>
+          <button onclick="filterFoodCategory('snack', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍟 Cemilan</button>
+        </div>
+      </div>
+
+      <!-- Restaurant Cards List -->
+      <div id="food-restaurant-container" class="p-4 space-y-3.5">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 6: RESTAURANT DETAIL & MENU ==================== -->
+    <div id="screen-resto-detail" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-28">
+      
+      <!-- Resto Hero Banner -->
+      <div class="relative bg-slate-800 text-white h-44 flex items-end p-4">
+        <button onclick="navigate('screen-food')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center z-10">
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+        </button>
+        
+        <div id="resto-hero-emoji" class="absolute inset-0 flex items-center justify-center text-7xl opacity-40">
+          🍲
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+
+        <div class="relative z-10">
+          <span id="resto-detail-badge" class="text-[9px] bg-brand-500 text-white font-bold px-2 py-0.5 rounded-full uppercase">Buka Sekarang</span>
+          <h2 id="resto-detail-name" class="text-xl font-black mt-1 text-white leading-tight">Warung Nasi Liwet Bu Tini</h2>
+          <div class="flex items-center gap-3 text-xs text-slate-300 mt-1">
+            <span class="flex items-center gap-1 text-amber-400 font-bold"><i class="fa-solid fa-star"></i> <span id="resto-detail-rating">4.8</span></span>
+            <span>•</span>
+            <span id="resto-detail-distance">1.2 km</span>
+            <span>•</span>
+            <span id="resto-detail-time">15-20 mnt</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Categories Tabs -->
+      <div class="bg-white border-b border-slate-200 px-4 py-2 flex gap-3 overflow-x-auto no-scrollbar sticky top-0 z-20">
+        <button class="text-xs font-bold text-brand-600 border-b-2 border-brand-600 pb-1.5 whitespace-nowrap">Semua Menu</button>
+        <button class="text-xs font-medium text-slate-500 pb-1.5 whitespace-nowrap">Makanan Utama</button>
+        <button class="text-xs font-medium text-slate-500 pb-1.5 whitespace-nowrap">Minuman</button>
+        <button class="text-xs font-medium text-slate-500 pb-1.5 whitespace-nowrap">Tambahan</button>
+      </div>
+
+      <!-- Menu Items List -->
+      <div id="resto-menu-container" class="p-4 space-y-3">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Floating Bottom Cart Button -->
+      <div id="floating-cart-bar" class="hidden fixed bottom-6 left-0 right-0 max-w-[440px] mx-auto px-4 z-40">
+        <button onclick="navigate('screen-cart')" class="w-full bg-brand-600 hover:bg-brand-700 text-white p-3.5 rounded-2xl shadow-xl flex items-center justify-between active:scale-98 transition">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center font-bold text-xs" id="cart-total-qty">
+              2
+            </div>
+            <div class="text-left">
+              <div class="text-xs font-black" id="cart-resto-name">Warung Bu Tini</div>
+              <div class="text-[10px] text-brand-100">Klik untuk lanjut pembayaran</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-sm" id="cart-total-price">Rp 35.000</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </div>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 7: CART & CHECKOUT ==================== -->
+    <div id="screen-cart" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-28">
+      
+      <!-- Cart Header -->
+      <div class="bg-white p-4 border-b border-slate-200 flex items-center gap-3 sticky top-0 z-30">
+        <button onclick="navigate('screen-resto-detail')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+        </button>
+        <h2 class="text-base font-extrabold text-slate-800">Keranjang & Pembayaran</h2>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Delivery Address Card -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Alamat Pengantaran</span>
+            <button onclick="openLocationModal()" class="text-xs font-bold text-brand-600">Ubah</button>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs mt-0.5">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-slate-800" id="checkout-address-name">Rumah (Desa Palasari)</h4>
+              <p class="text-[11px] text-slate-500 mt-0.5" id="checkout-address-detail">Jl. Raya Ciater No. 45, RT 02/03, Dekat Masjid Al-Ikhlas</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ordered Items Summary -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h4 class="text-xs font-bold text-slate-800" id="cart-summary-resto">Warung Nasi Liwet Bu Tini</h4>
+            <button onclick="navigate('screen-resto-detail')" class="text-[11px] font-semibold text-brand-600">+ Tambah Menu</button>
+          </div>
+          <div id="cart-items-list" class="divide-y divide-slate-100">
+            <!-- Rendered by JS -->
+          </div>
+          
+          <!-- Note input -->
+          <div class="mt-3 pt-3 border-t border-slate-100">
+            <input id="order-note-input" type="text" placeholder="Catatan untuk resto/driver (misal: sambal dipisah ya)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:bg-white">
+          </div>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+          <h4 class="text-xs font-bold text-slate-800 mb-3 uppercase tracking-wide">Pilih Pembayaran</h4>
+          
+          <div class="space-y-2">
+            <!-- COD -->
+            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="payment-method" value="COD" checked class="text-brand-600 focus:ring-brand-500">
+                <div class="text-xs font-bold text-slate-800">💵 Bayar Tunai (COD)</div>
+              </div>
+              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Bayar ke Driver</span>
+            </label>
+
+            <!-- CiaterPay -->
+            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="payment-method" value="CiaterPay" class="text-brand-600 focus:ring-brand-500">
+                <div>
+                  <div class="text-xs font-bold text-slate-800">💳 CiaterPay Saldo</div>
+                  <div class="text-[10px] text-slate-400">Saldo saat ini: Rp 85.000</div>
+                </div>
+              </div>
+              <span class="text-[10px] bg-brand-50 text-brand-700 px-2 py-0.5 rounded font-bold">Instan</span>
+            </label>
+
+            <!-- QRIS / E-Wallet -->
+            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="payment-method" value="QRIS" class="text-brand-600 focus:ring-brand-500">
+                <div class="text-xs font-bold text-slate-800">📱 QRIS / GoPay / DANA / OVO</div>
+              </div>
+              <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">Otomatis</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Cost Breakdown -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2 text-xs">
+          <h4 class="font-bold text-slate-800 mb-2">Rincian Pembayaran</h4>
+          <div class="flex justify-between text-slate-500">
+            <span>Subtotal Makanan</span>
+            <span id="cost-subtotal">Rp 0</span>
+          </div>
+          <div class="flex justify-between text-slate-500">
+            <span>Ongkos Kirim (1.2 km)</span>
+            <span id="cost-delivery">Rp 6.000</span>
+          </div>
+          <div class="flex justify-between text-slate-500">
+            <span>Biaya Layanan Aplikasi</span>
+            <span>Rp 1.000</span>
+          </div>
+          <div class="flex justify-between text-emerald-600 font-semibold" id="cost-discount-row">
+            <span>Diskon Promo</span>
+            <span id="cost-discount">- Rp 0</span>
+          </div>
+          <div class="pt-2 border-t border-slate-200 flex justify-between font-black text-sm text-slate-900">
+            <span>Total Pembayaran</span>
+            <span id="cost-grand-total" class="text-brand-600">Rp 0</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Place Order Button -->
+      <div class="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white p-4 border-t border-slate-200 shadow-2xl z-40">
+        <button onclick="handlePlaceOrder('FOOD')" class="w-full py-4 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-extrabold rounded-2xl shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition">
+          <span>Pesan Sekarang</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 8: CIATERRIDE (OJEK & MOBIL) ==================== -->
+    <div id="screen-ride" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <!-- Ride Header -->
+      <div class="bg-white p-4 border-b border-slate-200 flex items-center gap-3 sticky top-0 z-30">
+        <button onclick="navigate('screen-home')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+        </button>
+        <div>
+          <h2 class="text-base font-extrabold text-slate-800">🏍️ CiaterRide</h2>
+          <p class="text-[11px] text-slate-400">Transportasi lokal cepat & nyaman</p>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Pickup & Dropoff Inputs -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+          <!-- Pickup -->
+          <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-emerald-100 ml-1"></div>
+            <div class="flex-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Titik Jemput</label>
+              <input id="ride-pickup-input" type="text" value="Pemandian Air Panas Sari Ater" class="w-full text-xs font-bold text-slate-800 focus:outline-none bg-transparent">
+            </div>
+          </div>
+
+          <div class="h-px bg-slate-100 ml-6"></div>
+
+          <!-- Destination -->
+          <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-red-500 ring-4 ring-red-100 ml-1"></div>
+            <div class="flex-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Tujuan Pengantaran</label>
+              <input id="ride-drop-input" type="text" value="Pasar Ciater / Terminal Jalancagak" class="w-full text-xs font-bold text-slate-800 focus:outline-none bg-transparent">
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Destination Badges -->
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-2 block">Tujuan Populer Ciater</span>
+          <div class="flex gap-2 overflow-x-auto no-scrollbar text-xs">
+            <button onclick="setRideDestination('Sari Ater Hot Spring Resort')" class="bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-medium text-slate-700 whitespace-nowrap hover:border-brand-500">♨️ Sari Ater</button>
+            <button onclick="setRideDestination('Ciater Highland Resort')" class="bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-medium text-slate-700 whitespace-nowrap hover:border-brand-500">🏡 Ciater Highland</button>
+            <button onclick="setRideDestination('Kebun Teh Palasari')" class="bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-medium text-slate-700 whitespace-nowrap hover:border-brand-500">🍃 Kebun Teh</button>
+            <button onclick="setRideDestination('Terminal Jalancagak Subang')" class="bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-medium text-slate-700 whitespace-nowrap hover:border-brand-500">🚌 Jalancagak</button>
+          </div>
+        </div>
+
+        <!-- Vehicle Type Options -->
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-2 block">Pilih Jenis Kendaraan</span>
+          
+          <div class="space-y-2.5">
+            <!-- CiaterBike (Motor) -->
+            <label class="flex items-center justify-between p-3.5 bg-white rounded-2xl border-2 border-brand-500 cursor-pointer shadow-sm">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="ride-vehicle" value="BIKE" checked class="text-brand-600 focus:ring-brand-500">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-xl">
+                  🛵
+                </div>
+                <div>
+                  <div class="text-xs font-black text-slate-800">CiaterBike (Motor)</div>
+                  <div class="text-[10px] text-slate-400">1 Penumpang • Cepat & lincah</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-black text-brand-600">Rp 10.000</div>
+                <div class="text-[9px] text-slate-400">Est. 8 menit</div>
+              </div>
+            </label>
+
+            <!-- CiaterCar (Mobil) -->
+            <label class="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-slate-200 cursor-pointer shadow-sm hover:border-slate-300">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="ride-vehicle" value="CAR" class="text-brand-600 focus:ring-brand-500">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-xl">
+                  🚗
+                </div>
+                <div>
+                  <div class="text-xs font-black text-slate-800">CiaterCar (Mobil)</div>
+                  <div class="text-[10px] text-slate-400">Maks. 4 Penumpang • Nyaman</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-black text-slate-800">Rp 25.000</div>
+                <div class="text-[9px] text-slate-400">Est. 12 menit</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Payment selector for ride -->
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-money-bill-wave text-brand-600"></i>
+            <span class="font-bold text-slate-700">Metode Bayar: Tunai / COD</span>
+          </div>
+          <button class="font-bold text-brand-600 text-[11px]">Ganti</button>
+        </div>
+
+      </div>
+
+      <!-- Book Ride Button -->
+      <div class="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white p-4 border-t border-slate-200 shadow-2xl z-40">
+        <button onclick="handlePlaceOrder('RIDE')" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition">
+          <span>Pesan CiaterRide Sekarang</span>
+          <i class="fa-solid fa-motorcycle"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 9: CIATERKIRIM (PENGIRIMAN BARANG) ==================== -->
+    <div id="screen-kirim" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <!-- Kirim Header -->
+      <div class="bg-white p-4 border-b border-slate-200 flex items-center gap-3 sticky top-0 z-30">
+        <button onclick="navigate('screen-home')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+        </button>
+        <div>
+          <h2 class="text-base font-extrabold text-slate-800">📦 CiaterKirim</h2>
+          <p class="text-[11px] text-slate-400">Antar dokumen, paket & oleh-oleh lokal</p>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Sender & Receiver Inputs -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase">📍 Lokasi Pengirim (Pickup)</label>
+            <input id="kirim-sender-loc" type="text" value="Desa Cisaat, RT 01, Ciater" class="w-full text-xs font-bold text-slate-800 border-b border-slate-100 pb-1 mt-1 focus:outline-none">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase">🏁 Lokasi Penerima (Tujuan)</label>
+            <input id="kirim-receiver-loc" type="text" value="Villa Palasari Blok C No. 12" class="w-full text-xs font-bold text-slate-800 border-b border-slate-100 pb-1 mt-1 focus:outline-none">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase">📞 No. WhatsApp Penerima</label>
+            <input id="kirim-receiver-phone" type="tel" value="0852-9988-1122" class="w-full text-xs font-bold text-slate-800 border-b border-slate-100 pb-1 mt-1 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Package Type Selection -->
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-2 block">Jenis Paket</span>
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="p-3 bg-white rounded-2xl border-2 border-brand-500 text-center cursor-pointer shadow-sm">
+              <div class="text-2xl mb-1">📄</div>
+              <div class="text-xs font-black text-slate-800">Dokumen / Surat</div>
+              <div class="text-[10px] text-brand-600 font-bold mt-0.5">Rp 8.000</div>
+            </div>
+            <div class="p-3 bg-white rounded-2xl border border-slate-200 text-center cursor-pointer shadow-sm hover:border-slate-300">
+              <div class="text-2xl mb-1">🛍️</div>
+              <div class="text-xs font-black text-slate-800">Paket Kecil (< 5kg)</div>
+              <div class="text-[10px] text-slate-500 font-bold mt-0.5">Rp 12.000</div>
+            </div>
+            <div class="p-3 bg-white rounded-2xl border border-slate-200 text-center cursor-pointer shadow-sm hover:border-slate-300">
+              <div class="text-2xl mb-1">📦</div>
+              <div class="text-xs font-black text-slate-800">Paket Sedang (< 15kg)</div>
+              <div class="text-[10px] text-slate-500 font-bold mt-0.5">Rp 18.000</div>
+            </div>
+            <div class="p-3 bg-white rounded-2xl border border-slate-200 text-center cursor-pointer shadow-sm hover:border-slate-300">
+              <div class="text-2xl mb-1">🚚</div>
+              <div class="text-xs font-black text-slate-800">Paket Besar / Boks</div>
+              <div class="text-[10px] text-slate-500 font-bold mt-0.5">Rp 35.000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Package Note -->
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200">
+          <label class="text-[10px] font-bold text-slate-400 uppercase">Deskripsi Isi Paket</label>
+          <input type="text" placeholder="Contoh: Nanas Madu Subang & Keripik 2 box" class="w-full text-xs text-slate-800 mt-1 focus:outline-none">
+        </div>
+
+      </div>
+
+      <!-- Book Kirim Button -->
+      <div class="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white p-4 border-t border-slate-200 shadow-2xl z-40">
+        <button onclick="handlePlaceOrder('KIRIM')" class="w-full py-4 bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-extrabold rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition">
+          <span>Panggil Kurir Sekarang</span>
+          <i class="fa-solid fa-box"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 10: REAL-TIME TRACKING ==================== -->
+    <div id="screen-tracking" class="screen hidden flex-1 flex flex-col bg-slate-900 text-white relative">
+      
+      <!-- Top Floating Back & Status Bar -->
+      <div class="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
+        <button onclick="navigate('screen-orders')" class="w-10 h-10 rounded-full bg-slate-900/80 backdrop-blur-md text-white flex items-center justify-center border border-white/10 shadow-lg">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="px-3.5 py-1.5 rounded-full bg-emerald-500/90 text-white text-xs font-extrabold backdrop-blur-md shadow-lg flex items-center gap-1.5 animate-pulse">
+          <span class="w-2 h-2 rounded-full bg-white"></span>
+          <span id="tracking-status-pill">Driver Menuju Lokasi</span>
+        </div>
+      </div>
+
+      <!-- Real-Time Leaflet Map Container -->
+      <div class="flex-1 bg-slate-950 relative overflow-hidden flex items-center justify-center min-h-[380px]">
+        <div id="customer-live-map" class="w-full h-full min-h-[380px] z-0"></div>
+      </div>
+
+      <!-- Bottom Sheet Tracking Detail -->
+      <div class="bg-white text-slate-800 rounded-t-[32px] p-5 shadow-2xl z-30">
+        
+        <!-- ETA & Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase">Estimasi Tiba</div>
+            <div class="text-xl font-black text-brand-600" id="tracking-eta">6 Menit Lagi</div>
+          </div>
+          <div class="text-right">
+            <div class="text-[10px] font-bold text-slate-400 uppercase">Order ID</div>
+            <div class="text-xs font-bold text-slate-700" id="tracking-order-id">#CTG-8921</div>
+          </div>
+        </div>
+
+        <!-- Driver Profile Card -->
+        <div class="flex items-center justify-between py-3.5">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-lg border border-emerald-200">
+              👨‍✈️
+            </div>
+            <div>
+              <h4 class="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
+                Dadang Sudrajat
+                <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold">⭐ 4.9</span>
+              </h4>
+              <p class="text-[11px] text-slate-500 mt-0.5">Honda Vario 125 • <strong class="text-slate-700">T 4521 ZK</strong></p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="handleCallDriver()" class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition">
+              <i class="fa-solid fa-phone text-sm"></i>
+            </button>
+            <button onclick="handleChatDriver()" class="w-10 h-10 rounded-2xl bg-brand-600 text-white flex items-center justify-center hover:bg-brand-700 shadow-sm transition">
+              <i class="fa-solid fa-comment text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step Progress Dots -->
+        <div class="grid grid-cols-4 gap-1.5 pt-2 text-center text-[10px]">
+          <div class="p-1.5 rounded-xl bg-brand-50 text-brand-700 font-bold border border-brand-200">
+            1. Diterima
+          </div>
+          <div class="p-1.5 rounded-xl bg-brand-600 text-white font-bold shadow-sm" id="step-pickup">
+            2. Diambil
+          </div>
+          <div class="p-1.5 rounded-xl bg-slate-100 text-slate-400 font-medium" id="step-transit">
+            3. Diantar
+          </div>
+          <div class="p-1.5 rounded-xl bg-slate-100 text-slate-400 font-medium" id="step-done">
+            4. Sampai
+          </div>
+        </div>
+
+        <!-- Simulation controls -->
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-[10px] text-slate-400 font-medium">Simulasi demo perjalanan:</span>
+          <button onclick="simulateOrderFinish()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-bold px-3 py-1.5 rounded-xl">
+            Simulasikan Selesai ✅
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 11: ORDERS HISTORY ==================== -->
+    <div id="screen-orders" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <!-- Orders Header -->
+      <div class="bg-white p-4 border-b border-slate-200 sticky top-0 z-30">
+        <h2 class="text-lg font-extrabold text-slate-800 mb-2">Riwayat Pesanan</h2>
+        
+        <!-- Filter Tabs -->
+        <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
+          <button onclick="filterOrdersTab('all', this)" class="flex-1 py-1.5 bg-white text-slate-800 rounded-lg shadow-sm">Semua</button>
+          <button onclick="filterOrdersTab('active', this)" class="flex-1 py-1.5 rounded-lg">Berlangsung</button>
+          <button onclick="filterOrdersTab('done', this)" class="flex-1 py-1.5 rounded-lg">Selesai</button>
+        </div>
+      </div>
+
+      <!-- Orders List Container -->
+      <div id="orders-history-container" class="p-4 space-y-3">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 12: PROMO & VOUCHERS ==================== -->
+    <div id="screen-promo" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <!-- Promo Header -->
+      <div class="bg-white p-4 border-b border-slate-200 flex items-center gap-3 sticky top-0 z-30">
+        <button onclick="navigate('screen-home')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+        </button>
+        <div>
+          <h2 class="text-base font-extrabold text-slate-800">🎁 Voucher & Promo</h2>
+          <p class="text-[11px] text-slate-400">Hemat setiap pesan di CiaterGo</p>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-3.5">
+        
+        <!-- Promo Code Input Form -->
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2">
+          <input id="custom-promo-code" type="text" placeholder="Masukkan kode voucher..." class="flex-1 text-xs font-bold uppercase text-slate-800 focus:outline-none">
+          <button onclick="applyCustomPromo()" class="px-4 py-2 bg-brand-600 text-white text-xs font-bold rounded-xl hover:bg-brand-700 transition">
+            Pakai
+          </button>
+        </div>
+
+        <!-- Voucher Card 1 -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div class="p-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white flex justify-between items-center">
+            <div>
+              <span class="text-[10px] bg-black/20 px-2 py-0.5 rounded font-bold uppercase">CiaterFood</span>
+              <h4 class="font-black text-base mt-1">Diskon Ongkir Rp 5.000</h4>
+              <p class="text-[11px] text-orange-100">Min. belanja Rp 25.000</p>
+            </div>
+            <div class="text-3xl">🍲</div>
+          </div>
+          <div class="p-3 bg-slate-50 flex items-center justify-between text-xs">
+            <span class="font-mono font-bold text-slate-700">KODE: CIATERKULINER</span>
+            <button onclick="usePromo('CIATERKULINER')" class="font-bold text-brand-600 hover:underline">Gunakan Voucher</button>
+          </div>
+        </div>
+
+        <!-- Voucher Card 2 -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div class="p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex justify-between items-center">
+            <div>
+              <span class="text-[10px] bg-black/20 px-2 py-0.5 rounded font-bold uppercase">CiaterRide</span>
+              <h4 class="font-black text-base mt-1">Potongan 30% Ojek</h4>
+              <p class="text-[11px] text-emerald-100">Berlaku untuk semua rute Ciater</p>
+            </div>
+            <div class="text-3xl">🛵</div>
+          </div>
+          <div class="p-3 bg-slate-50 flex items-center justify-between text-xs">
+            <span class="font-mono font-bold text-slate-700">KODE: RIDEHEMAT</span>
+            <button onclick="usePromo('RIDEHEMAT')" class="font-bold text-brand-600 hover:underline">Gunakan Voucher</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== SCREEN 13: USER PROFILE ==================== -->
+    <div id="screen-profile" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <!-- Profile Top Header -->
+      <div class="bg-white p-5 border-b border-slate-200">
+        <div class="flex items-center gap-3.5">
+          <div class="w-14 h-14 rounded-2xl bg-brand-600 text-white font-black text-xl flex items-center justify-center shadow-lg">
+            AG
+          </div>
+          <div>
+            <h3 class="font-black text-base text-slate-800">Asep Gunawan</h3>
+            <p class="text-xs text-slate-500">+62 821-1988-7766</p>
+            <span class="inline-block mt-1 text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-extrabold">
+              ⭐ Member Emas Ciater
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Wallet Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-md">
+          <div class="flex justify-between items-center mb-3">
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase font-bold">Dompet CiaterPay</span>
+              <h3 class="text-xl font-black text-emerald-400">Rp 85.000</h3>
+            </div>
+            <button onclick="topUpCiaterPay()" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs rounded-xl shadow transition">
+              + Isi Saldo
+            </button>
+          </div>
+          <div class="text-[11px] text-slate-400 flex items-center gap-1">
+            <i class="fa-solid fa-circle-check text-emerald-400"></i> Akun terverifikasi untuk pembayaran instan
+          </div>
+        </div>
+
+        <!-- Menu List Group -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm divide-y divide-slate-100 text-xs">
+          
+          <div onclick="navigate('screen-orders')" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-receipt text-brand-600 text-sm w-4 text-center"></i>
+              <span class="font-bold text-slate-700">Semua Pesanan Saya</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+          </div>
+
+          <div onclick="openLocationModal()" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-map-location-dot text-brand-600 text-sm w-4 text-center"></i>
+              <span class="font-bold text-slate-700">Daftar Alamat Tersimpan</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+          </div>
+
+          <div onclick="navigate('screen-promo')" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-tag text-brand-600 text-sm w-4 text-center"></i>
+              <span class="font-bold text-slate-700">Voucher & Kupon Promo</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+          </div>
+
+          <div onclick="showToast('Pusat Bantuan WhatsApp: 0812-3344-5566')" class="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-circle-question text-brand-600 text-sm w-4 text-center"></i>
+              <span class="font-bold text-slate-700">Bantuan & CS Ciater</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>
+          </div>
+
+        </div>
+
+        <!-- App Switcher inside Profile for easy testing -->
+        <div class="bg-brand-50 p-4 rounded-2xl border border-brand-200">
+          <h4 class="text-xs font-bold text-brand-900 uppercase tracking-wide mb-2">Buka Aplikasi Mitra / Pengelola</h4>
+          <div class="grid grid-cols-3 gap-2 text-center text-xs">
+            <a href="driver.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-emerald-50 border border-slate-200">
+              🏍️ Driver
+            </a>
+            <a href="merchant.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-orange-50 border border-slate-200">
+              🏪 Warung
+            </a>
+            <a href="admin.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-blue-50 border border-slate-200">
+              ⚙️ Admin
+            </a>
+          </div>
+        </div>
+
+        <!-- Logout button -->
+        <button onclick="handleLogout()" class="w-full py-3 bg-red-50 text-red-600 text-xs font-bold rounded-2xl border border-red-200 hover:bg-red-100 transition">
+          Keluar dari Akun
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
+    <div id="bottom-nav-bar" class="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto glass-nav border-t border-slate-200/80 px-4 py-2 flex justify-between items-center z-40 sm:rounded-b-[36px]">
+      
+      <button onclick="navigate('screen-home')" class="nav-item flex flex-col items-center gap-1 text-brand-600 py-1 flex-1">
+        <i class="fa-solid fa-house text-base"></i>
+        <span class="text-[10px] font-bold">Beranda</span>
+      </button>
+
+      <button onclick="navigate('screen-food')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 py-1 flex-1">
+        <i class="fa-solid fa-utensils text-base"></i>
+        <span class="text-[10px] font-medium">Makanan</span>
+      </button>
+
+      <button onclick="navigate('screen-orders')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 py-1 flex-1 relative">
+        <i class="fa-solid fa-receipt text-base"></i>
+        <span class="text-[10px] font-medium">Pesanan</span>
+        <span id="active-order-badge" class="hidden absolute top-0 right-4 w-2 h-2 bg-brand-500 rounded-full animate-ping"></span>
+      </button>
+
+      <button onclick="navigate('screen-promo')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 py-1 flex-1">
+        <i class="fa-solid fa-percent text-base"></i>
+        <span class="text-[10px] font-medium">Promo</span>
+      </button>
+
+      <button onclick="navigate('screen-profile')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 py-1 flex-1">
+        <i class="fa-solid fa-user text-base"></i>
+        <span class="text-[10px] font-medium">Akun</span>
+      </button>
+
+    </div>
+
+    <!-- ==================== MODAL: LOCATION SELECTOR ==================== -->
+    <div id="modal-location" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[440px] rounded-t-[32px] sm:rounded-[32px] p-5 space-y-4 max-h-[85vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="text-sm font-extrabold text-slate-800">Pilih Lokasi Pengantaran</h3>
+          <button onclick="closeLocationModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div onclick="selectLocation('Desa Palasari, Kec. Ciater', 'Jl. Raya Ciater No. 45')" class="p-3 rounded-2xl border border-brand-500 bg-brand-50/50 cursor-pointer">
+            <div class="font-bold text-slate-800">🏠 Rumah (Utama)</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">Desa Palasari, Kec. Ciater - Subang</div>
+          </div>
+          <div onclick="selectLocation('Sari Ater Hot Spring Resort', 'Area Parkir Utama Villa')" class="p-3 rounded-2xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+            <div class="font-bold text-slate-800">♨️ Sari Ater Hot Spring Resort</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">Jl. Raya Ciater, Nagrak, Ciater</div>
+          </div>
+          <div onclick="selectLocation('Ciater Highland Resort', 'Cluster Ranch Blok B7')" class="p-3 rounded-2xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+            <div class="font-bold text-slate-800">🏡 Ciater Highland Resort</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">Cisaat, Kec. Ciater</div>
+          </div>
+          <div onclick="selectLocation('Kantor Desa Cisaat', 'Kawasan Desa Wisata Edukasi')" class="p-3 rounded-2xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+            <div class="font-bold text-slate-800">🏢 Desa Wisata Cisaat</div>
+            <div class="text-slate-500 text-[11px] mt-0.5">Cisaat, Ciater</div>
+          </div>
+        </div>
+
+        <button onclick="showToast('Fitur pin point GPS aktif'); closeLocationModal();" class="w-full py-3 bg-slate-100 text-slate-700 font-bold rounded-2xl text-xs flex items-center justify-center gap-2">
+          <i class="fa-solid fa-crosshairs text-brand-600"></i> Gunakan Titik GPS Saat Ini
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: IN-APP CHAT WITH DRIVER ==================== -->
+    <div id="modal-chat" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[440px] rounded-t-[32px] sm:rounded-[32px] flex flex-col h-[80vh] max-h-[600px] overflow-hidden shadow-2xl">
+        
+        <!-- Chat Header -->
+        <div class="p-4 bg-brand-600 text-white flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl">
+              👨‍✈️
+            </div>
+            <div>
+              <h4 class="text-xs font-black text-white flex items-center gap-1.5">
+                Dadang Sudrajat <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
+              </h4>
+              <p class="text-[10px] text-brand-100 font-medium">Honda Vario 125 • T 4521 ZK</p>
+            </div>
+          </div>
+          <button onclick="closeChatModal()" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white text-xs">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Messages Bubble Area -->
+        <div id="chat-messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-xs">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Quick Reply Chips -->
+        <div class="px-3 py-2 bg-white border-t border-slate-100 flex gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+          <button onclick="sendQuickReply('Saya sudah di depan pagar ya pak')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            📍 Sudah di depan pagar
+          </button>
+          <button onclick="sendQuickReply('Tolong titip di satpam villa ya')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            🏡 Titip di pos satpam
+          </button>
+          <button onclick="sendQuickReply('Sudah sampai mana pak?')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            ⏱️ Sampai mana pak?
+          </button>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+          <input id="chat-text-input" type="text" placeholder="Tulis pesan ke driver..." class="flex-1 text-xs bg-slate-100 px-3.5 py-2.5 rounded-2xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 font-medium" onkeydown="if(event.key==='Enter') sendCustomerChat()">
+          <button onclick="sendCustomerChat()" class="w-10 h-10 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center active:scale-95 transition shadow-md shadow-brand-600/30">
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: QR CODE SCAN FOR SMARTPHONE ==================== -->
+    <div id="modal-qr" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white w-full max-w-sm rounded-[32px] p-6 text-center shadow-2xl space-y-4">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div class="flex items-center gap-2 text-slate-800 font-extrabold text-sm">
+            <i class="fa-solid fa-mobile-screen text-brand-600"></i> Buka di Smartphone
+          </div>
+          <button onclick="closeQrModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-500 leading-relaxed">
+          Scan QR Code di bawah dengan kamera HP Anda untuk membuka aplikasi langsung di smartphone:
+        </p>
+
+        <!-- QR Image Display -->
+        <div class="bg-slate-50 p-4 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center">
+          <img id="qr-image-display" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=http://localhost:3000" alt="QR Code" class="w-44 h-44 rounded-xl shadow-md bg-white p-2">
+          <span class="text-[11px] font-mono font-bold text-slate-700 mt-2.5 truncate max-w-full px-2" id="qr-url-text">http://localhost:3000</span>
+        </div>
+
+        <!-- Role Selectors for QR -->
+        <div class="grid grid-cols-4 gap-1.5 text-[10px] font-bold">
+          <button onclick="updateQrTarget('index.html')" class="p-1.5 bg-brand-50 text-brand-700 rounded-xl border border-brand-200">User</button>
+          <button onclick="updateQrTarget('driver.html')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">Driver</button>
+          <button onclick="updateQrTarget('merchant.html')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">Resto</button>
+          <button onclick="updateQrTarget('admin.html')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">Admin</button>
+        </div>
+
+        <div class="text-[10px] text-slate-400">
+          💡 Pastikan laptop & HP berada dalam jaringan Wi-Fi yang sama jika menggunakan server Node.js.
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-msg" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-xs bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-2 transition-all">
+      <i class="fa-solid fa-circle-check text-emerald-400"></i>
+      <span id="toast-text">Berhasil menambahkan ke keranjang</span>
+    </div>
+
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    // MOCK DATA: RESTAURANTS & MENUS IN CIATER SUBANG
+    const RESTAURANTS = [
+      {
+        id: 'resto-1',
+        name: 'Warung Nasi Liwet Bu Tini',
+        category: 'sunda',
+        emoji: '🥘',
+        rating: 4.9,
+        reviews: 240,
+        distance: '0.8 km',
+        time: '15-20 mnt',
+        isOpen: true,
+        desc: 'Nasi liwet kastrol khas Sunda komplit ayam kampung & sambal dadak',
+        menus: [
+          { id: 'm1', name: 'Paket Liwet Komplit Ayam Bakar', price: 28000, emoji: '🍗', desc: 'Nasi liwet, ayam bakar bumbu rujak, tahu tempe, lalap sambal' },
+          { id: 'm2', name: 'Nasi Liwet Kastrol Kasturi (2 Porsi)', price: 45000, emoji: '🥘', desc: 'Liwet wangi daun jeruk & ikan teri asin' },
+          { id: 'm3', name: 'Gurame Bakar Sambal Cobek', price: 42000, emoji: '🐟', desc: 'Ikan gurame segar bakar kecap pedas gurih' },
+          { id: 'm4', name: 'Karedok Leunca Khas Ciater', price: 12000, emoji: '🥗', desc: 'Lalapan segar bumbu kencur pedas' },
+          { id: 'm5', name: 'Es Teh Manis Melati', price: 5000, emoji: '🧋', desc: 'Teh tubruk wangi sejuk' }
+        ]
+      },
+      {
+        id: 'resto-2',
+        name: 'Sate Maranggi Sari Ater Mang Ocid',
+        category: 'sunda',
+        emoji: '🍢',
+        rating: 4.8,
+        reviews: 189,
+        distance: '1.2 km',
+        time: '20-25 mnt',
+        isOpen: true,
+        desc: 'Sate maranggi sapi & kambing empuk sambal tomat segar',
+        menus: [
+          { id: 'm6', name: 'Sate Maranggi Sapi (10 Tusuk)', price: 35000, emoji: '🍢', desc: 'Daging sapi marinasi rempah khas + sambal tomat' },
+          { id: 'm7', name: 'Sate Maranggi Kambing (10 Tusuk)', price: 38000, emoji: '🍢', desc: 'Daging kambing empuk tanpa bau prengus' },
+          { id: 'm8', name: 'Ketan Bakar Bumbu Oncom', price: 10000, emoji: '🍙', desc: 'Ketan pulen bakar dengan cocolan oncom gurih' },
+          { id: 'm9', name: 'Es Kelapa Muda Jeruk', price: 12000, emoji: '🥥', desc: 'Air kelapa murni segar' }
+        ]
+      },
+      {
+        id: 'resto-3',
+        name: 'Bakso Rudal Urat Pak Kumis Ciater',
+        category: 'bakso',
+        emoji: '🍜',
+        rating: 4.7,
+        reviews: 310,
+        distance: '0.5 km',
+        time: '10-15 mnt',
+        isOpen: true,
+        desc: 'Bakso urat jumbo daging asli kuah kaldu sapi gurih mantap',
+        menus: [
+          { id: 'm10', name: 'Bakso Urat Jumbo Super', price: 22000, emoji: '🍜', desc: '1 bakso urat besar + 3 bakso halus + mie bihun tahu' },
+          { id: 'm11', name: 'Mie Ayam Bakso Ceker', price: 18000, emoji: '🍝', desc: 'Mie kenyal topping ayam manis gurih + ceker empuk' },
+          { id: 'm12', name: 'Bakso Beranak Mercon', price: 28000, emoji: '🌶️', desc: 'Bakso isi cincang cabai rawit pedas gila' },
+          { id: 'm13', name: 'Es Jeruk Peras Segar', price: 7000, emoji: '🍊', desc: 'Jeruk peras asli manis dingin' }
+        ]
+      },
+      {
+        id: 'resto-4',
+        name: 'Ayam Goreng & Bakar Madu Palasari',
+        category: 'ayam',
+        emoji: '🍗',
+        rating: 4.9,
+        reviews: 145,
+        distance: '1.5 km',
+        time: '15-20 mnt',
+        isOpen: true,
+        desc: 'Ayam kampung bakar madu legit meresap sampai ke tulang',
+        menus: [
+          { id: 'm14', name: 'Paket Ayam Bakar Madu + Nasi', price: 25000, emoji: '🍗', desc: 'Ayam madu legit, nasi hangat, sambal bajak' },
+          { id: 'm15', name: 'Bebek Goreng Kremes Renyah', price: 32000, emoji: '🦆', desc: 'Bebek gurih empuk tabur kremes gurih' },
+          { id: 'm16', name: 'Sayur Asem Khas Sunda', price: 10000, emoji: '🥣', desc: 'Sayur asem kuah segar isi jagung melinjo' }
+        ]
+      },
+      {
+        id: 'resto-5',
+        name: 'Oleh-Oleh Nanas Madu Subang & Keripik',
+        category: 'snack',
+        emoji: '🍍',
+        rating: 4.8,
+        reviews: 98,
+        distance: '0.4 km',
+        time: '10-15 mnt',
+        isOpen: true,
+        desc: 'Nanas Simadu manis tanpa gatal, dodol nanas & keripik oncom',
+        menus: [
+          { id: 'm17', name: 'Nanas Simadu Subang Grade A (2 Buah)', price: 30000, emoji: '🍍', desc: 'Nanas madu manis legit siap makan' },
+          { id: 'm18', name: 'Dodol Nanas Asli Ciater (Box 250g)', price: 20000, emoji: '🍬', desc: 'Dodol legit lembut aroma nanas segar' },
+          { id: 'm19', name: 'Keripik Tempe Oncom Renyah', price: 15000, emoji: '🍘', desc: 'Cemilan gurih khas oleh-oleh Subang' }
+        ]
+      },
+      {
+        id: 'resto-6',
+        name: 'Kedai Kopi Teh Kebun Ciater',
+        category: 'minuman',
+        emoji: '☕',
+        rating: 4.6,
+        reviews: 112,
+        distance: '1.8 km',
+        time: '15-20 mnt',
+        isOpen: true,
+        desc: 'Kopi Arabika Ciater, teh hijau pucuk & pisang goreng keju',
+        menus: [
+          { id: 'm20', name: 'Kopi Susu Gula Aren Ciater', price: 16000, emoji: '☕', desc: 'Espresso lokal blend susu fresh aren murni' },
+          { id: 'm21', name: 'Teh Hijau Seduh Pucuk Segar', price: 10000, emoji: '🍵', desc: 'Teh asli perkebunan teh Ciater' },
+          { id: 'm22', name: 'Pisang Goreng Keju Cokelat', price: 15000, emoji: '🍌', desc: 'Pisang tanduk renyah topping keju susu' }
+        ]
+      }
+    ];
+
+    // STATE VARIABLES
+    let currentScreen = 'screen-splash';
+    let selectedResto = RESTAURANTS[0];
+    let cart = []; // [{ item, qty }]
+    let activePromo = null;
+    let userBalance = 85000;
+    let orderHistory = [
+      {
+        id: 'CTG-7721',
+        service: 'FOOD',
+        title: 'Warung Nasi Liwet Bu Tini',
+        date: 'Hari ini, 12:30',
+        items: '1x Paket Liwet Komplit, 1x Es Teh',
+        total: 39000,
+        status: 'SELESAI',
+        statusColor: 'emerald'
+      },
+      {
+        id: 'CTG-6643',
+        service: 'RIDE',
+        title: 'CiaterBike ke Sari Ater',
+        date: 'Kemarin, 16:45',
+        items: 'Jemput: Desa Palasari',
+        total: 10000,
+        status: 'SELESAI',
+        statusColor: 'emerald'
+      }
+    ];
+    let currentActiveOrder = null;
+
+    // INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      // Register PWA Service Worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg Error:', err));
+      }
+
+      // Load Orders from Shared Sync DB
+      if (window.CiaterSync) {
+        const stored = CiaterSync.getStoredOrders();
+        if (stored && stored.length > 0) {
+          orderHistory = stored;
+        }
+        // Listen to Realtime Events from Driver / Merchant / Admin
+        CiaterSync.listenSyncEvents((type, payload) => {
+          console.log('[User App] Sync Event:', type, payload);
+          if (type === 'STATUS_UPDATED' || type === 'ORDER_CREATED') {
+            orderHistory = CiaterSync.getStoredOrders();
+            renderOrdersHistory();
+            if (currentActiveOrder && payload.orderId === currentActiveOrder.id) {
+              handleRemoteStatusUpdate(payload.status);
+            }
+          } else if (type === 'CHAT_MESSAGE') {
+            renderChatMessages();
+            if (payload.message && payload.message.role !== 'customer') {
+              showToast(`💬 Pesan dari Driver: "${payload.message.text}"`);
+            }
+          }
+        });
+      }
+
+      renderHomeMerchants();
+      renderFoodRestaurants(RESTAURANTS);
+      renderOrdersHistory();
+      
+      // Auto advance splash screen
+      setTimeout(() => {
+        if (currentScreen === 'screen-splash') {
+          navigate('screen-home');
+        }
+      }, 2200);
+
+      // Handle OTP boxes auto focus
+      const otpInputs = document.querySelectorAll('.otp-box');
+      otpInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+          if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus();
+          }
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !e.target.value && index > 0) {
+            otpInputs[index - 1].focus();
+          }
+        });
+      });
+    });
+
+    function handleRemoteStatusUpdate(newStatus) {
+      const statusPill = document.getElementById('tracking-status-pill');
+      if (newStatus === 'COOKING') {
+        if (statusPill) statusPill.innerText = 'Warung Sedang Memasak Pesanan Anda';
+        showToast('🍳 Warung mulai memasak pesanan Anda!');
+      } else if (newStatus === 'READY') {
+        if (statusPill) statusPill.innerText = 'Makanan Siap! Driver Menuju Warung';
+        showToast('✅ Makanan siap! Driver segera mengambil pesanan.');
+      } else if (newStatus === 'DRIVER_PICKED_UP' || newStatus === 'DRIVER_ON_WAY') {
+        if (statusPill) statusPill.innerText = 'Driver Sedang Mengantar ke Alamat Anda';
+        document.getElementById('step-transit')?.classList.add('bg-brand-600', 'text-white');
+        showToast('🛵 Driver telah mengambil pesanan dan dalam perjalanan!');
+      } else if (newStatus === 'COMPLETED' || newStatus === 'SELESAI') {
+        simulateOrderFinish();
+      }
+    }
+
+    // NAVIGATION SYSTEM
+    function navigate(screenId) {
+      document.querySelectorAll('.screen').forEach(s => {
+        s.classList.add('hidden');
+      });
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.remove('hidden');
+        currentScreen = screenId;
+        window.scrollTo(0, 0);
+      }
+
+      // Hide bottom nav on specific fullscreen views
+      const hideNavScreens = ['screen-splash', 'screen-auth', 'screen-otp', 'screen-tracking', 'screen-cart'];
+      const navBar = document.getElementById('bottom-nav-bar');
+      if (hideNavScreens.includes(screenId)) {
+        navBar.classList.add('hidden');
+      } else {
+        navBar.classList.remove('hidden');
+      }
+
+      // Update Nav active icon colors
+      updateBottomNavActive(screenId);
+    }
+
+    function updateBottomNavActive(screenId) {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('text-brand-600');
+        item.classList.add('text-slate-400');
+      });
+      if (screenId === 'screen-home') document.querySelectorAll('.nav-item')[0]?.classList.add('text-brand-600');
+      if (screenId === 'screen-food' || screenId === 'screen-resto-detail') document.querySelectorAll('.nav-item')[1]?.classList.add('text-brand-600');
+      if (screenId === 'screen-orders') document.querySelectorAll('.nav-item')[2]?.classList.add('text-brand-600');
+      if (screenId === 'screen-promo') document.querySelectorAll('.nav-item')[3]?.classList.add('text-brand-600');
+      if (screenId === 'screen-profile') document.querySelectorAll('.nav-item')[4]?.classList.add('text-brand-600');
+    }
+
+    // RENDER HOME MERCHANTS
+    function renderHomeMerchants() {
+      const container = document.getElementById('home-merchant-list');
+      if (!container) return;
+      container.innerHTML = RESTAURANTS.slice(0, 3).map(resto => `
+        <div onclick="openRestoDetail('${resto.id}')" class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition active:scale-98 cursor-pointer flex gap-3.5 items-center">
+          <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl shadow-inner shrink-0">
+            ${resto.emoji}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <h4 class="font-extrabold text-xs text-slate-800 truncate">${resto.name}</h4>
+              <span class="text-[10px] font-black text-amber-500 flex items-center gap-1">
+                <i class="fa-solid fa-star"></i> ${resto.rating}
+              </span>
+            </div>
+            <p class="text-[10px] text-slate-400 truncate mt-0.5">${resto.desc}</p>
+            <div class="flex items-center gap-2 text-[10px] text-slate-500 font-semibold mt-1.5">
+              <span><i class="fa-solid fa-location-dot text-brand-600"></i> ${resto.distance}</span>
+              <span>•</span>
+              <span><i class="fa-solid fa-clock text-slate-400"></i> ${resto.time}</span>
+              <span>•</span>
+              <span class="text-brand-600 font-bold">Ongkir Rp 5rb</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // RENDER FOOD RESTAURANTS LIST
+    function renderFoodRestaurants(list) {
+      const container = document.getElementById('food-restaurant-container');
+      if (!container) return;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12">
+            <div class="text-4xl mb-2">🔍</div>
+            <h4 class="text-xs font-bold text-slate-700">Tidak ada warung/resto ditemukan</h4>
+            <p class="text-[11px] text-slate-400">Coba kata kunci lain atau ganti kategori</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(resto => `
+        <div onclick="openRestoDetail('${resto.id}')" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition active:scale-98 cursor-pointer flex gap-3.5 items-center">
+          <div class="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center text-3xl shadow-inner shrink-0 border border-amber-100">
+            ${resto.emoji}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <h4 class="font-extrabold text-xs text-slate-800 truncate">${resto.name}</h4>
+              <span class="text-[10px] font-black text-amber-500 flex items-center gap-1">
+                <i class="fa-solid fa-star"></i> ${resto.rating} (${resto.reviews})
+              </span>
+            </div>
+            <p class="text-[10px] text-slate-500 truncate mt-0.5">${resto.desc}</p>
+            <div class="flex items-center gap-2 text-[10px] text-slate-500 font-semibold mt-2">
+              <span class="bg-slate-100 px-2 py-0.5 rounded text-slate-700">📍 ${resto.distance}</span>
+              <span class="bg-brand-50 text-brand-700 px-2 py-0.5 rounded font-bold">⏱️ ${resto.time}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // FILTER RESTAURANTS BY CATEGORY
+    function filterFoodCategory(category, btn) {
+      document.querySelectorAll('.category-chip').forEach(c => {
+        c.classList.remove('bg-brand-600', 'text-white');
+        c.classList.add('bg-slate-100', 'text-slate-600');
+      });
+      btn.classList.remove('bg-slate-100', 'text-slate-600');
+      btn.classList.add('bg-brand-600', 'text-white');
+
+      if (category === 'all') {
+        renderFoodRestaurants(RESTAURANTS);
+      } else {
+        const filtered = RESTAURANTS.filter(r => r.category === category);
+        renderFoodRestaurants(filtered);
+      }
+    }
+
+    function handleFoodSearch() {
+      const q = document.getElementById('food-search-input').value.toLowerCase().trim();
+      const filtered = RESTAURANTS.filter(r => 
+        r.name.toLowerCase().includes(q) || 
+        r.desc.toLowerCase().includes(q) ||
+        r.menus.some(m => m.name.toLowerCase().includes(q))
+      );
+      renderFoodRestaurants(filtered);
+    }
+
+    // OPEN RESTO DETAIL & RENDER MENUS
+    function openRestoDetail(restoId) {
+      selectedResto = RESTAURANTS.find(r => r.id === restoId) || RESTAURANTS[0];
+      
+      document.getElementById('resto-detail-name').innerText = selectedResto.name;
+      document.getElementById('resto-detail-rating').innerText = selectedResto.rating;
+      document.getElementById('resto-detail-distance').innerText = selectedResto.distance;
+      document.getElementById('resto-detail-time').innerText = selectedResto.time;
+      document.getElementById('resto-hero-emoji').innerText = selectedResto.emoji;
+
+      const container = document.getElementById('resto-menu-container');
+      container.innerHTML = selectedResto.menus.map(menu => {
+        const inCart = cart.find(c => c.item.id === menu.id);
+        const qty = inCart ? inCart.qty : 0;
+
+        return `
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center text-2xl shrink-0 border border-slate-100">
+                ${menu.emoji}
+              </div>
+              <div>
+                <h4 class="text-xs font-extrabold text-slate-800">${menu.name}</h4>
+                <p class="text-[10px] text-slate-400 line-clamp-1 mt-0.5">${menu.desc}</p>
+                <div class="text-xs font-black text-brand-600 mt-1">Rp ${menu.price.toLocaleString('id-ID')}</div>
+              </div>
+            </div>
+
+            <!-- Add / Quantity Controls -->
+            <div class="shrink-0">
+              ${qty === 0 ? `
+                <button onclick="addToCart('${menu.id}')" class="px-3.5 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 font-bold text-xs rounded-xl active:scale-95 transition">
+                  + Tambah
+                </button>
+              ` : `
+                <div class="flex items-center gap-2 bg-brand-50 border border-brand-200 rounded-xl p-1 text-xs">
+                  <button onclick="updateCartQty('${menu.id}', -1)" class="w-6 h-6 rounded-lg bg-white text-brand-700 font-bold flex items-center justify-center shadow-xs">-</button>
+                  <span class="font-extrabold text-brand-800 px-1">${qty}</span>
+                  <button onclick="updateCartQty('${menu.id}', 1)" class="w-6 h-6 rounded-lg bg-brand-600 text-white font-bold flex items-center justify-center shadow-xs">+</button>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateCartBar();
+      navigate('screen-resto-detail');
+    }
+
+    // CART MANAGEMENT
+    function addToCart(menuId) {
+      const menu = selectedResto.menus.find(m => m.id === menuId);
+      if (!menu) return;
+
+      const existing = cart.find(c => c.item.id === menuId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ item: menu, qty: 1 });
+      }
+
+      showToast(`Ditambahkan: ${menu.name}`);
+      openRestoDetail(selectedResto.id);
+    }
+
+    function updateCartQty(menuId, change) {
+      const idx = cart.findIndex(c => c.item.id === menuId);
+      if (idx !== -1) {
+        cart[idx].qty += change;
+        if (cart[idx].qty <= 0) {
+          cart.splice(idx, 1);
+        }
+      }
+      openRestoDetail(selectedResto.id);
+      renderCartItems();
+    }
+
+    function updateCartBar() {
+      const bar = document.getElementById('floating-cart-bar');
+      if (cart.length === 0) {
+        bar.classList.add('hidden');
+        return;
+      }
+
+      bar.classList.remove('hidden');
+      const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+      const totalPrice = cart.reduce((sum, i) => sum + (i.item.price * i.qty), 0);
+
+      document.getElementById('cart-total-qty').innerText = totalQty;
+      document.getElementById('cart-resto-name').innerText = selectedResto.name;
+      document.getElementById('cart-total-price').innerText = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+    }
+
+    // RENDER CART PAGE
+    function renderCartItems() {
+      const container = document.getElementById('cart-items-list');
+      if (!container) return;
+
+      if (cart.length === 0) {
+        navigate('screen-food');
+        return;
+      }
+
+      document.getElementById('cart-summary-resto').innerText = selectedResto.name;
+
+      container.innerHTML = cart.map(c => `
+        <div class="py-3 flex items-center justify-between gap-2">
+          <div class="min-w-0">
+            <h5 class="text-xs font-bold text-slate-800">${c.item.name}</h5>
+            <div class="text-[11px] text-slate-400">Rp ${c.item.price.toLocaleString('id-ID')} x ${c.qty}</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-extrabold text-slate-800">Rp ${(c.item.price * c.qty).toLocaleString('id-ID')}</span>
+            <div class="flex items-center gap-1.5 bg-slate-100 rounded-lg p-0.5 text-xs">
+              <button onclick="updateCartQty('${c.item.id}', -1)" class="w-5 h-5 rounded bg-white text-slate-700 font-bold flex items-center justify-center">-</button>
+              <span class="font-bold px-1 text-[11px]">${c.qty}</span>
+              <button onclick="updateCartQty('${c.item.id}', 1)" class="w-5 h-5 rounded bg-brand-600 text-white font-bold flex items-center justify-center">+</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Calculate totals
+      const subtotal = cart.reduce((sum, i) => sum + (i.item.price * i.qty), 0);
+      const deliveryFee = 6000;
+      const serviceFee = 1000;
+      let discount = activePromo === 'CIATERKULINER' ? 5000 : 0;
+      const grandTotal = Math.max(0, subtotal + deliveryFee + serviceFee - discount);
+
+      document.getElementById('cost-subtotal').innerText = `Rp ${subtotal.toLocaleString('id-ID')}`;
+      document.getElementById('cost-delivery').innerText = `Rp ${deliveryFee.toLocaleString('id-ID')}`;
+      document.getElementById('cost-discount').innerText = `- Rp ${discount.toLocaleString('id-ID')}`;
+      document.getElementById('cost-grand-total').innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+    }
+
+    // ORDER PLACEMENT & DISPATCH SIMULATION
+    function handlePlaceOrder(serviceType) {
+      let orderTitle = '';
+      let orderItems = '';
+      let total = 0;
+
+      if (serviceType === 'FOOD') {
+        if (cart.length === 0) {
+          showToast('Keranjang Anda kosong!');
+          return;
+        }
+        orderTitle = selectedResto.name;
+        orderItems = cart.map(c => `${c.qty}x ${c.item.name}`).join(', ');
+        const subtotal = cart.reduce((sum, i) => sum + (i.item.price * i.qty), 0);
+        total = subtotal + 7000;
+      } else if (serviceType === 'RIDE') {
+        const pickup = document.getElementById('ride-pickup-input').value;
+        const drop = document.getElementById('ride-drop-input').value;
+        const vehicle = document.querySelector('input[name="ride-vehicle"]:checked').value;
+        orderTitle = `CiaterRide (${vehicle === 'BIKE' ? 'Motor' : 'Mobil'})`;
+        orderItems = `Dari: ${pickup} ➔ Ke: ${drop}`;
+        total = vehicle === 'BIKE' ? 10000 : 25000;
+      } else if (serviceType === 'KIRIM') {
+        const sender = document.getElementById('kirim-sender-loc').value;
+        const receiver = document.getElementById('kirim-receiver-loc').value;
+        orderTitle = 'CiaterKirim Paket Lokal';
+        orderItems = `Dari: ${sender} ➔ Ke: ${receiver}`;
+        total = 12000;
+      }
+
+      const orderId = 'CTG-' + Math.floor(1000 + Math.random() * 9000);
+      
+      currentActiveOrder = {
+        id: orderId,
+        service: serviceType,
+        title: orderTitle,
+        date: 'Baru saja',
+        items: orderItems,
+        total: total,
+        status: 'PENDING',
+        statusColor: 'amber',
+        merchantName: serviceType === 'FOOD' ? selectedResto.name : 'Layanan Ciater',
+        customerName: 'Asep Gunawan',
+        customerPhone: '+62 821-1988-7766'
+      };
+
+      if (window.CiaterSync) {
+        CiaterSync.addOrder(currentActiveOrder);
+      } else {
+        orderHistory.unshift(currentActiveOrder);
+      }
+
+      cart = []; // reset cart
+      renderOrdersHistory();
+
+      // Setup tracking screen
+      document.getElementById('tracking-order-id').innerText = '#' + orderId;
+      document.getElementById('tracking-status-pill').innerText = 'Driver Sedang Menuju Titik Penjemputan';
+      document.getElementById('tracking-eta').innerText = '6 Menit';
+      document.getElementById('active-order-badge').classList.remove('hidden');
+
+      showToast('🎉 Pesanan Berhasil! Mencari driver...');
+      navigate('screen-tracking');
+
+      // Start Real Leaflet Map & GPS Tracking
+      initCustomerLiveMap();
+    }
+
+    // REAL LEAFLET MAP TRACKING IN CIATER SUBANG
+    let leafletMapInstance = null;
+    let driverMapMarker = null;
+    let customerMapMarker = null;
+    let pickupMapMarker = null;
+    let routePolyline = null;
+
+    function initCustomerLiveMap() {
+      setTimeout(() => {
+        const mapContainer = document.getElementById('customer-live-map');
+        if (!mapContainer || typeof L === 'undefined') return;
+
+        if (leafletMapInstance) {
+          leafletMapInstance.remove();
+          leafletMapInstance = null;
+        }
+
+        // Coordinates around Ciater Subang
+        const pickupCoords = [-6.7350, 107.6580]; // Warung Nasi Bu Tini (Palasari)
+        let driverCoords = [-6.7360, 107.6570]; // Driver position
+        const customerCoords = [-6.7412, 107.6534]; // Customer position (Sari Ater / Palasari)
+
+        leafletMapInstance = L.map('customer-live-map', {
+          zoomControl: false,
+          attributionControl: false
+        }).setView(driverCoords, 15);
+
+        // OpenStreetMap clean dark/voyager tiles
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          maxZoom: 19
+        }).addTo(leafletMapInstance);
+
+        // Custom emoji icons
+        const driverIcon = L.divIcon({
+          className: 'custom-driver-icon',
+          html: `<div class="w-10 h-10 rounded-2xl bg-emerald-600 border-2 border-white shadow-xl flex items-center justify-center text-xl text-white transform -translate-x-1/2 -translate-y-1/2 animate-bounce">🛵</div>`,
+          iconSize: [40, 40]
+        });
+
+        const storeIcon = L.divIcon({
+          className: 'custom-store-icon',
+          html: `<div class="w-8 h-8 rounded-full bg-orange-500 border-2 border-white shadow-lg flex items-center justify-center text-sm text-white transform -translate-x-1/2 -translate-y-1/2">🥘</div>`,
+          iconSize: [32, 32]
+        });
+
+        const userIcon = L.divIcon({
+          className: 'custom-user-icon',
+          html: `<div class="w-8 h-8 rounded-full bg-red-500 border-2 border-white shadow-lg flex items-center justify-center text-sm text-white transform -translate-x-1/2 -translate-y-1/2">📍</div>`,
+          iconSize: [32, 32]
+        });
+
+        pickupMapMarker = L.marker(pickupCoords, { icon: storeIcon }).addTo(leafletMapInstance).bindPopup('<b>Warung Nasi Bu Tini</b><br>Titik Pengambilan');
+        customerMapMarker = L.marker(customerCoords, { icon: userIcon }).addTo(leafletMapInstance).bindPopup('<b>Lokasi Anda</b><br>Desa Palasari, Ciater');
+        driverMapMarker = L.marker(driverCoords, { icon: driverIcon }).addTo(leafletMapInstance).bindPopup('<b>Pak Dadang (Driver)</b><br>Honda Vario 125');
+
+        // Route Polyline
+        const latlngs = [
+          pickupCoords,
+          [-6.7375, 107.6565],
+          [-6.7390, 107.6550],
+          customerCoords
+        ];
+        routePolyline = L.polyline(latlngs, { color: '#16a34a', weight: 5, opacity: 0.85, dashArray: '8, 8' }).addTo(leafletMapInstance);
+
+        leafletMapInstance.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
+
+        // Simulate animated GPS movement towards customer
+        simulateDriverGPSMovement(latlngs);
+      }, 300);
+    }
+
+    function simulateDriverGPSMovement(waypoints) {
+      if (!driverMapMarker || !leafletMapInstance) return;
+      let stepIndex = 0;
+
+      const gpsInterval = setInterval(() => {
+        stepIndex++;
+        if (stepIndex < waypoints.length) {
+          const nextCoord = waypoints[stepIndex];
+          driverMapMarker.setLatLng(nextCoord);
+          leafletMapInstance.panTo(nextCoord);
+
+          if (stepIndex === 1) {
+            document.getElementById('tracking-status-pill').innerText = 'Driver Sudah Mengambil Makanan';
+            document.getElementById('tracking-eta').innerText = '4 Menit';
+            document.getElementById('step-pickup').classList.add('bg-brand-600', 'text-white');
+          } else if (stepIndex === 2) {
+            document.getElementById('tracking-status-pill').innerText = 'Driver Sedang Menuju Rumah Anda';
+            document.getElementById('tracking-eta').innerText = '2 Menit';
+            document.getElementById('step-transit').classList.add('bg-brand-600', 'text-white');
+          } else if (stepIndex === 3) {
+            document.getElementById('tracking-status-pill').innerText = 'Driver Tiba di Alamat Anda!';
+            document.getElementById('tracking-eta').innerText = 'Tiba!';
+            document.getElementById('step-done').classList.add('bg-brand-600', 'text-white');
+            clearInterval(gpsInterval);
+          }
+        } else {
+          clearInterval(gpsInterval);
+        }
+      }, 4000);
+    }
+
+    function simulateOrderFinish() {
+      if (currentActiveOrder) {
+        currentActiveOrder.status = 'SELESAI';
+        currentActiveOrder.statusColor = 'emerald';
+        if (window.CiaterSync) {
+          CiaterSync.updateOrderStatus(currentActiveOrder.id, 'COMPLETED');
+        }
+      }
+      document.getElementById('active-order-badge').classList.add('hidden');
+      renderOrdersHistory();
+      showToast('✅ Pesanan telah selesai! Terima kasih.');
+      navigate('screen-orders');
+    }
+
+    // RENDER ORDERS HISTORY
+    function renderOrdersHistory() {
+      const container = document.getElementById('orders-history-container');
+      if (!container) return;
+
+      container.innerHTML = orderHistory.map(ord => `
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="text-base">${ord.service === 'FOOD' ? '🍔' : ord.service === 'RIDE' ? '🏍️' : '📦'}</span>
+              <div>
+                <h4 class="text-xs font-black text-slate-800">${ord.title}</h4>
+                <span class="text-[10px] text-slate-400 font-medium">${ord.date}</span>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ${ord.status === 'SELESAI' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200 animate-pulse'}">
+              ${ord.status}
+            </span>
+          </div>
+
+          <p class="text-[11px] text-slate-600 line-clamp-2">${ord.items}</p>
+
+          <div class="pt-2 flex items-center justify-between">
+            <span class="text-xs font-black text-slate-900">Total: Rp ${ord.total.toLocaleString('id-ID')}</span>
+            <div class="flex gap-2">
+              ${ord.status !== 'SELESAI' ? `
+                <button onclick="navigate('screen-tracking')" class="px-3 py-1.5 bg-brand-600 text-white font-bold text-xs rounded-xl shadow-sm">
+                  Lacak Live
+                </button>
+              ` : `
+                <button onclick="showToast('Memuat ulang pesanan...')" class="px-3 py-1.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-slate-200">
+                  Pesan Lagi
+                </button>
+              `}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterOrdersTab(tab, btn) {
+      btn.parentElement.querySelectorAll('button').forEach(b => {
+        b.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
+        b.classList.add('text-slate-600');
+      });
+      btn.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+
+      if (tab === 'active') {
+        const active = orderHistory.filter(o => o.status !== 'SELESAI');
+        renderCustomOrdersList(active);
+      } else if (tab === 'done') {
+        const done = orderHistory.filter(o => o.status === 'SELESAI');
+        renderCustomOrdersList(done);
+      } else {
+        renderOrdersHistory();
+      }
+    }
+
+    function renderCustomOrdersList(list) {
+      const container = document.getElementById('orders-history-container');
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-center py-10 text-xs text-slate-400">Tidak ada pesanan di kategori ini</div>`;
+        return;
+      }
+      container.innerHTML = list.map(ord => `
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-slate-800">${ord.title}</h4>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${ord.status === 'SELESAI' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-800'}">${ord.status}</span>
+          </div>
+          <p class="text-[11px] text-slate-500">${ord.items}</p>
+          <div class="text-xs font-black text-slate-800">Rp ${ord.total.toLocaleString('id-ID')}</div>
+        </div>
+      `).join('');
+    }
+
+    // PROMOS & VOUCHERS
+    function usePromo(code) {
+      activePromo = code;
+      showToast(`🎉 Promo ${code} berhasil dipasang!`);
+      navigate('screen-food');
+    }
+
+    function applyCustomPromo() {
+      const code = document.getElementById('custom-promo-code').value.toUpperCase().trim();
+      if (code === 'CIATERKULINER' || code === 'RIDEHEMAT' || code === 'GRATISONGKIR') {
+        usePromo(code);
+      } else {
+        showToast('❌ Kode voucher tidak ditemukan atau kadaluarsa.');
+      }
+    }
+
+    // USER BALANCE & ACTIONS
+    function topUpCiaterPay() {
+      userBalance += 50000;
+      document.getElementById('user-balance-display').innerText = `Rp ${userBalance.toLocaleString('id-ID')}`;
+      showToast('💳 Top Up Rp 50.000 via QRIS Berhasil!');
+    }
+
+    function handleCallDriver() {
+      showToast('📞 Menghubungi Pak Dadang (0821-4455-6677)...');
+    }
+
+    // IN-APP CHAT WITH DRIVER
+    function handleChatDriver() {
+      openChatModal();
+    }
+
+    function openChatModal() {
+      const modal = document.getElementById('modal-chat');
+      if (modal) {
+        modal.classList.remove('hidden');
+        renderChatMessages();
+      }
+    }
+
+    function closeChatModal() {
+      const modal = document.getElementById('modal-chat');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderChatMessages() {
+      const container = document.getElementById('chat-messages-container');
+      if (!container) return;
+
+      const orderId = currentActiveOrder ? currentActiveOrder.id : 'CTG-9102';
+      const messages = window.CiaterSync ? CiaterSync.getChatMessages(orderId) : [];
+
+      container.innerHTML = messages.map(msg => `
+        <div class="flex flex-col ${msg.role === 'customer' ? 'items-end' : 'items-start'}">
+          <div class="max-w-[78%] p-3 rounded-2xl ${msg.role === 'customer' ? 'bg-brand-600 text-white rounded-br-none shadow-sm' : 'bg-white text-slate-800 rounded-bl-none border border-slate-200 shadow-sm'}">
+            <p class="font-medium leading-relaxed">${msg.text}</p>
+          </div>
+          <span class="text-[9px] text-slate-400 mt-1 px-1">${msg.time}</span>
+        </div>
+      `).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendCustomerChat() {
+      const input = document.getElementById('chat-text-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const orderId = currentActiveOrder ? currentActiveOrder.id : 'CTG-9102';
+      if (window.CiaterSync) {
+        CiaterSync.sendChatMessage(orderId, 'Asep Gunawan (Pelanggan)', 'customer', text);
+      }
+      input.value = '';
+      renderChatMessages();
+    }
+
+    function sendQuickReply(text) {
+      const orderId = currentActiveOrder ? currentActiveOrder.id : 'CTG-9102';
+      if (window.CiaterSync) {
+        CiaterSync.sendChatMessage(orderId, 'Asep Gunawan (Pelanggan)', 'customer', text);
+      }
+      renderChatMessages();
+    }
+
+    // LOCATION MODAL
+    function openLocationModal() {
+      document.getElementById('modal-location').classList.remove('hidden');
+    }
+    function closeLocationModal() {
+      document.getElementById('modal-location').classList.add('hidden');
+    }
+    function selectLocation(name, detail) {
+      document.getElementById('current-location-text').innerText = name;
+      document.getElementById('checkout-address-name').innerText = name;
+      document.getElementById('checkout-address-detail').innerText = detail;
+      closeLocationModal();
+      showToast(`Lokasi aktif: ${name}`);
+    }
+
+    // AUTH / OTP SIMULATION
+    function handleRequestOtp() {
+      const phone = document.getElementById('auth-phone').value;
+      document.getElementById('otp-phone-display').innerText = '+62 ' + phone;
+      navigate('screen-otp');
+      showToast('Kode OTP terkirim ke WhatsApp: 123456');
+    }
+
+    function handleVerifyOtp() {
+      showToast('✅ Login Berhasil! Selamat datang di CiaterGo.');
+      navigate('screen-home');
+    }
+
+    function handleLogout() {
+      showToast('Berhasil keluar akun.');
+      navigate('screen-auth');
+    }
+
+    // QR CODE MODAL HELPERS
+    function openQrModal() {
+      const modal = document.getElementById('modal-qr');
+      if (modal) {
+        modal.classList.remove('hidden');
+        updateQrTarget('index.html');
+      }
+    }
+
+    function closeQrModal() {
+      const modal = document.getElementById('modal-qr');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function updateQrTarget(filename) {
+      let baseUrl = window.location.origin;
+      if (baseUrl === 'null' || !baseUrl.startsWith('http')) {
+        baseUrl = 'http://localhost:3000';
+      }
+      const targetUrl = `${baseUrl}/${filename === 'index.html' ? '' : filename}`;
+      document.getElementById('qr-url-text').innerText = targetUrl;
+      document.getElementById('qr-image-display').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}`;
+    }
+
+    // TOAST UTILITY
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      const text = document.getElementById('toast-text');
+      text.innerText = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
