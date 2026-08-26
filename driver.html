@@ -704,11 +704,44 @@
       initDriverLiveMap();
     }
 
-    // REAL LEAFLET MAP ON DRIVER SCREEN
+    // REAL LEAFLET MAP ON DRIVER SCREEN WITH REAL GPS
     let driverMapInstance = null;
     let driverCurrentMarker = null;
+    let driverGPSWatchId = null;
+    let driverCurrentCoords = [-6.7360, 107.6570];
+
+    // Start watching Driver Real GPS
+    function startDriverGPSWatcher() {
+      if (!('geolocation' in navigator)) return;
+      if (driverGPSWatchId !== null) return;
+
+      driverGPSWatchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          driverCurrentCoords = [lat, lng];
+
+          if (driverCurrentMarker && driverMapInstance) {
+            driverCurrentMarker.setLatLng([lat, lng]);
+          }
+
+          // Broadcast Driver GPS to Customer in Real-Time
+          if (currentHandlingOrder && window.CiaterSync) {
+            CiaterSync.broadcastEvent('DRIVER_GPS_MOVE', {
+              orderId: currentHandlingOrder.id,
+              coords: [lat, lng],
+              timestamp: Date.now()
+            });
+          }
+        },
+        (err) => console.log('Driver GPS Watch Err:', err),
+        { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+      );
+    }
 
     function initDriverLiveMap() {
+      startDriverGPSWatcher();
+
       setTimeout(() => {
         const mapDiv = document.getElementById('driver-live-map');
         if (!mapDiv || typeof L === 'undefined') return;
@@ -718,7 +751,7 @@
           driverMapInstance = null;
         }
 
-        const driverCoords = [-6.7360, 107.6570];
+        const driverCoords = driverCurrentCoords;
         const storeCoords = currentHandlingOrder?.pickupCoords || [-6.7350, 107.6580];
         const customerCoords = currentHandlingOrder?.dropCoords || [-6.7412, 107.6534];
 
@@ -746,18 +779,18 @@
 
         const userIcon = L.divIcon({
           className: 'd-user-icon',
-          html: `<div class="w-8 h-8 rounded-full bg-red-500 border-2 border-white shadow-lg flex items-center justify-center text-sm text-white transform -translate-x-1/2 -translate-y-1/2">📍</div>`,
-          iconSize: [32, 32]
+          html: `<div class="w-9 h-9 rounded-full bg-red-500 border-2 border-white shadow-xl flex items-center justify-center text-sm text-white transform -translate-x-1/2 -translate-y-1/2 ring-4 ring-red-400/30">📍</div>`,
+          iconSize: [36, 36]
         });
 
-        const pickupLabel = currentHandlingOrder?.pickupLocation || currentHandlingOrder?.merchantName || 'Titik Jemput';
-        const dropLabel = currentHandlingOrder?.customerName ? `${currentHandlingOrder.customerName} (Tujuan Antar)` : 'Tujuan Antar';
+        const pickupLabel = currentHandlingOrder?.pickupLocation || currentHandlingOrder?.merchantName || 'Area Belanja';
+        const dropLabel = currentHandlingOrder?.customerName ? `${currentHandlingOrder.customerName} (Titik GPS Pelanggan)` : 'Tujuan Antar';
 
-        L.marker(storeCoords, { icon: storeIcon }).addTo(driverMapInstance).bindPopup(`<b>${pickupLabel}</b><br>Titik Pengambilan`);
-        L.marker(customerCoords, { icon: userIcon }).addTo(driverMapInstance).bindPopup(`<b>${dropLabel}</b><br>Tujuan Antar`);
+        L.marker(storeCoords, { icon: storeIcon }).addTo(driverMapInstance).bindPopup(`<b>${pickupLabel}</b><br>Area Cari / Beli Makanan`);
+        L.marker(customerCoords, { icon: userIcon }).addTo(driverMapInstance).bindPopup(`<b>${dropLabel}</b><br>Koordinat: ${customerCoords[0].toFixed(5)}, ${customerCoords[1].toFixed(5)}`).openPopup();
         driverCurrentMarker = L.marker(driverCoords, { icon: driverIcon }).addTo(driverMapInstance);
 
-        const route = L.polyline([driverCoords, storeCoords, [-6.7380, 107.6560], customerCoords], {
+        const route = L.polyline([driverCoords, storeCoords, customerCoords], {
           color: '#059669',
           weight: 5,
           opacity: 0.85,
