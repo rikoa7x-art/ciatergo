@@ -4,8 +4,7 @@
   "description": "OTW keun Mobile Web Application Suite",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "build": "echo 'Ready for deployment'"
+    "start": "node server.js"
   },
   "keywords": [
     "otwkeun",
