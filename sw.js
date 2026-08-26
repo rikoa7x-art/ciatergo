@@ -1,4 +1,4 @@
-const CACHE_NAME = 'otwkeun-v4';
+const CACHE_NAME = 'otwkeun-v5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

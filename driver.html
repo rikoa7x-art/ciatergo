@@ -386,9 +386,16 @@
           </div>
         </div>
 
-        <button onclick="showToast('Kembali ke mode offline')" class="w-full py-3 bg-red-50 text-red-600 text-xs font-bold rounded-2xl border border-red-200 hover:bg-red-100 transition">
-          Keluar dari Aplikasi Driver
-        </button>
+        <div class="space-y-2.5 pt-2">
+          <a href="index.html" class="w-full py-3.5 bg-brand-50 text-brand-700 text-xs font-bold rounded-2xl border border-brand-200 hover:bg-brand-100 flex items-center justify-center gap-2 transition">
+            <i class="fa-solid fa-user"></i>
+            <span>Beralih ke Aplikasi Pelanggan</span>
+          </a>
+          <button onclick="handleDriverLogout()" class="w-full py-3.5 bg-red-50 text-red-600 text-xs font-bold rounded-2xl border border-red-200 hover:bg-red-100 flex items-center justify-center gap-2 transition">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>Keluar Akun Driver (Logout)</span>
+          </button>
+        </div>
 
       </div>
 
@@ -913,6 +920,15 @@
 
     function withdrawDriverEarnings() {
       showToast('💸 Penarikan Rp 450.000 ke BCA Pak Dadang sedang diproses (instan)');
+    }
+
+    function handleDriverLogout() {
+      localStorage.removeItem('otw_auth_role');
+      localStorage.removeItem('otw_user_phone');
+      showToast('Berhasil keluar dari akun Driver.');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 500);
     }
 
     let toastTimeout;

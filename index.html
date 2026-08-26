@@ -174,10 +174,28 @@
         <button onclick="navigate('screen-home')" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-6">
           <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <div class="mb-8">
-          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">Akun OTW keun</span>
+        <div class="mb-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">Portal Masuk Akun</span>
           <h2 class="text-2xl font-extrabold text-slate-800 mt-3">Masuk / Daftar</h2>
-          <p class="text-slate-500 text-xs mt-1">Gunakan nomor WhatsApp aktif Anda untuk kemudahan komunikasi driver.</p>
+          <p class="text-slate-500 text-xs mt-1">Pilih peran Anda untuk diarahkan ke aplikasi yang sesuai.</p>
+        </div>
+
+        <!-- ROLE SELECTOR TABS -->
+        <div class="mb-5">
+          <label class="block text-xs font-bold text-slate-700 mb-2">Pilih Peran Akun:</label>
+          <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl">
+            <button type="button" onclick="selectAuthRole('customer', this)" id="auth-role-customer" class="py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 bg-white text-brand-700 shadow-sm transition">
+              <i class="fa-solid fa-user"></i>
+              <span>Pelanggan</span>
+            </button>
+            <button type="button" onclick="selectAuthRole('driver', this)" id="auth-role-driver" class="py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
+              <i class="fa-solid fa-motorcycle"></i>
+              <span>Mitra Driver</span>
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1.5 px-1" id="auth-role-desc">
+            🛒 Masuk untuk memesan makanan, ojek, dan kirim barang.
+          </p>
         </div>
 
         <div class="space-y-4">
@@ -191,7 +209,7 @@
 
           <div class="p-3.5 bg-amber-50 rounded-2xl border border-amber-200/80 text-amber-800 text-xs flex items-start gap-2.5">
             <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5 text-sm"></i>
-            <p>Kode OTP simulasi adalah <strong class="underline font-bold">123456</strong> untuk keperluan demo ini.</p>
+            <p>Kode OTP simulasi demo adalah <strong class="underline font-bold">123456</strong>.</p>
           </div>
         </div>
       </div>
@@ -448,13 +466,32 @@
           </div>
         </div>
 
-        <!-- Deskripsi Pesanan -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-2">
-            🍽️ Ceritakan Pesanan Anda
-          </label>
-          <textarea id="food-order-desc" rows="3" placeholder="Contoh: Nasi liwet ayam bakar 2 porsi, sambel dipisah. Kalau ada, minta es teh manis juga ya..." class="w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 transition resize-none leading-relaxed"></textarea>
-          <p class="text-[10px] text-slate-400 mt-1.5">Semakin detail, semakin mudah driver mencarinya 👍</p>
+        <!-- Input Nama Makanan & Detail -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-1.5">
+              🍽️ Nama Makanan / Minuman
+            </label>
+            <input id="food-order-name" type="text" placeholder="Contoh: Nasi Liwet Ayam Bakar Komplit" class="w-full text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 transition">
+          </div>
+
+          <!-- Qty Selector -->
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-xs font-bold text-slate-700">Jumlah Porsi / Pcs</span>
+            <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
+              <button onclick="changeFoodQty(-1)" class="w-7 h-7 rounded-lg bg-white text-slate-800 font-black text-sm flex items-center justify-center shadow-xs hover:bg-slate-50 active:scale-95 transition">-</button>
+              <span id="food-order-qty" class="text-xs font-extrabold text-slate-800 w-6 text-center">1</span>
+              <button onclick="changeFoodQty(1)" class="w-7 h-7 rounded-lg bg-brand-600 text-white font-black text-sm flex items-center justify-center shadow-xs hover:bg-brand-700 active:scale-95 transition">+</button>
+            </div>
+          </div>
+
+          <!-- Detail Request Tambahan -->
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-1.5">
+              📝 Detail / Catatan Khusus
+            </label>
+            <textarea id="food-order-desc" rows="2" placeholder="Contoh: Sambal dipisah, minta es teh manis 2, kembalian dari Rp 100rb..." class="w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 transition resize-none leading-relaxed"></textarea>
+          </div>
         </div>
 
         <!-- Area Cari Warung -->
@@ -474,24 +511,33 @@
           </div>
         </div>
 
-        <!-- Estimasi Harga Makanan -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-2">
-            💰 Estimasi Budget Makanan (Opsional)
-          </label>
-          <div class="flex gap-2 overflow-x-auto no-scrollbar text-xs">
-            <button onclick="setFoodBudget(25000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap border border-transparent">Rp 15–25rb</button>
-            <button onclick="setFoodBudget(40000, this)" class="budget-chip bg-brand-600 text-white font-bold px-3.5 py-1.5 rounded-xl whitespace-nowrap">Rp 25–40rb</button>
-            <button onclick="setFoodBudget(60000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap border border-transparent">Rp 40–60rb</button>
-            <button onclick="setFoodBudget(100000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap border border-transparent">Rp 60–100rb</button>
+        <!-- Estimasi Harga Makanan (Input Manual + Preset Chips) -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+              💰 Estimasi Harga Total Makanan (Bisa Ketik Manual)
+            </label>
+            <span class="text-[10px] text-brand-600 font-bold">Ketik bebas</span>
           </div>
-          <input id="food-budget-value" type="hidden" value="40000">
-        </div>
+          
+          <!-- Manual Price Input Field -->
+          <div class="flex items-center border-2 border-slate-200 focus-within:border-brand-500 rounded-xl overflow-hidden px-3 py-1 bg-slate-50 focus-within:bg-white transition">
+            <span class="text-xs font-black text-slate-400 pr-2 border-r border-slate-200">Rp</span>
+            <input id="food-budget-input" type="number" step="1000" min="1000" value="40000" oninput="handleManualBudgetChange(this.value)" placeholder="40000" class="w-full py-2 px-3 text-slate-800 font-extrabold text-sm bg-transparent focus:outline-none">
+          </div>
 
-        <!-- Catatan Tambahan -->
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-1.5">📝 Catatan Tambahan</label>
-          <input id="food-extra-note" type="text" placeholder="Misal: jangan pedas, tanpa kecap, atau minta kembaliannya..." class="w-full text-xs text-slate-800 focus:outline-none bg-transparent placeholder-slate-400">
+          <!-- Quick Preset Chips -->
+          <div>
+            <span class="text-[9px] text-slate-400 font-medium">Pilihan Cepat:</span>
+            <div class="flex gap-1.5 overflow-x-auto no-scrollbar text-xs pt-1">
+              <button onclick="setFoodBudget(20000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap border border-transparent text-[11px]">Rp 20rb</button>
+              <button onclick="setFoodBudget(35000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap border border-transparent text-[11px]">Rp 35rb</button>
+              <button onclick="setFoodBudget(50000, this)" class="budget-chip bg-brand-600 text-white font-bold px-2.5 py-1 rounded-lg whitespace-nowrap text-[11px]">Rp 50rb</button>
+              <button onclick="setFoodBudget(75000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap border border-transparent text-[11px]">Rp 75rb</button>
+              <button onclick="setFoodBudget(100000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap border border-transparent text-[11px]">Rp 100rb</button>
+            </div>
+          </div>
+          <input id="food-budget-value" type="hidden" value="50000">
         </div>
 
         <!-- Alamat & Lokasi GPS Pengantaran -->
@@ -1667,8 +1713,50 @@
     }
 
     // ============================================================
-    // OTWFOOD — FORM ORDER BEBAS (BARU: tanpa pilih warung)
+    // AUTH ROLE SELECTION & FOOD ORDER BEBAS
     // ============================================================
+
+    let selectedAuthRole = 'customer';
+
+    function selectAuthRole(role, btn) {
+      selectedAuthRole = role;
+      const custBtn = document.getElementById('auth-role-customer');
+      const driverBtn = document.getElementById('auth-role-driver');
+      const desc = document.getElementById('auth-role-desc');
+
+      if (role === 'customer') {
+        if (custBtn) custBtn.className = 'py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 bg-white text-brand-700 shadow-sm transition';
+        if (driverBtn) driverBtn.className = 'py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition';
+        if (desc) desc.innerText = '🛒 Masuk untuk memesan makanan, ojek, dan kirim barang.';
+      } else {
+        if (driverBtn) driverBtn.className = 'py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 bg-emerald-600 text-white shadow-sm transition';
+        if (custBtn) custBtn.className = 'py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition';
+        if (desc) desc.innerText = '🛵 Masuk ke aplikasi khusus Mitra Driver untuk menerima & mengantar pesanan.';
+      }
+    }
+
+    // Ubah jumlah porsi (+ / -)
+    function changeFoodQty(delta) {
+      const qtyEl = document.getElementById('food-order-qty');
+      if (!qtyEl) return;
+      let current = parseInt(qtyEl.innerText || '1');
+      current = Math.max(1, Math.min(50, current + delta));
+      qtyEl.innerText = current;
+    }
+
+    // Input manual harga makanan
+    function handleManualBudgetChange(val) {
+      const parsed = parseInt(val) || 0;
+      foodBudget = parsed;
+      const hiddenInput = document.getElementById('food-budget-value');
+      if (hiddenInput) hiddenInput.value = parsed;
+
+      // Deselect preset chips if manual number doesn't match
+      document.querySelectorAll('.budget-chip').forEach(c => {
+        c.classList.remove('bg-brand-600', 'text-white');
+        c.classList.add('bg-slate-100', 'text-slate-600');
+      });
+    }
 
     // Pilih kategori makanan sebagai hint untuk driver
     function selectFoodCategory(categoryName, btn) {
@@ -1680,43 +1768,45 @@
       btn.classList.remove('bg-slate-100', 'text-slate-600');
       btn.classList.add('bg-brand-600', 'text-white');
       
-      const textarea = document.getElementById('food-order-desc');
-      if (textarea && !textarea.value.trim()) {
+      const nameInput = document.getElementById('food-order-name');
+      if (nameInput && !nameInput.value.trim()) {
         const hints = {
-          'Masakan Sunda': 'Nasi liwet ayam bakar, sambel dipisah ya',
-          'Bakso & Mie': 'Bakso urat jumbo kuah panas, mie secukupnya',
-          'Ayam & Bebek': 'Ayam bakar madu + nasi, 2 porsi',
-          'Minuman & Kopi': 'Kopi susu gula aren + es teh manis',
-          'Cemilan & Snack': 'Keripik tempe oncom + nanas madu Subang'
+          'Masakan Sunda': 'Nasi Liwet Ayam Bakar Komplit',
+          'Bakso & Mie': 'Bakso Urat Jumbo Super Pedas',
+          'Ayam & Bebek': 'Paket Ayam Goreng Madu + Nasi',
+          'Minuman & Kopi': 'Kopi Susu Gula Aren Ciater',
+          'Cemilan & Snack': 'Keripik Tempe Oncom & Nanas Simadu'
         };
-        textarea.placeholder = hints[categoryName] || textarea.placeholder;
+        nameInput.placeholder = hints[categoryName] || 'Contoh: Nama Makanan / Minuman';
       }
       showToast(`Kategori: ${categoryName} dipilih`);
     }
 
-    // Pilih estimasi budget
+    // Pilih estimasi budget via preset chip
     function setFoodBudget(amount, btn) {
       foodBudget = amount;
       document.querySelectorAll('.budget-chip').forEach(c => {
         c.classList.remove('bg-brand-600', 'text-white');
         c.classList.add('bg-slate-100', 'text-slate-600');
-        c.classList.remove('border-brand-300');
-        c.classList.add('border-transparent');
       });
-      btn.classList.remove('bg-slate-100', 'text-slate-600', 'border-transparent');
+      btn.classList.remove('bg-slate-100', 'text-slate-600');
       btn.classList.add('bg-brand-600', 'text-white');
-      const budgetInput = document.getElementById('food-budget-value');
+
+      const budgetInput = document.getElementById('food-budget-input');
+      const hiddenInput = document.getElementById('food-budget-value');
       if (budgetInput) budgetInput.value = amount;
-      showToast(`Budget: Rp ${amount.toLocaleString('id-ID')}`);
+      if (hiddenInput) hiddenInput.value = amount;
+      showToast(`Estimasi harga: Rp ${amount.toLocaleString('id-ID')}`);
     }
 
     // Validasi form & lanjut ke konfirmasi
     function handlePlaceOrder(serviceType) {
       if (serviceType === 'FOOD') {
+        const name = document.getElementById('food-order-name')?.value.trim();
         const desc = document.getElementById('food-order-desc')?.value.trim();
-        if (!desc) {
-          showToast('⚠️ Ceritakan dulu makanan yang ingin dipesan!');
-          document.getElementById('food-order-desc')?.focus();
+        if (!name && !desc) {
+          showToast('⚠️ Masukkan nama makanan yang ingin dipesan!');
+          document.getElementById('food-order-name')?.focus();
           return;
         }
         renderFoodOrderSummaryInCart();
@@ -1728,10 +1818,12 @@
 
     // Tampilkan ringkasan pesanan di cart screen (preview sebelum konfirmasi)
     function renderFoodOrderSummaryInCart() {
-      const desc = document.getElementById('food-order-desc')?.value.trim() || '(Tidak ada deskripsi)';
+      const name = document.getElementById('food-order-name')?.value.trim() || 'Pesanan Makanan Bebas';
+      const qty = parseInt(document.getElementById('food-order-qty')?.innerText || '1');
+      const desc = document.getElementById('food-order-desc')?.value.trim() || '';
       const area = document.getElementById('food-area-warung')?.value || 'Sekitar Ciater';
-      const budget = parseInt(document.getElementById('food-budget-value')?.value || '40000');
-      const note = document.getElementById('food-extra-note')?.value.trim() || '';
+      const rawBudget = parseInt(document.getElementById('food-budget-input')?.value || document.getElementById('food-budget-value')?.value || '40000');
+      const budget = Math.max(5000, rawBudget);
       const deliveryFee = 8000;
       const serviceFee = 1000;
       let discount = (activePromo === 'CIATERKULINER' || activePromo === 'GRATISONGKIR') ? 5000 : 0;
@@ -1740,12 +1832,15 @@
       const container = document.getElementById('cart-items-list');
       if (container) {
         container.innerHTML = `
-          <div class="space-y-2 text-xs">
-            <div>
-              <span class="text-[10px] text-slate-400 font-bold uppercase">Pesanan Anda</span>
-              <p class="text-slate-800 font-semibold mt-1 leading-relaxed">${desc}</p>
+          <div class="space-y-2.5 text-xs">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-slate-800">${qty}x ${name}</span>
+                <span class="text-xs font-extrabold text-brand-600">Rp ${budget.toLocaleString('id-ID')}</span>
+              </div>
+              ${desc ? `<p class="text-[11px] text-slate-500 mt-1 italic leading-relaxed">"${desc}"</p>` : ''}
             </div>
-            <div class="flex items-center gap-2 text-slate-500 pt-1">
+            <div class="flex items-center gap-2 text-slate-500 pt-0.5">
               <i class="fa-solid fa-location-dot text-brand-600 text-xs"></i>
               <span>Area cari warung: <strong class="text-slate-700">${area}</strong></span>
             </div>
@@ -1757,7 +1852,6 @@
               <i class="fa-solid fa-map-pin text-emerald-600 text-xs"></i>
               <span>Antar ke: <strong class="text-slate-700">${currentUserLocation.name}</strong></span>
             </div>
-            ${note ? `<div class="flex items-center gap-2 text-slate-500"><i class="fa-solid fa-note-sticky text-amber-500 text-xs"></i><span>Catatan: <em class="text-slate-600">${note}</em></span></div>` : ''}
           </div>
         `;
       }
@@ -1827,18 +1921,22 @@
       dropLocation = currentUserLocation.name + (currentUserLocation.detail ? ` (${currentUserLocation.detail})` : '');
 
       if (serviceType === 'FOOD') {
-        foodOrderDesc = document.getElementById('food-order-desc')?.value.trim() || 'Pesanan makanan';
+        const foodName = document.getElementById('food-order-name')?.value.trim() || 'Pesanan Makanan';
+        const foodQty = parseInt(document.getElementById('food-order-qty')?.innerText || '1');
+        const extraNote = document.getElementById('food-order-desc')?.value.trim() || '';
         foodArea = document.getElementById('food-area-warung')?.value || 'Sekitar Ciater';
-        const budget = parseInt(document.getElementById('food-budget-value')?.value || '40000');
-        const extraNote = document.getElementById('food-extra-note')?.value.trim() || '';
+        const rawBudget = parseInt(document.getElementById('food-budget-input')?.value || document.getElementById('food-budget-value')?.value || '40000');
+        const budget = Math.max(5000, rawBudget);
+        
+        foodOrderDesc = `${foodQty}x ${foodName}${extraNote ? ' (' + extraNote + ')' : ''}`;
         orderTitle = foodOrderDesc.length > 40 ? foodOrderDesc.substring(0, 40) + '...' : foodOrderDesc;
         subtotal = budget;
         deliveryFee = 8000;
         discount = (activePromo === 'CIATERKULINER' || activePromo === 'GRATISONGKIR') ? 5000 : 0;
         total = Math.max(0, subtotal + deliveryFee + serviceFee - discount);
         pickupLocation = foodArea;
-        itemsSummary = `${foodOrderDesc}${extraNote ? ' • Catatan: ' + extraNote : ''} • Area: ${foodArea}`;
-        orderItems = [{ name: foodOrderDesc, qty: 1, price: subtotal, area: foodArea, note: extraNote, category: selectedFoodCategory }];
+        itemsSummary = `${foodOrderDesc} • Area: ${foodArea}`;
+        orderItems = [{ name: foodName, qty: foodQty, price: subtotal, area: foodArea, note: extraNote, category: selectedFoodCategory }];
       } else if (serviceType === 'RIDE') {
         pickupLocation = document.getElementById('ride-pickup-input')?.value || 'Pemandian Air Panas Sari Ater';
         dropLocation = document.getElementById('ride-drop-input')?.value || 'Pasar Ciater / Terminal Jalancagak';
@@ -2222,20 +2320,13 @@
 
     // LOCATION MODAL
     function openLocationModal() {
-      document.getElementById('modal-location').classList.remove('hidden');
+      document.getElementById('modal-location')?.classList.remove('hidden');
     }
     function closeLocationModal() {
-      document.getElementById('modal-location').classList.add('hidden');
-    }
-    function selectLocation(name, detail) {
-      document.getElementById('current-location-text').innerText = name;
-      document.getElementById('checkout-address-name').innerText = name;
-      document.getElementById('checkout-address-detail').innerText = detail;
-      closeLocationModal();
-      showToast(`Lokasi aktif: ${name}`);
+      document.getElementById('modal-location')?.classList.add('hidden');
     }
 
-    // AUTH / OTP SIMULATION
+    // AUTH / OTP SIMULATION & ROLE REDIRECTION
     function handleRequestOtp() {
       const phone = document.getElementById('auth-phone').value.trim();
       if (!phone || phone.length < 9) {
@@ -2246,7 +2337,6 @@
       navigate('screen-otp');
       showToast('📱 Kode OTP demo dikirim. Gunakan: 1-2-3-4-5-6');
     }
-    // Alias — button memanggil handleSendOTP
     const handleSendOTP = handleRequestOtp;
 
     function handleVerifyOtp() {
@@ -2254,8 +2344,21 @@
       const otp = Array.from(boxes).map(b => b.value.trim()).join('');
       // Demo OTP: 123456
       if (otp === '123456' || otp === '') {
-        showToast('✅ Login Berhasil! Selamat datang di OTW keun.');
-        navigate('screen-home');
+        const phone = document.getElementById('auth-phone')?.value.trim() || '82119887766';
+        
+        if (selectedAuthRole === 'driver') {
+          localStorage.setItem('otw_auth_role', 'driver');
+          localStorage.setItem('otw_user_phone', phone);
+          showToast('🛵 Login Mitra Driver Berhasil! Mengalihkan ke aplikasi Driver...');
+          setTimeout(() => {
+            window.location.href = 'driver.html';
+          }, 800);
+        } else {
+          localStorage.setItem('otw_auth_role', 'customer');
+          localStorage.setItem('otw_user_phone', phone);
+          showToast('✅ Login Pelanggan Berhasil! Selamat datang di OTW keun.');
+          navigate('screen-home');
+        }
       } else {
         showToast('❌ Kode OTP tidak valid. Coba lagi. (Demo: 123456)');
         boxes.forEach(b => { b.value = ''; b.classList.add('border-red-400'); });
@@ -2265,6 +2368,8 @@
     }
 
     function handleLogout() {
+      localStorage.removeItem('otw_auth_role');
+      localStorage.removeItem('otw_user_phone');
       showToast('Berhasil keluar akun.');
       navigate('screen-auth');
     }
