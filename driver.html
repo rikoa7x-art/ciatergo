@@ -612,7 +612,8 @@
         password: '12345',
         name: 'Nova',
         fullName: 'Nova Pratama',
-        phone: '+62 821-2233-4455',
+        phone: '089630537250',
+        phoneDisplay: '0896-3053-7250',
         vehicle: 'Honda Beat Street (T 3819 ZB)',
         rating: '4.95',
         id: '#DRV-001',
@@ -624,7 +625,8 @@
         password: '12345',
         name: 'Leo',
         fullName: 'Leo Firmansyah',
-        phone: '+62 822-6677-8899',
+        phone: '087700692352',
+        phoneDisplay: '0877-0069-2352',
         vehicle: 'Yamaha NMAX 155 (T 5920 AB)',
         rating: '4.90',
         id: '#DRV-002',
@@ -784,9 +786,15 @@
 
     function handleIncomingSyncOrder(order) {
       currentHandlingOrder = order;
-      // Tentukan service label
+      
+      // Tentukan service label & target driver
       let serviceBadge = `PESANAN ${order.serviceName || order.service || 'OTW KEUN'}`;
-      if (order.service === 'FOOD') serviceBadge = 'PESANAN MAKANAN BARU';
+      if (order.service === 'FOOD') serviceBadge = 'PESANAN MAKANAN';
+      if (order.targetDriver && order.targetDriver === currentActiveDriver.username) {
+        serviceBadge = `🎯 PESANAN LANGSUNG UNTUK ANDA (${currentActiveDriver.name.toUpperCase()})`;
+      } else if (order.targetDriver) {
+        serviceBadge = `PESANAN (DITUJUKAN KE DRIVER ${order.targetDriver.toUpperCase()})`;
+      }
       document.getElementById('incoming-service-badge').innerText = serviceBadge;
       
       // Title: tampilkan deskripsi makanan (bukan nama warung)

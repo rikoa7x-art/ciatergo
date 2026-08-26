@@ -588,6 +588,46 @@
           <input id="food-budget-value" type="hidden" value="50000">
         </div>
 
+        <!-- Pilih Mitra Driver Langsung -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+              🛵 Pilih Mitra Driver Anda
+            </label>
+            <span class="text-[10px] text-emerald-600 font-bold">Driver Siap di Ciater</span>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2">
+            <!-- Driver Nova -->
+            <div onclick="selectDriverChoice('nova')" id="choice-driver-nova" class="driver-choice-box p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 cursor-pointer transition shadow-2xs relative">
+              <div class="flex items-start justify-between">
+                <span class="text-xl">🛵</span>
+                <span class="text-[9px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-extrabold">⭐ 4.95</span>
+              </div>
+              <div class="mt-1.5">
+                <h4 class="text-xs font-black text-slate-900">Nova (Driver 1)</h4>
+                <p class="text-[10px] text-slate-600 font-medium">0896-3053-7250</p>
+                <span class="text-[9px] text-emerald-700 font-bold block mt-0.5">Beat • Sari Ater</span>
+              </div>
+              <div id="check-driver-nova" class="absolute top-2 right-2 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-[9px] text-white">✓</div>
+            </div>
+
+            <!-- Driver Leo -->
+            <div onclick="selectDriverChoice('leo')" id="choice-driver-leo" class="driver-choice-box p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative">
+              <div class="flex items-start justify-between">
+                <span class="text-xl">🏍️</span>
+                <span class="text-[9px] bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-extrabold">⭐ 4.90</span>
+              </div>
+              <div class="mt-1.5">
+                <h4 class="text-xs font-black text-slate-900">Leo (Driver 2)</h4>
+                <p class="text-[10px] text-slate-600 font-medium">0877-0069-2352</p>
+                <span class="text-[9px] text-teal-700 font-bold block mt-0.5">NMAX • Palasari</span>
+              </div>
+              <div id="check-driver-leo" class="hidden absolute top-2 right-2 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-[9px] text-white">✓</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Alamat & Lokasi GPS Pengantaran -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2.5">
           <div class="flex items-center justify-between">
@@ -682,6 +722,25 @@
               <i class="fa-solid fa-circle-info"></i>
               Driver akan mencari & membelikan pesanan ini dari warung terdekat
             </p>
+          </div>
+        </div>
+
+        <!-- Driver Pilihan Anda (di Cart) -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">🛵 Driver Pilihan Anda</h4>
+            <button onclick="navigate('screen-food')" class="text-[11px] font-semibold text-brand-600">Ganti</button>
+          </div>
+          <div class="p-3 bg-emerald-50/70 rounded-xl border border-emerald-200 flex items-center justify-between" id="cart-driver-card">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl" id="cart-driver-avatar">🛵</span>
+              <div>
+                <h5 class="text-xs font-black text-slate-900" id="cart-driver-name">Nova (Driver 1)</h5>
+                <p class="text-[11px] text-slate-600" id="cart-driver-phone">0896-3053-7250</p>
+                <span class="text-[10px] text-emerald-700 font-bold" id="cart-driver-vehicle">Honda Beat Street • Sari Ater</span>
+              </div>
+            </div>
+            <span class="text-[10px] bg-emerald-200 text-emerald-900 font-extrabold px-2 py-0.5 rounded-full" id="cart-driver-rating">⭐ 4.95</span>
           </div>
         </div>
 
@@ -985,27 +1044,34 @@
           </div>
         </div>
 
-        <!-- Driver Profile Card -->
-        <div class="flex items-center justify-between py-3.5">
+        <!-- Driver Profile Card (Dynamic Nova / Leo) -->
+        <div class="flex items-center justify-between py-3.5 border-b border-slate-100">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-lg border border-emerald-200">
-              👨‍✈️
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-2xl border border-emerald-200 shadow-xs" id="tracking-driver-avatar">
+              🛵
             </div>
             <div>
               <h4 class="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
-                Dadang Sudrajat
-                <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">⭐ 4.9</span>
+                <span id="tracking-driver-name">Nova Pratama</span>
+                <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold" id="tracking-driver-rating">⭐ 4.95</span>
               </h4>
-              <p class="text-[11px] text-slate-500 mt-0.5">Honda Vario 125 • <strong class="text-slate-700">T 4521 ZK</strong></p>
+              <p class="text-[11px] text-slate-500 mt-0.5" id="tracking-driver-vehicle">Honda Beat Street • <strong class="text-slate-700">T 3819 ZB</strong></p>
+              <p class="text-[10px] text-emerald-700 font-bold" id="tracking-driver-phone-text">WA: 0896-3053-7250</p>
             </div>
           </div>
           
           <div class="flex items-center gap-2">
-            <button onclick="handleCallDriver()" class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition">
-              <i class="fa-solid fa-phone text-sm"></i>
+            <!-- WhatsApp Button -->
+            <button onclick="handleWhatsAppDriver()" class="w-10 h-10 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center active:scale-95 shadow-sm transition" title="Chat WhatsApp Driver">
+              <i class="fa-brands fa-whatsapp text-lg"></i>
             </button>
-            <button onclick="handleChatDriver()" class="w-10 h-10 rounded-2xl bg-brand-600 text-white flex items-center justify-center hover:bg-brand-700 shadow-sm transition">
-              <i class="fa-solid fa-comment text-sm"></i>
+            <!-- Call Button -->
+            <button onclick="handleCallDriver()" class="w-10 h-10 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center active:scale-95 transition" title="Telepon Driver">
+              <i class="fa-solid fa-phone text-xs"></i>
+            </button>
+            <!-- In-App Chat -->
+            <button onclick="handleChatDriver()" class="w-10 h-10 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center active:scale-95 shadow-sm transition" title="Chat di Aplikasi">
+              <i class="fa-solid fa-comment text-xs"></i>
             </button>
           </div>
         </div>
@@ -1770,7 +1836,9 @@
         password: '12345',
         name: 'Nova',
         fullName: 'Nova Pratama',
-        phone: '+62 821-2233-4455',
+        phone: '089630537250',
+        phoneDisplay: '0896-3053-7250',
+        waLink: 'https://wa.me/6289630537250',
         vehicle: 'Honda Beat Street (T 3819 ZB)',
         rating: '4.95',
         id: '#DRV-001',
@@ -1782,7 +1850,9 @@
         password: '12345',
         name: 'Leo',
         fullName: 'Leo Firmansyah',
-        phone: '+62 822-6677-8899',
+        phone: '087700692352',
+        phoneDisplay: '0877-0069-2352',
+        waLink: 'https://wa.me/6287700692352',
         vehicle: 'Yamaha NMAX 155 (T 5920 AB)',
         rating: '4.90',
         id: '#DRV-002',
@@ -1792,6 +1862,45 @@
     };
 
     let selectedAuthRole = 'customer';
+    let selectedDriverChoice = 'nova'; // Default to Nova
+
+    // Pilihan Driver oleh Pelanggan (Nova / Leo)
+    function selectDriverChoice(driverKey) {
+      if (!REGISTERED_DRIVERS[driverKey]) return;
+      selectedDriverChoice = driverKey;
+      const driver = REGISTERED_DRIVERS[driverKey];
+
+      const boxNova = document.getElementById('choice-driver-nova');
+      const boxLeo = document.getElementById('choice-driver-leo');
+      const checkNova = document.getElementById('check-driver-nova');
+      const checkLeo = document.getElementById('check-driver-leo');
+
+      if (driverKey === 'nova') {
+        if (boxNova) boxNova.className = 'driver-choice-box p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 cursor-pointer transition shadow-2xs relative';
+        if (boxLeo) boxLeo.className = 'driver-choice-box p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative';
+        if (checkNova) checkNova.classList.remove('hidden');
+        if (checkLeo) checkLeo.classList.add('hidden');
+      } else {
+        if (boxLeo) boxLeo.className = 'driver-choice-box p-3 rounded-2xl border-2 border-teal-500 bg-teal-50/70 cursor-pointer transition shadow-2xs relative';
+        if (boxNova) boxNova.className = 'driver-choice-box p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative';
+        if (checkLeo) checkLeo.classList.remove('hidden');
+        if (checkNova) checkNova.classList.add('hidden');
+      }
+
+      // Update Cart Preview
+      const cartName = document.getElementById('cart-driver-name');
+      const cartPhone = document.getElementById('cart-driver-phone');
+      const cartVeh = document.getElementById('cart-driver-vehicle');
+      const cartRate = document.getElementById('cart-driver-rating');
+      const cartAva = document.getElementById('cart-driver-avatar');
+      if (cartName) cartName.innerText = `${driver.name} (Driver)`;
+      if (cartPhone) cartPhone.innerText = driver.phoneDisplay;
+      if (cartVeh) cartVeh.innerText = `${driver.vehicle} • ${driver.location}`;
+      if (cartRate) cartRate.innerText = `⭐ ${driver.rating}`;
+      if (cartAva) cartAva.innerText = driver.avatar;
+
+      showToast(`🛵 Driver dipilih: ${driver.name} (${driver.phoneDisplay})`);
+    }
 
     function selectAuthRole(role, btn) {
       selectedAuthRole = role;
@@ -2078,6 +2187,8 @@
 
       const orderId = 'OTW-' + Math.floor(1000 + Math.random() * 9000);
       
+      const chosenDriver = REGISTERED_DRIVERS[selectedDriverChoice] || REGISTERED_DRIVERS.nova;
+
       currentActiveOrder = {
         id: orderId,
         service: serviceType,
@@ -2093,6 +2204,13 @@
         dropLocation: dropLocation,
         pickupCoords: [-6.7350, 107.6580],
         dropCoords: customerCoords,
+        targetDriver: selectedDriverChoice,
+        driverName: chosenDriver.fullName || chosenDriver.name,
+        driverPhone: chosenDriver.phone,
+        driverPhoneDisplay: chosenDriver.phoneDisplay,
+        driverVehicle: chosenDriver.vehicle,
+        driverRating: chosenDriver.rating,
+        driverAvatar: chosenDriver.avatar,
         date: 'Baru saja',
         items: orderItems,
         itemsSummary: itemsSummary,
@@ -2124,12 +2242,14 @@
       // Setup tracking screen
       document.getElementById('tracking-order-id').innerText = '#' + orderId;
       document.getElementById('tracking-status-pill').innerText = serviceType === 'FOOD'
-        ? 'Driver Mencari & Membeli Pesanan Anda...'
-        : 'Driver Sedang Menuju Titik Penjemputan';
+        ? `Driver ${chosenDriver.name} Mencari & Membeli Pesanan Anda...`
+        : `Driver ${chosenDriver.name} Sedang Menuju Titik Penjemputan`;
       document.getElementById('tracking-eta').innerText = 'Menunggu Driver...';
       document.getElementById('active-order-badge').classList.remove('hidden');
 
-      showToast('🎉 Pesanan Berhasil Terkirim! Menunggu driver menerima...');
+      renderTrackingDriverInfo(chosenDriver);
+
+      showToast(`🎉 Pesanan Terkirim ke Driver ${chosenDriver.name}!`);
       navigate('screen-tracking');
 
       // Start Real Leaflet Map & GPS Tracking
@@ -2372,8 +2492,46 @@
       showToast(`Metode bayar diubah: ${ridePaymentOptions[ridePaymentIndex]}`);
     }
 
+    function renderTrackingDriverInfo(driverData) {
+      const driver = driverData || (currentActiveOrder ? {
+        name: currentActiveOrder.driverName || 'Nova Pratama',
+        phone: currentActiveOrder.driverPhone || '089630537250',
+        phoneDisplay: currentActiveOrder.driverPhoneDisplay || '0896-3053-7250',
+        vehicle: currentActiveOrder.driverVehicle || 'Honda Beat Street (T 3819 ZB)',
+        rating: currentActiveOrder.driverRating || '4.95',
+        avatar: currentActiveOrder.driverAvatar || '🛵'
+      } : REGISTERED_DRIVERS[selectedDriverChoice]);
+
+      const nameEl = document.getElementById('tracking-driver-name');
+      const rateEl = document.getElementById('tracking-driver-rating');
+      const vehEl = document.getElementById('tracking-driver-vehicle');
+      const phoneEl = document.getElementById('tracking-driver-phone-text');
+      const avaEl = document.getElementById('tracking-driver-avatar');
+
+      if (nameEl) nameEl.innerText = driver.name || driver.fullName;
+      if (rateEl) rateEl.innerText = `⭐ ${driver.rating || '4.95'}`;
+      if (vehEl) vehEl.innerHTML = `${driver.vehicle || 'Honda Beat'}`;
+      if (phoneEl) phoneEl.innerText = `WA: ${driver.phoneDisplay || driver.phone || '0896-3053-7250'}`;
+      if (avaEl) avaEl.innerText = driver.avatar || '🛵';
+    }
+
+    function handleWhatsAppDriver() {
+      const phone = currentActiveOrder?.driverPhone || (REGISTERED_DRIVERS[selectedDriverChoice]?.phone) || '089630537250';
+      const cleanPhone = phone.replace(/\D/g, '');
+      const finalPhone = cleanPhone.startsWith('0') ? '62' + cleanPhone.substring(1) : cleanPhone;
+      const driverName = currentActiveOrder?.driverName || (REGISTERED_DRIVERS[selectedDriverChoice]?.name) || 'Driver';
+      const orderId = currentActiveOrder ? currentActiveOrder.id : 'OTW-Order';
+      const msg = `Halo Driver ${driverName}, saya pelanggan dari pesanan #${orderId} di OTW keun Ciater. Mohon info perkembangannya ya. Terima kasih!`;
+      window.open(`https://wa.me/${finalPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
     function handleCallDriver() {
-      showToast('📞 Menghubungi Pak Dadang (0821-4455-6677)...');
+      const phone = currentActiveOrder?.driverPhone || (REGISTERED_DRIVERS[selectedDriverChoice]?.phone) || '089630537250';
+      const driverName = currentActiveOrder?.driverName || 'Driver';
+      showToast(`📞 Membuka panggilan ke ${driverName} (${phone})...`);
+      setTimeout(() => {
+        window.location.href = `tel:${phone}`;
+      }, 400);
     }
 
     // IN-APP CHAT WITH DRIVER
