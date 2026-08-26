@@ -85,9 +85,6 @@
     <a href="driver.html" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
       <i class="fa-solid fa-motorcycle"></i> Driver
     </a>
-    <a href="merchant.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
-      <i class="fa-solid fa-store text-orange-400"></i> Warung/Resto
-    </a>
     <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
       <i class="fa-solid fa-shield-halved text-blue-400"></i> Admin
     </a>
@@ -102,7 +99,6 @@
       </span>
       <div class="flex items-center gap-1.5">
         <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">User</a>
-        <a href="merchant.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Resto</a>
         <a href="admin.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Admin</a>
       </div>
     </div>
@@ -163,21 +159,37 @@
 
         <!-- Recent Trips Log -->
         <div>
-          <h4 class="text-xs font-extrabold text-slate-800 mb-2.5 px-1">Aktivitas Trip Hari Ini</h4>
-          <div class="bg-white rounded-2xl border border-slate-200/80 divide-y divide-slate-100 overflow-hidden text-xs">
-            <div class="p-3 flex items-center justify-between">
-              <div>
-                <div class="font-bold text-slate-800">🍔 Antar Makanan (Warung Bu Tini)</div>
-                <div class="text-[10px] text-slate-400">13:10 • 1.2 km • Selesai</div>
+          <h4 class="text-xs font-extrabold text-slate-800 mb-2.5 px-1">Riwayat Perjalanan</h4>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🍔</span>
+                <div>
+                  <div class="font-bold text-slate-800">Antar Makanan ke Desa Palasari</div>
+                  <div class="text-slate-400">Hari ini, 12:45 • Bakso & Mie</div>
+                </div>
               </div>
-              <span class="font-black text-emerald-600">+Rp 8.000</span>
+              <span class="font-bold text-emerald-600">+Rp 12.000</span>
             </div>
-            <div class="p-3 flex items-center justify-between">
-              <div>
-                <div class="font-bold text-slate-800">🏍️ Ojek Penumpang (Sari Ater)</div>
-                <div class="text-[10px] text-slate-400">11:45 • 2.5 km • Selesai</div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🏍️</span>
+                <div>
+                  <div class="font-bold text-slate-800">OTWRide ke Sari Ater</div>
+                  <div class="text-slate-400">Hari ini, 11:20</div>
+                </div>
               </div>
-              <span class="font-black text-emerald-600">+Rp 12.000</span>
+              <span class="font-bold text-emerald-600">+Rp 10.000</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🍔</span>
+                <div>
+                  <div class="font-bold text-slate-800">Antar Makanan ke Desa Cisaat</div>
+                  <div class="text-slate-400">Kemarin, 18:30 • Masakan Sunda</div>
+                </div>
+              </div>
+              <span class="font-bold text-emerald-600">+Rp 14.000</span>
             </div>
           </div>
         </div>
@@ -216,8 +228,8 @@
             </div>
             <div class="min-w-0">
               <div class="text-[9px] text-emerald-300 font-extrabold uppercase" id="step-badge">LANGKAH 1 DARI 3</div>
-              <div class="text-xs font-black truncate max-w-[200px]" id="nav-instruction-text">Menuju Warung Nasi Bu Tini</div>
-              <div class="text-[10px] text-slate-300 truncate max-w-[200px]" id="nav-location-name">Warung Nasi Liwet Bu Tini (Jl. Raya Ciater No. 45)</div>
+              <div class="text-xs font-black truncate max-w-[200px]" id="nav-instruction-text">Cari & Beli Makanan Pesanan</div>
+              <div class="text-[10px] text-slate-300 truncate max-w-[200px]" id="nav-location-name">Cari warung sesuai pesanan pelanggan di area Sari Ater</div>
             </div>
           </div>
           <button onclick="showToast('Navigasi GPS Aktif')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-[10px] font-bold shrink-0">
@@ -392,17 +404,17 @@
             🔔
           </div>
           <span class="text-[10px] bg-orange-100 text-orange-700 font-extrabold px-3 py-1 rounded-full uppercase" id="incoming-service-badge">
-            PESANAN CIATERFOOD
+            PESANAN MAKANAN BARU
           </span>
-          <h3 class="text-lg font-black text-slate-900 mt-2" id="incoming-title">Warung Nasi Liwet Bu Tini</h3>
+          <h3 class="text-base font-black text-slate-900 mt-2 leading-snug" id="incoming-title">Nasi liwet ayam bakar 2 porsi...</h3>
           <div class="text-xl font-black text-emerald-600" id="incoming-fare">Rp 12.000 (Ongkos Anda)</div>
         </div>
 
         <!-- Route Details -->
         <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span class="text-slate-500">Ambil: <strong class="text-slate-800" id="incoming-pickup">Warung Bu Tini (0.5 km)</strong></span>
+            <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+            <span class="text-slate-500">Cari warung di: <strong class="text-slate-800" id="incoming-pickup">Area Sari Ater & Palasari</strong></span>
           </div>
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-red-500"></span>
@@ -579,10 +591,20 @@
 
     function handleIncomingSyncOrder(order) {
       currentHandlingOrder = order;
-      document.getElementById('incoming-service-badge').innerText = `PESANAN ${order.serviceName || order.service || 'OTW KEUN'}`;
-      document.getElementById('incoming-title').innerText = order.title || order.merchantName || 'Pesanan Baru';
+      // Tentukan service label
+      let serviceBadge = `PESANAN ${order.serviceName || order.service || 'OTW KEUN'}`;
+      if (order.service === 'FOOD') serviceBadge = 'PESANAN MAKANAN BARU';
+      document.getElementById('incoming-service-badge').innerText = serviceBadge;
+      
+      // Title: tampilkan deskripsi makanan (bukan nama warung)
+      const title = order.foodOrderDesc || order.title || 'Pesanan Makanan';
+      document.getElementById('incoming-title').innerText = title.length > 55 ? title.substring(0, 55) + '...' : title;
+      
       document.getElementById('incoming-fare').innerText = `Rp ${((order.total || 30000) * 0.35).toLocaleString('id-ID')} (Ongkos Bersih)`;
-      document.getElementById('incoming-pickup').innerText = order.pickupLocation || order.merchantName || 'Titik Penjemputan';
+      
+      // Pickup: tampilkan area cari warung (hint dari pelanggan), bukan nama merchant
+      const pickupHint = order.foodArea || order.pickupLocation || 'Sekitar Ciater';
+      document.getElementById('incoming-pickup').innerText = pickupHint;
       document.getElementById('incoming-drop').innerText = order.dropLocation || order.customerLocation || 'Desa Palasari';
       
       triggerSimulatedIncomingOrder(true);
@@ -808,14 +830,14 @@
         if (currentHandlingOrder && window.CiaterSync) {
           CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ARRIVED_PICKUP');
         }
-        showToast('📍 Anda telah tiba di titik penjemputan. Ambil pesanan!');
+        showToast('✅ Makanan berhasil dibeli! Periksa pesanan sebelum mengantar.');
       } else if (orderStep === 2) {
         orderStep = 3;
         updateOrderStepUI();
         if (currentHandlingOrder && window.CiaterSync) {
           CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ON_WAY');
         }
-        showToast('🛵 Pesanan diambil! Sedang dalam perjalanan ke alamat pelanggan.');
+        showToast('🛵 Berangkat! Sedang mengantar makanan ke alamat pelanggan.');
       } else if (orderStep === 3) {
         // Finished
         if (currentHandlingOrder && window.CiaterSync) {
@@ -833,19 +855,21 @@
       const navLoc = document.getElementById('nav-location-name');
       const btnText = document.getElementById('btn-advance-text');
 
-      const pickupName = currentHandlingOrder ? (currentHandlingOrder.pickupLocation || currentHandlingOrder.merchantName || 'Titik Penjemputan') : 'Warung Nasi Liwet Bu Tini (Jl. Raya Ciater No. 45)';
+      // Dalam konsep baru: pickup = area cari warung (hint dari pelanggan), drop = alamat antar
+      const pickupArea = currentHandlingOrder ? (currentHandlingOrder.pickupLocation || currentHandlingOrder.foodArea || 'Sekitar Ciater') : 'Area Sari Ater & Palasari';
+      const orderDesc = currentHandlingOrder ? (currentHandlingOrder.foodOrderDesc || currentHandlingOrder.title || 'Pesanan Makanan') : 'Nasi Liwet Ayam Bakar 2 Porsi';
       const dropName = currentHandlingOrder ? (currentHandlingOrder.dropLocation || currentHandlingOrder.customerLocation || 'Desa Palasari RT 02/03') : 'Desa Palasari RT 02/03, Ciater';
 
       if (orderStep === 1) {
         if (stepBadge) stepBadge.innerText = 'LANGKAH 1 DARI 3';
-        if (navInst) navInst.innerText = 'Menuju Titik Penjemputan / Warung';
-        if (navLoc) navLoc.innerText = pickupName;
-        if (btnText) btnText.innerText = 'Saya Sudah Tiba di Titik Jemput';
+        if (navInst) navInst.innerText = 'Cari & Beli Makanan Pesanan';
+        if (navLoc) navLoc.innerText = `${orderDesc} — cari di: ${pickupArea}`;
+        if (btnText) btnText.innerText = 'Makanan Sudah Dibeli ✓';
       } else if (orderStep === 2) {
         if (stepBadge) stepBadge.innerText = 'LANGKAH 2 DARI 3';
-        if (navInst) navInst.innerText = 'Konfirmasi Pengambilan Pesanan';
-        if (navLoc) navLoc.innerText = 'Pastikan pesanan sesuai rincian';
-        if (btnText) btnText.innerText = 'Pesanan Sudah Diambil ➔ Mulai Antar';
+        if (navInst) navInst.innerText = 'Konfirmasi Pesanan Sudah Dibeli';
+        if (navLoc) navLoc.innerText = 'Periksa kelengkapan pesanan sebelum berangkat';
+        if (btnText) btnText.innerText = 'Pesanan Lengkap ➔ Mulai Antar';
       } else if (orderStep === 3) {
         if (stepBadge) stepBadge.innerText = 'LANGKAH 3 DARI 3';
         if (navInst) navInst.innerText = 'Antar ke Alamat Pelanggan';

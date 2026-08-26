@@ -123,9 +123,6 @@
     <a href="driver.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
       <i class="fa-solid fa-motorcycle text-green-400"></i> Driver
     </a>
-    <a href="merchant.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
-      <i class="fa-solid fa-store text-orange-400"></i> Warung/Resto
-    </a>
     <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
       <i class="fa-solid fa-shield-halved text-blue-400"></i> Admin
     </a>
@@ -144,7 +141,6 @@
       </span>
       <div class="flex items-center gap-1.5">
         <a href="driver.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Driver</a>
-        <a href="merchant.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Resto</a>
         <a href="admin.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Admin</a>
       </div>
     </div>
@@ -158,7 +154,7 @@
         </div>
         <h1 class="text-4xl font-black tracking-tight mb-2">OTW<span class="text-amber-400">keun</span></h1>
         <p class="text-brand-100 text-sm max-w-xs leading-relaxed font-medium">
-          Aplikasi Super Cepat Pesan Makanan, Ojek & Kirim Barang Ciater & Sekitarnya
+          Pesan makanan, ojek & kirim barang — Driver kami siap belikan & antarkan langsung ke Anda
         </p>
       </div>
       <div class="w-full flex flex-col items-center gap-3">
@@ -301,7 +297,7 @@
         <!-- Search Bar -->
         <div class="relative" onclick="navigate('screen-food')">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
-          <input type="text" placeholder="Cari sate maranggi, bakso, atau warung..." readonly class="w-full bg-white text-slate-800 placeholder-slate-400 text-xs font-medium pl-9 pr-4 py-3 rounded-2xl shadow-sm focus:outline-none cursor-pointer">
+          <input type="text" placeholder="Mau pesan makanan apa? Ceritakan ke driver..." readonly class="w-full bg-white text-slate-800 placeholder-slate-400 text-xs font-medium pl-9 pr-4 py-3 rounded-2xl shadow-sm focus:outline-none cursor-pointer">
         </div>
       </div>
 
@@ -374,26 +370,44 @@
           </div>
         </div>
 
-        <!-- POPULAR MERCHANTS LIST -->
+        <!-- HOW IT WORKS (NEW CONCEPT) -->
         <div>
           <div class="flex items-center justify-between mb-3 px-1">
             <div>
-              <h3 class="text-sm font-extrabold text-slate-800">Warung & Resto Terpopuler</h3>
-              <p class="text-[11px] text-slate-400">Pilihan favorit warga & wisatawan Ciater</p>
+              <h3 class="text-sm font-extrabold text-slate-800">Cara Kerja OTWFood</h3>
+              <p class="text-[11px] text-slate-400">Tanpa pilih warung — Driver yang urus segalanya!</p>
             </div>
-            <button onclick="navigate('screen-food')" class="text-xs font-bold text-brand-600">Semua</button>
           </div>
-
-          <div id="home-merchant-list" class="space-y-3">
-            <!-- Rendered by JS -->
+          <div class="space-y-2.5">
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex gap-3.5 items-center">
+              <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-2xl shrink-0">1️⃣</div>
+              <div>
+                <h4 class="font-extrabold text-xs text-slate-800">Ceritakan pesanan Anda</h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">Ketik makanan apa yang kamu inginkan, area warung, & tujuan antar</p>
+              </div>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex gap-3.5 items-center">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl shrink-0">2️⃣</div>
+              <div>
+                <h4 class="font-extrabold text-xs text-slate-800">Driver menerima & mencari</h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">Driver kami langsung cari warung terbaik sesuai pesananmu</p>
+              </div>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm flex gap-3.5 items-center">
+              <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl shrink-0">3️⃣</div>
+              <div>
+                <h4 class="font-extrabold text-xs text-slate-800">Tinggal tunggu di rumah!</h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">Lacak driver secara live & chat langsung di aplikasi</p>
+              </div>
+            </div>
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- ==================== SCREEN 5: OTWFOOD RESTAURANT LIST ==================== -->
-    <div id="screen-food" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+    <!-- ==================== SCREEN 5: OTWFOOD — FORM ORDER BEBAS ==================== -->
+    <div id="screen-food" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-28">
       
       <!-- Food Header -->
       <div class="bg-white border-b border-slate-200 sticky top-0 z-30 p-4">
@@ -403,105 +417,105 @@
           </button>
           <div class="flex-1">
             <h2 class="text-base font-extrabold text-slate-800 flex items-center gap-1.5">
-              🍔 OTWFood <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Lokal</span>
+              🍔 OTWFood <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Driver Belikan</span>
             </h2>
-            <p class="text-[11px] text-slate-400">Pesan makanan favorit seputar Ciater</p>
+            <p class="text-[11px] text-slate-400">Driver cari & belikan langsung ke alamat Anda</p>
           </div>
         </div>
 
-        <!-- Search input -->
-        <div class="relative">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-          <input id="food-search-input" oninput="handleFoodSearch()" type="text" placeholder="Cari nama menu atau warung..." class="w-full bg-slate-100 text-xs font-medium pl-9 pr-4 py-2.5 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 transition">
-        </div>
-
-        <!-- Category Chips -->
-        <div class="flex gap-2 overflow-x-auto no-scrollbar pt-3 text-xs">
-          <button onclick="filterFoodCategory('all', this)" class="category-chip bg-brand-600 text-white font-bold px-3.5 py-1.5 rounded-xl whitespace-nowrap">Semua</button>
-          <button onclick="filterFoodCategory('sunda', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🥘 Masakan Sunda</button>
-          <button onclick="filterFoodCategory('bakso', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍜 Bakso & Mie</button>
-          <button onclick="filterFoodCategory('ayam', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍗 Ayam & Bebek</button>
-          <button onclick="filterFoodCategory('minuman', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🧋 Minuman</button>
-          <button onclick="filterFoodCategory('snack', this)" class="category-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍟 Cemilan</button>
+        <!-- Category Chips sebagai pilihan jenis makanan (hint ke driver) -->
+        <div>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wide mb-1.5">Kategori Makanan</p>
+          <div class="flex gap-2 overflow-x-auto no-scrollbar text-xs">
+            <button onclick="selectFoodCategory('Masakan Sunda', this)" class="food-cat-chip bg-brand-600 text-white font-bold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🥘 Masakan Sunda</button>
+            <button onclick="selectFoodCategory('Bakso & Mie', this)" class="food-cat-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍜 Bakso & Mie</button>
+            <button onclick="selectFoodCategory('Ayam & Bebek', this)" class="food-cat-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍗 Ayam & Bebek</button>
+            <button onclick="selectFoodCategory('Minuman & Kopi', this)" class="food-cat-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🧋 Minuman</button>
+            <button onclick="selectFoodCategory('Cemilan & Snack', this)" class="food-cat-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap">🍟 Cemilan</button>
+          </div>
         </div>
       </div>
 
-      <!-- Restaurant Cards List -->
-      <div id="food-restaurant-container" class="p-4 space-y-3.5">
-        <!-- Rendered by JS -->
+      <!-- ORDER FORM -->
+      <div class="p-4 space-y-4">
+
+        <!-- Info Banner -->
+        <div class="bg-orange-50 border border-orange-200 rounded-2xl p-3.5 flex items-start gap-3">
+          <div class="text-xl shrink-0">🛵</div>
+          <div>
+            <h4 class="text-xs font-extrabold text-orange-800">Driver belikan, bukan warung yang kirim!</h4>
+            <p class="text-[10px] text-orange-600 mt-0.5 leading-relaxed">Ceritakan saja makanan yang kamu mau. Driver kami akan mencari warung terbaik di area pilihanmu & langsung mengantarkan ke alamatmu.</p>
+          </div>
+        </div>
+
+        <!-- Deskripsi Pesanan -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-2">
+            🍽️ Ceritakan Pesanan Anda
+          </label>
+          <textarea id="food-order-desc" rows="3" placeholder="Contoh: Nasi liwet ayam bakar 2 porsi, sambel dipisah. Kalau ada, minta es teh manis juga ya..." class="w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 transition resize-none leading-relaxed"></textarea>
+          <p class="text-[10px] text-slate-400 mt-1.5">Semakin detail, semakin mudah driver mencarinya 👍</p>
+        </div>
+
+        <!-- Area Cari Warung -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-2">
+            📍 Area Cari Warung (Petunjuk untuk Driver)
+          </label>
+          <div class="space-y-2">
+            <select id="food-area-warung" class="w-full text-xs font-semibold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-500 transition">
+              <option value="Sekitar Ciater (terserah driver)">📌 Sekitar Ciater (terserah driver)</option>
+              <option value="Area Sari Ater & Palasari">♨️ Area Sari Ater & Palasari</option>
+              <option value="Pasar Ciater & Sekitarnya">🏪 Pasar Ciater & Sekitarnya</option>
+              <option value="Desa Cisaat, Ciater">🌿 Desa Cisaat, Ciater</option>
+              <option value="Jalancagak & Sagalaherang">🛣️ Jalancagak & Sagalaherang</option>
+              <option value="Bebas, driver yang tahu">🗺️ Bebas, driver yang tahu terbaik</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Estimasi Harga Makanan -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-2">
+            💰 Estimasi Budget Makanan (Opsional)
+          </label>
+          <div class="flex gap-2 overflow-x-auto no-scrollbar text-xs">
+            <button onclick="setFoodBudget(25000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap border border-transparent">Rp 15–25rb</button>
+            <button onclick="setFoodBudget(40000, this)" class="budget-chip bg-brand-600 text-white font-bold px-3.5 py-1.5 rounded-xl whitespace-nowrap">Rp 25–40rb</button>
+            <button onclick="setFoodBudget(60000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap border border-transparent">Rp 40–60rb</button>
+            <button onclick="setFoodBudget(100000, this)" class="budget-chip bg-slate-100 text-slate-600 font-semibold px-3.5 py-1.5 rounded-xl whitespace-nowrap border border-transparent">Rp 60–100rb</button>
+          </div>
+          <input id="food-budget-value" type="hidden" value="40000">
+        </div>
+
+        <!-- Catatan Tambahan -->
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-1.5">📝 Catatan Tambahan</label>
+          <input id="food-extra-note" type="text" placeholder="Misal: jangan pedas, tanpa kecap, atau minta kembaliannya..." class="w-full text-xs text-slate-800 focus:outline-none bg-transparent placeholder-slate-400">
+        </div>
+
       </div>
+
+      <!-- Floating Order Button -->
+      <div class="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white p-4 border-t border-slate-200 shadow-2xl z-40">
+        <button onclick="handlePlaceOrder('FOOD')" class="w-full py-4 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-extrabold rounded-2xl shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition">
+          <span>Pesan Sekarang — Cari Driver</span>
+          <i class="fa-solid fa-motorcycle"></i>
+        </button>
+      </div>
+
     </div>
 
-    <!-- ==================== SCREEN 6: RESTAURANT DETAIL & MENU ==================== -->
-    <div id="screen-resto-detail" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-28">
-      
-      <!-- Resto Hero Banner -->
-      <div class="relative bg-slate-800 text-white h-44 flex items-end p-4">
-        <button onclick="navigate('screen-food')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center z-10">
-          <i class="fa-solid fa-arrow-left text-sm"></i>
-        </button>
-        
-        <div id="resto-hero-emoji" class="absolute inset-0 flex items-center justify-center text-7xl opacity-40">
-          🍲
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-
-        <div class="relative z-10">
-          <span id="resto-detail-badge" class="text-[9px] bg-brand-500 text-white font-bold px-2 py-0.5 rounded-full uppercase">Buka Sekarang</span>
-          <h2 id="resto-detail-name" class="text-xl font-black mt-1 text-white leading-tight">Warung Nasi Liwet Bu Tini</h2>
-          <div class="flex items-center gap-3 text-xs text-slate-300 mt-1">
-            <span class="flex items-center gap-1 text-amber-400 font-bold"><i class="fa-solid fa-star"></i> <span id="resto-detail-rating">4.8</span></span>
-            <span>•</span>
-            <span id="resto-detail-distance">1.2 km</span>
-            <span>•</span>
-            <span id="resto-detail-time">15-20 mnt</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Menu Categories Tabs -->
-      <div class="bg-white border-b border-slate-200 px-4 py-2 flex gap-3 overflow-x-auto no-scrollbar sticky top-0 z-20">
-        <button class="text-xs font-bold text-brand-600 border-b-2 border-brand-600 pb-1.5 whitespace-nowrap">Semua Menu</button>
-        <button class="text-xs font-medium text-slate-500 pb-1.5 whitespace-nowrap">Makanan Utama</button>
-        <button class="text-xs font-medium text-slate-500 pb-1.5 whitespace-nowrap">Minuman</button>
-        <button class="text-xs font-medium text-slate-500 pb-1.5 whitespace-nowrap">Tambahan</button>
-      </div>
-
-      <!-- Menu Items List -->
-      <div id="resto-menu-container" class="p-4 space-y-3">
-        <!-- Rendered by JS -->
-      </div>
-
-      <!-- Floating Bottom Cart Button -->
-      <div id="floating-cart-bar" class="hidden fixed bottom-6 left-0 right-0 max-w-[440px] mx-auto px-4 z-40">
-        <button onclick="navigate('screen-cart')" class="w-full bg-brand-600 hover:bg-brand-700 text-white p-3.5 rounded-2xl shadow-xl flex items-center justify-between active:scale-98 transition">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center font-bold text-xs" id="cart-total-qty">
-              2
-            </div>
-            <div class="text-left">
-              <div class="text-xs font-black" id="cart-resto-name">Warung Bu Tini</div>
-              <div class="text-[10px] text-brand-100">Klik untuk lanjut pembayaran</div>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="font-extrabold text-sm" id="cart-total-price">Rp 35.000</span>
-            <i class="fa-solid fa-arrow-right text-xs"></i>
-          </div>
-        </button>
-      </div>
-
-    </div>
 
     <!-- ==================== SCREEN 7: CART & CHECKOUT ==================== -->
     <div id="screen-cart" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-28">
       
       <!-- Cart Header -->
       <div class="bg-white p-4 border-b border-slate-200 flex items-center gap-3 sticky top-0 z-30">
-        <button onclick="navigate('screen-resto-detail')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+        <button onclick="navigate('screen-food')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
           <i class="fa-solid fa-arrow-left text-sm"></i>
         </button>
-        <h2 class="text-base font-extrabold text-slate-800">Keranjang & Pembayaran</h2>
+        <h2 class="text-base font-extrabold text-slate-800">Konfirmasi & Pembayaran</h2>
       </div>
 
       <div class="p-4 space-y-4">
@@ -523,19 +537,21 @@
           </div>
         </div>
 
-        <!-- Ordered Items Summary -->
+        <!-- Ringkasan Pesanan (teks bebas dari form) -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h4 class="text-xs font-bold text-slate-800" id="cart-summary-resto">Warung Nasi Liwet Bu Tini</h4>
-            <button onclick="navigate('screen-resto-detail')" class="text-[11px] font-semibold text-brand-600">+ Tambah Menu</button>
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-3">
+            <h4 class="text-xs font-bold text-slate-800">🍔 Detail Pesanan Makanan</h4>
+            <button onclick="navigate('screen-food')" class="text-[11px] font-semibold text-brand-600">✏️ Edit</button>
           </div>
-          <div id="cart-items-list" class="divide-y divide-slate-100">
+          <div id="cart-items-list">
             <!-- Rendered by JS -->
           </div>
-          
-          <!-- Note input -->
-          <div class="mt-3 pt-3 border-t border-slate-100">
-            <input id="order-note-input" type="text" placeholder="Catatan untuk resto/driver (misal: sambal dipisah ya)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:bg-white">
+          <!-- Info untuk driver -->
+          <div class="mt-3 pt-3 border-t border-slate-100 bg-orange-50 rounded-xl p-2.5">
+            <p class="text-[10px] text-orange-700 font-semibold flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-info"></i>
+              Driver akan mencari & membelikan pesanan ini dari warung terdekat
+            </p>
           </div>
         </div>
 
@@ -580,12 +596,12 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2 text-xs">
           <h4 class="font-bold text-slate-800 mb-2">Rincian Pembayaran</h4>
           <div class="flex justify-between text-slate-500">
-            <span>Subtotal Makanan</span>
+            <span>Estimasi Harga Makanan</span>
             <span id="cost-subtotal">Rp 0</span>
           </div>
           <div class="flex justify-between text-slate-500">
-            <span>Ongkos Kirim (1.2 km)</span>
-            <span id="cost-delivery">Rp 6.000</span>
+            <span>Ongkos Driver (jasa beli + antar)</span>
+            <span id="cost-delivery">Rp 8.000</span>
           </div>
           <div class="flex justify-between text-slate-500">
             <span>Biaya Layanan Aplikasi</span>
@@ -599,15 +615,16 @@
             <span>Total Pembayaran</span>
             <span id="cost-grand-total" class="text-brand-600">Rp 0</span>
           </div>
+          <p class="text-[10px] text-slate-400 pt-1">* Harga makanan final mungkin berbeda sesuai yang dibeli driver. Kembalian diberikan langsung oleh driver.</p>
         </div>
 
       </div>
 
       <!-- Bottom Place Order Button -->
       <div class="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white p-4 border-t border-slate-200 shadow-2xl z-40">
-        <button onclick="handlePlaceOrder('FOOD')" class="w-full py-4 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-extrabold rounded-2xl shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition">
-          <span>Pesan Sekarang</span>
-          <i class="fa-solid fa-arrow-right"></i>
+        <button onclick="confirmFoodOrder()" class="w-full py-4 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-extrabold rounded-2xl shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition">
+          <span>Konfirmasi & Cari Driver</span>
+          <i class="fa-solid fa-motorcycle"></i>
         </button>
       </div>
 
@@ -869,7 +886,7 @@
             1. Diterima
           </div>
           <div class="p-1.5 rounded-xl bg-brand-600 text-white font-bold shadow-sm" id="step-pickup">
-            2. Diambil
+            2. Driver Cari
           </div>
           <div class="p-1.5 rounded-xl bg-slate-100 text-slate-400 font-medium" id="step-transit">
             3. Diantar
@@ -1049,13 +1066,10 @@
 
         <!-- App Switcher inside Profile for easy testing -->
         <div class="bg-brand-50 p-4 rounded-2xl border border-brand-200">
-          <h4 class="text-xs font-bold text-brand-900 uppercase tracking-wide mb-2">Buka Aplikasi Mitra / Pengelola</h4>
-          <div class="grid grid-cols-3 gap-2 text-center text-xs">
+          <h4 class="text-xs font-bold text-brand-900 uppercase tracking-wide mb-2">Buka Aplikasi Mitra</h4>
+          <div class="grid grid-cols-2 gap-2 text-center text-xs">
             <a href="driver.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-emerald-50 border border-slate-200">
               🏍️ Driver
-            </a>
-            <a href="merchant.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-orange-50 border border-slate-200">
-              🏪 Warung
             </a>
             <a href="admin.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-blue-50 border border-slate-200">
               ⚙️ Admin
@@ -1213,10 +1227,9 @@
         </div>
 
         <!-- Role Selectors for QR -->
-        <div class="grid grid-cols-4 gap-1.5 text-[10px] font-bold">
+        <div class="grid grid-cols-3 gap-1.5 text-[10px] font-bold">
           <button onclick="updateQrTarget('index.html')" class="p-1.5 bg-brand-50 text-brand-700 rounded-xl border border-brand-200">User</button>
           <button onclick="updateQrTarget('driver.html')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">Driver</button>
-          <button onclick="updateQrTarget('merchant.html')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">Resto</button>
           <button onclick="updateQrTarget('admin.html')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">Admin</button>
         </div>
 
@@ -1349,18 +1362,18 @@
 
     // STATE VARIABLES
     let currentScreen = 'screen-splash';
-    let selectedResto = RESTAURANTS[0];
-    let cart = []; // [{ item, qty }]
+    let selectedFoodCategory = 'Masakan Sunda'; // default hint
+    let foodBudget = 40000; // default budget estimate
     let activePromo = null;
     let userBalance = 85000;
     let orderHistory = [
       {
         id: 'OTW-7721',
         service: 'FOOD',
-        title: 'Warung Nasi Liwet Bu Tini',
+        title: 'Nasi liwet + ayam bakar (Driver belikan)',
         date: 'Hari ini, 12:30',
-        items: '1x Paket Liwet Komplit, 1x Es Teh',
-        total: 39000,
+        items: 'Nasi liwet ayam bakar 2 porsi, es teh • Area Sari Ater',
+        total: 49000,
         status: 'SELESAI',
         statusColor: 'emerald'
       },
@@ -1390,7 +1403,7 @@
         if (stored && stored.length > 0) {
           orderHistory = stored;
         }
-        // Listen to Realtime Events from Driver / Merchant / Admin
+        // Listen to Realtime Events from Driver / Admin
         CiaterSync.listenSyncEvents((type, payload) => {
           console.log('[User App] Sync Event:', type, payload);
           if (type === 'STATUS_UPDATED' || type === 'ORDER_CREATED') {
@@ -1408,8 +1421,6 @@
         });
       }
 
-      renderHomeMerchants();
-      renderFoodRestaurants(RESTAURANTS);
       renderOrdersHistory();
       
       // Auto advance splash screen
@@ -1418,7 +1429,6 @@
           navigate('screen-home');
         }
       }, 2200);
-
       // Handle OTP boxes auto focus
       const otpInputs = document.querySelectorAll('.otp-box');
       otpInputs.forEach((input, index) => {
@@ -1438,23 +1448,17 @@
     function handleRemoteStatusUpdate(newStatus) {
       const statusPill = document.getElementById('tracking-status-pill');
       if (newStatus === 'DRIVER_ASSIGNED' || newStatus === 'ACCEPTED') {
-        if (statusPill) statusPill.innerText = 'Driver Ditemukan! Menuju Lokasi Penjemputan';
+        if (statusPill) statusPill.innerText = 'Driver Ditemukan! Sedang Mencari & Membeli Pesanan Anda';
         showToast('🛵 Driver telah menerima pesanan Anda!');
-      } else if (newStatus === 'COOKING') {
-        if (statusPill) statusPill.innerText = 'Warung Sedang Memasak Pesanan Anda';
-        showToast('🍳 Warung mulai memasak pesanan Anda!');
-      } else if (newStatus === 'READY') {
-        if (statusPill) statusPill.innerText = 'Makanan Siap! Driver Menuju Warung';
-        showToast('✅ Makanan siap! Driver segera mengambil pesanan.');
       } else if (newStatus === 'DRIVER_ARRIVED_PICKUP') {
-        if (statusPill) statusPill.innerText = 'Driver Sudah Tiba di Titik Pengambilan';
+        if (statusPill) statusPill.innerText = 'Driver Sudah Membeli Pesanan — Menuju Alamat Anda';
         document.getElementById('step-pickup')?.classList.add('bg-brand-600', 'text-white');
-        showToast('📍 Driver sudah tiba di lokasi pengambilan.');
+        showToast('📍 Driver sudah membeli pesanan dan siap antar!');
       } else if (newStatus === 'DRIVER_PICKED_UP' || newStatus === 'DRIVER_ON_WAY') {
         if (statusPill) statusPill.innerText = 'Driver Sedang Mengantar ke Alamat Anda';
         document.getElementById('step-pickup')?.classList.add('bg-brand-600', 'text-white');
         document.getElementById('step-transit')?.classList.add('bg-brand-600', 'text-white');
-        showToast('🛵 Driver telah mengambil pesanan dan dalam perjalanan!');
+        showToast('🛵 Driver dalam perjalanan ke alamat Anda!');
       } else if (newStatus === 'COMPLETED' || newStatus === 'SELESAI') {
         simulateOrderFinish();
       }
@@ -1500,242 +1504,118 @@
         item.classList.add('text-slate-400');
       });
       if (screenId === 'screen-home') document.querySelectorAll('.nav-item')[0]?.classList.add('text-brand-600');
-      if (screenId === 'screen-food' || screenId === 'screen-resto-detail') document.querySelectorAll('.nav-item')[1]?.classList.add('text-brand-600');
+      if (screenId === 'screen-food' || screenId === 'screen-cart') document.querySelectorAll('.nav-item')[1]?.classList.add('text-brand-600');
       if (screenId === 'screen-orders') document.querySelectorAll('.nav-item')[2]?.classList.add('text-brand-600');
       if (screenId === 'screen-promo') document.querySelectorAll('.nav-item')[3]?.classList.add('text-brand-600');
       if (screenId === 'screen-profile') document.querySelectorAll('.nav-item')[4]?.classList.add('text-brand-600');
     }
 
-    // RENDER HOME MERCHANTS
-    function renderHomeMerchants() {
-      const container = document.getElementById('home-merchant-list');
-      if (!container) return;
-      container.innerHTML = RESTAURANTS.slice(0, 3).map(resto => `
-        <div onclick="openRestoDetail('${resto.id}')" class="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition active:scale-98 cursor-pointer flex gap-3.5 items-center">
-          <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl shadow-inner shrink-0">
-            ${resto.emoji}
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between">
-              <h4 class="font-extrabold text-xs text-slate-800 truncate">${resto.name}</h4>
-              <span class="text-[10px] font-black text-amber-500 flex items-center gap-1">
-                <i class="fa-solid fa-star"></i> ${resto.rating}
-              </span>
-            </div>
-            <p class="text-[10px] text-slate-400 truncate mt-0.5">${resto.desc}</p>
-            <div class="flex items-center gap-2 text-[10px] text-slate-500 font-semibold mt-1.5">
-              <span><i class="fa-solid fa-location-dot text-brand-600"></i> ${resto.distance}</span>
-              <span>•</span>
-              <span><i class="fa-solid fa-clock text-slate-400"></i> ${resto.time}</span>
-              <span>•</span>
-              <span class="text-brand-600 font-bold">Ongkir Rp 5rb</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
+    // ============================================================
+    // OTWFOOD — FORM ORDER BEBAS (BARU: tanpa pilih warung)
+    // ============================================================
 
-    // RENDER FOOD RESTAURANTS LIST
-    function renderFoodRestaurants(list) {
-      const container = document.getElementById('food-restaurant-container');
-      if (!container) return;
-
-      if (list.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-12">
-            <div class="text-4xl mb-2">🔍</div>
-            <h4 class="text-xs font-bold text-slate-700">Tidak ada warung/resto ditemukan</h4>
-            <p class="text-[11px] text-slate-400">Coba kata kunci lain atau ganti kategori</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = list.map(resto => `
-        <div onclick="openRestoDetail('${resto.id}')" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition active:scale-98 cursor-pointer flex gap-3.5 items-center">
-          <div class="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center text-3xl shadow-inner shrink-0 border border-amber-100">
-            ${resto.emoji}
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between">
-              <h4 class="font-extrabold text-xs text-slate-800 truncate">${resto.name}</h4>
-              <span class="text-[10px] font-black text-amber-500 flex items-center gap-1">
-                <i class="fa-solid fa-star"></i> ${resto.rating} (${resto.reviews})
-              </span>
-            </div>
-            <p class="text-[10px] text-slate-500 truncate mt-0.5">${resto.desc}</p>
-            <div class="flex items-center gap-2 text-[10px] text-slate-500 font-semibold mt-2">
-              <span class="bg-slate-100 px-2 py-0.5 rounded text-slate-700">📍 ${resto.distance}</span>
-              <span class="bg-brand-50 text-brand-700 px-2 py-0.5 rounded font-bold">⏱️ ${resto.time}</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // FILTER RESTAURANTS BY CATEGORY
-    function filterFoodCategory(category, btn) {
-      document.querySelectorAll('.category-chip').forEach(c => {
+    // Pilih kategori makanan sebagai hint untuk driver
+    function selectFoodCategory(categoryName, btn) {
+      selectedFoodCategory = categoryName;
+      document.querySelectorAll('.food-cat-chip').forEach(c => {
         c.classList.remove('bg-brand-600', 'text-white');
         c.classList.add('bg-slate-100', 'text-slate-600');
       });
       btn.classList.remove('bg-slate-100', 'text-slate-600');
       btn.classList.add('bg-brand-600', 'text-white');
-
-      if (category === 'all') {
-        renderFoodRestaurants(RESTAURANTS);
-      } else {
-        const filtered = RESTAURANTS.filter(r => r.category === category);
-        renderFoodRestaurants(filtered);
-      }
-    }
-
-    function handleFoodSearch() {
-      const q = document.getElementById('food-search-input').value.toLowerCase().trim();
-      const filtered = RESTAURANTS.filter(r => 
-        r.name.toLowerCase().includes(q) || 
-        r.desc.toLowerCase().includes(q) ||
-        r.menus.some(m => m.name.toLowerCase().includes(q))
-      );
-      renderFoodRestaurants(filtered);
-    }
-
-    // OPEN RESTO DETAIL & RENDER MENUS
-    function openRestoDetail(restoId) {
-      selectedResto = RESTAURANTS.find(r => r.id === restoId) || RESTAURANTS[0];
       
-      document.getElementById('resto-detail-name').innerText = selectedResto.name;
-      document.getElementById('resto-detail-rating').innerText = selectedResto.rating;
-      document.getElementById('resto-detail-distance').innerText = selectedResto.distance;
-      document.getElementById('resto-detail-time').innerText = selectedResto.time;
-      document.getElementById('resto-hero-emoji').innerText = selectedResto.emoji;
+      const textarea = document.getElementById('food-order-desc');
+      if (textarea && !textarea.value.trim()) {
+        const hints = {
+          'Masakan Sunda': 'Nasi liwet ayam bakar, sambel dipisah ya',
+          'Bakso & Mie': 'Bakso urat jumbo kuah panas, mie secukupnya',
+          'Ayam & Bebek': 'Ayam bakar madu + nasi, 2 porsi',
+          'Minuman & Kopi': 'Kopi susu gula aren + es teh manis',
+          'Cemilan & Snack': 'Keripik tempe oncom + nanas madu Subang'
+        };
+        textarea.placeholder = hints[categoryName] || textarea.placeholder;
+      }
+      showToast(`Kategori: ${categoryName} dipilih`);
+    }
 
-      const container = document.getElementById('resto-menu-container');
-      container.innerHTML = selectedResto.menus.map(menu => {
-        const inCart = cart.find(c => c.item.id === menu.id);
-        const qty = inCart ? inCart.qty : 0;
+    // Pilih estimasi budget
+    function setFoodBudget(amount, btn) {
+      foodBudget = amount;
+      document.querySelectorAll('.budget-chip').forEach(c => {
+        c.classList.remove('bg-brand-600', 'text-white');
+        c.classList.add('bg-slate-100', 'text-slate-600');
+        c.classList.remove('border-brand-300');
+        c.classList.add('border-transparent');
+      });
+      btn.classList.remove('bg-slate-100', 'text-slate-600', 'border-transparent');
+      btn.classList.add('bg-brand-600', 'text-white');
+      const budgetInput = document.getElementById('food-budget-value');
+      if (budgetInput) budgetInput.value = amount;
+      showToast(`Budget: Rp ${amount.toLocaleString('id-ID')}`);
+    }
 
-        return `
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center text-2xl shrink-0 border border-slate-100">
-                ${menu.emoji}
-              </div>
-              <div>
-                <h4 class="text-xs font-extrabold text-slate-800">${menu.name}</h4>
-                <p class="text-[10px] text-slate-400 line-clamp-1 mt-0.5">${menu.desc}</p>
-                <div class="text-xs font-black text-brand-600 mt-1">Rp ${menu.price.toLocaleString('id-ID')}</div>
-              </div>
+    // Validasi form & lanjut ke konfirmasi
+    function handlePlaceOrder(serviceType) {
+      if (serviceType === 'FOOD') {
+        const desc = document.getElementById('food-order-desc')?.value.trim();
+        if (!desc) {
+          showToast('⚠️ Ceritakan dulu makanan yang ingin dipesan!');
+          document.getElementById('food-order-desc')?.focus();
+          return;
+        }
+        renderFoodOrderSummaryInCart();
+        navigate('screen-cart');
+        return;
+      }
+      dispatchOrder(serviceType);
+    }
+
+    // Tampilkan ringkasan pesanan di cart screen (preview sebelum konfirmasi)
+    function renderFoodOrderSummaryInCart() {
+      const desc = document.getElementById('food-order-desc')?.value.trim() || '(Tidak ada deskripsi)';
+      const area = document.getElementById('food-area-warung')?.value || 'Sekitar Ciater';
+      const budget = parseInt(document.getElementById('food-budget-value')?.value || '40000');
+      const note = document.getElementById('food-extra-note')?.value.trim() || '';
+      const deliveryFee = 8000;
+      const serviceFee = 1000;
+      let discount = (activePromo === 'CIATERKULINER' || activePromo === 'GRATISONGKIR') ? 5000 : 0;
+      const grandTotal = Math.max(0, budget + deliveryFee + serviceFee - discount);
+
+      const container = document.getElementById('cart-items-list');
+      if (container) {
+        container.innerHTML = `
+          <div class="space-y-2 text-xs">
+            <div>
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Pesanan Anda</span>
+              <p class="text-slate-800 font-semibold mt-1 leading-relaxed">${desc}</p>
             </div>
-
-            <!-- Add / Quantity Controls -->
-            <div class="shrink-0">
-              ${qty === 0 ? `
-                <button onclick="addToCart('${menu.id}')" class="px-3.5 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 font-bold text-xs rounded-xl active:scale-95 transition">
-                  + Tambah
-                </button>
-              ` : `
-                <div class="flex items-center gap-2 bg-brand-50 border border-brand-200 rounded-xl p-1 text-xs">
-                  <button onclick="updateCartQty('${menu.id}', -1)" class="w-6 h-6 rounded-lg bg-white text-brand-700 font-bold flex items-center justify-center shadow-xs">-</button>
-                  <span class="font-extrabold text-brand-800 px-1">${qty}</span>
-                  <button onclick="updateCartQty('${menu.id}', 1)" class="w-6 h-6 rounded-lg bg-brand-600 text-white font-bold flex items-center justify-center shadow-xs">+</button>
-                </div>
-              `}
+            <div class="flex items-center gap-2 text-slate-500 pt-1">
+              <i class="fa-solid fa-location-dot text-brand-600 text-xs"></i>
+              <span>Area cari warung: <strong class="text-slate-700">${area}</strong></span>
             </div>
+            <div class="flex items-center gap-2 text-slate-500">
+              <i class="fa-solid fa-tag text-brand-600 text-xs"></i>
+              <span>Kategori: <strong class="text-slate-700">${selectedFoodCategory}</strong></span>
+            </div>
+            ${note ? `<div class="flex items-center gap-2 text-slate-500"><i class="fa-solid fa-note-sticky text-amber-500 text-xs"></i><span>Catatan: <em class="text-slate-600">${note}</em></span></div>` : ''}
           </div>
         `;
-      }).join('');
-
-      updateCartBar();
-      navigate('screen-resto-detail');
-    }
-
-    // CART MANAGEMENT
-    function addToCart(menuId) {
-      const menu = selectedResto.menus.find(m => m.id === menuId);
-      if (!menu) return;
-
-      const existing = cart.find(c => c.item.id === menuId);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push({ item: menu, qty: 1 });
       }
 
-      showToast(`Ditambahkan: ${menu.name}`);
-      openRestoDetail(selectedResto.id);
+      // Update cost breakdown
+      const subtotalEl = document.getElementById('cost-subtotal');
+      const deliveryEl = document.getElementById('cost-delivery');
+      const discountEl = document.getElementById('cost-discount');
+      const grandEl = document.getElementById('cost-grand-total');
+      if (subtotalEl) subtotalEl.innerText = `Rp ${budget.toLocaleString('id-ID')}`;
+      if (deliveryEl) deliveryEl.innerText = `Rp ${deliveryFee.toLocaleString('id-ID')}`;
+      if (discountEl) discountEl.innerText = `- Rp ${discount.toLocaleString('id-ID')}`;
+      if (grandEl) grandEl.innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
     }
 
-    function updateCartQty(menuId, change) {
-      const idx = cart.findIndex(c => c.item.id === menuId);
-      if (idx !== -1) {
-        cart[idx].qty += change;
-        if (cart[idx].qty <= 0) {
-          cart.splice(idx, 1);
-        }
-      }
-      openRestoDetail(selectedResto.id);
-      renderCartItems();
-    }
-
-    function updateCartBar() {
-      const bar = document.getElementById('floating-cart-bar');
-      if (cart.length === 0) {
-        bar.classList.add('hidden');
-        return;
-      }
-
-      bar.classList.remove('hidden');
-      const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
-      const totalPrice = cart.reduce((sum, i) => sum + (i.item.price * i.qty), 0);
-
-      document.getElementById('cart-total-qty').innerText = totalQty;
-      document.getElementById('cart-resto-name').innerText = selectedResto.name;
-      document.getElementById('cart-total-price').innerText = `Rp ${totalPrice.toLocaleString('id-ID')}`;
-    }
-
-    // RENDER CART PAGE
-    function renderCartItems() {
-      const container = document.getElementById('cart-items-list');
-      if (!container) return;
-
-      if (cart.length === 0) {
-        navigate('screen-food');
-        return;
-      }
-
-      document.getElementById('cart-summary-resto').innerText = selectedResto.name;
-
-      container.innerHTML = cart.map(c => `
-        <div class="py-3 flex items-center justify-between gap-2">
-          <div class="min-w-0">
-            <h5 class="text-xs font-bold text-slate-800">${c.item.name}</h5>
-            <div class="text-[11px] text-slate-400">Rp ${c.item.price.toLocaleString('id-ID')} x ${c.qty}</div>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="text-xs font-extrabold text-slate-800">Rp ${(c.item.price * c.qty).toLocaleString('id-ID')}</span>
-            <div class="flex items-center gap-1.5 bg-slate-100 rounded-lg p-0.5 text-xs">
-              <button onclick="updateCartQty('${c.item.id}', -1)" class="w-5 h-5 rounded bg-white text-slate-700 font-bold flex items-center justify-center">-</button>
-              <span class="font-bold px-1 text-[11px]">${c.qty}</span>
-              <button onclick="updateCartQty('${c.item.id}', 1)" class="w-5 h-5 rounded bg-brand-600 text-white font-bold flex items-center justify-center">+</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-
-      // Calculate totals
-      const subtotal = cart.reduce((sum, i) => sum + (i.item.price * i.qty), 0);
-      const deliveryFee = 6000;
-      const serviceFee = 1000;
-      let discount = 0;
-      if (activePromo === 'CIATERKULINER') discount = 5000;
-      else if (activePromo === 'GRATISONGKIR') discount = deliveryFee; // gratis ongkir
-      const grandTotal = Math.max(0, subtotal + deliveryFee + serviceFee - discount);
-
-      document.getElementById('cost-subtotal').innerText = `Rp ${subtotal.toLocaleString('id-ID')}`;
-      document.getElementById('cost-delivery').innerText = `Rp ${deliveryFee.toLocaleString('id-ID')}`;
-      document.getElementById('cost-discount').innerText = `- Rp ${discount.toLocaleString('id-ID')}`;
-      document.getElementById('cost-grand-total').innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+    // Konfirmasi & dispatch order dari cart screen
+    function confirmFoodOrder() {
+      dispatchOrder('FOOD');
     }
 
     // POPULAR DESTINATION SELECTOR FOR OTWRIDE
@@ -1755,8 +1635,8 @@
       return String(items);
     }
 
-    // ORDER PLACEMENT & DISPATCH SIMULATION
-    function handlePlaceOrder(serviceType) {
+    // Dispatch order ke driver & broadcast via CiaterSync
+    function dispatchOrder(serviceType) {
       let orderTitle = '';
       let orderItems = [];
       let itemsSummary = '';
@@ -1767,28 +1647,23 @@
       let discount = 0;
       let pickupLocation = '';
       let dropLocation = '';
+      let foodOrderDesc = '';
+      let foodArea = '';
 
       if (serviceType === 'FOOD') {
-        if (cart.length === 0) {
-          showToast('Keranjang Anda kosong!');
-          return;
-        }
-        orderTitle = selectedResto.name;
-        orderItems = cart.map(c => ({
-          id: c.item.id,
-          name: c.item.name,
-          qty: c.qty,
-          price: c.item.price,
-          note: document.getElementById('order-note-input')?.value || ''
-        }));
-        itemsSummary = orderItems.map(c => `${c.qty}x ${c.name}`).join(', ');
-        subtotal = cart.reduce((sum, i) => sum + (i.item.price * i.qty), 0);
-        deliveryFee = 6000;
-        if (activePromo === 'CIATERKULINER') discount = 5000;
-        else if (activePromo === 'GRATISONGKIR') discount = deliveryFee;
+        foodOrderDesc = document.getElementById('food-order-desc')?.value.trim() || 'Pesanan makanan';
+        foodArea = document.getElementById('food-area-warung')?.value || 'Sekitar Ciater';
+        const budget = parseInt(document.getElementById('food-budget-value')?.value || '40000');
+        const extraNote = document.getElementById('food-extra-note')?.value.trim() || '';
+        orderTitle = foodOrderDesc.length > 40 ? foodOrderDesc.substring(0, 40) + '...' : foodOrderDesc;
+        subtotal = budget;
+        deliveryFee = 8000;
+        discount = (activePromo === 'CIATERKULINER' || activePromo === 'GRATISONGKIR') ? 5000 : 0;
         total = Math.max(0, subtotal + deliveryFee + serviceFee - discount);
-        pickupLocation = selectedResto.name;
+        pickupLocation = foodArea;
         dropLocation = document.getElementById('current-location-text')?.innerText || 'Desa Palasari, Kec. Ciater';
+        itemsSummary = `${foodOrderDesc}${extraNote ? ' • Catatan: ' + extraNote : ''} • Area: ${foodArea}`;
+        orderItems = [{ name: foodOrderDesc, qty: 1, price: subtotal, area: foodArea, note: extraNote, category: selectedFoodCategory }];
       } else if (serviceType === 'RIDE') {
         pickupLocation = document.getElementById('ride-pickup-input')?.value || 'Pemandian Air Panas Sari Ater';
         dropLocation = document.getElementById('ride-drop-input')?.value || 'Pasar Ciater / Terminal Jalancagak';
@@ -1819,9 +1694,9 @@
         service: serviceType,
         serviceName: serviceType === 'FOOD' ? 'OTWFood' : (serviceType === 'RIDE' ? 'OTWRide' : 'OTWKirim'),
         title: orderTitle,
-        merchantId: serviceType === 'FOOD' ? selectedResto.id : null,
-        merchantName: serviceType === 'FOOD' ? selectedResto.name : 'Layanan Ciater',
-        merchantLocation: serviceType === 'FOOD' ? 'Jl. Raya Ciater No. 45' : null,
+        foodOrderDesc: foodOrderDesc || null,
+        foodArea: foodArea || null,
+        foodCategory: serviceType === 'FOOD' ? selectedFoodCategory : null,
         customerName: 'Asep Gunawan',
         customerPhone: '+62 821-1988-7766',
         customerLocation: dropLocation,
@@ -1850,16 +1725,22 @@
         orderHistory.unshift(currentActiveOrder);
       }
 
-      cart = []; // reset cart
+      // Reset form FOOD
+      if (serviceType === 'FOOD') {
+        const textarea = document.getElementById('food-order-desc');
+        if (textarea) textarea.value = '';
+      }
       renderOrdersHistory();
 
       // Setup tracking screen
       document.getElementById('tracking-order-id').innerText = '#' + orderId;
-      document.getElementById('tracking-status-pill').innerText = 'Driver Sedang Menuju Titik Penjemputan';
-      document.getElementById('tracking-eta').innerText = '6 Menit';
+      document.getElementById('tracking-status-pill').innerText = serviceType === 'FOOD'
+        ? 'Driver Mencari & Membeli Pesanan Anda...'
+        : 'Driver Sedang Menuju Titik Penjemputan';
+      document.getElementById('tracking-eta').innerText = '8 Menit';
       document.getElementById('active-order-badge').classList.remove('hidden');
 
-      showToast('🎉 Pesanan Berhasil! Mencari driver...');
+      showToast('🎉 Pesanan Berhasil! Sedang mencari driver...');
       navigate('screen-tracking');
 
       // Start Real Leaflet Map & GPS Tracking
@@ -1955,7 +1836,7 @@
           leafletMapInstance.panTo(nextCoord);
 
           if (stepIndex === 1) {
-            document.getElementById('tracking-status-pill').innerText = 'Driver Sudah Mengambil Pesanan';
+            document.getElementById('tracking-status-pill').innerText = 'Driver Sudah Beli Pesanan — Sedang Menuju Anda';
             document.getElementById('tracking-eta').innerText = '4 Menit';
             document.getElementById('step-pickup')?.classList.add('bg-brand-600', 'text-white');
           } else if (stepIndex === 2) {

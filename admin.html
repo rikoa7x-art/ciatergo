@@ -78,7 +78,7 @@
           <span>Kelola Mitra Driver</span>
         </button>
 
-        <button onclick="adminNav('panel-merchants', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+        <button onclick="adminNav('panel-merchants', this)" class="hidden admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
           <i class="fa-solid fa-store w-4 text-center"></i>
           <span>Kelola Warung & Resto</span>
         </button>
@@ -99,10 +99,9 @@
     <div class="p-4 border-t border-slate-800 space-y-3">
       <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700 text-xs">
         <div class="text-[10px] text-slate-400 font-bold uppercase mb-1">Buka Aplikasi Demo:</div>
-        <div class="grid grid-cols-3 gap-1 text-center font-bold">
+        <div class="grid grid-cols-2 gap-1 text-center font-bold">
           <a href="index.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white">User</a>
           <a href="driver.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white">Driver</a>
-          <a href="merchant.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white">Resto</a>
         </div>
       </div>
 
@@ -183,9 +182,9 @@
 
           <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
             <div>
-              <span class="text-[11px] font-bold text-slate-400 uppercase">Warung / Resto Buka</span>
-              <h3 class="text-2xl font-black text-slate-800 mt-1">28 Mitra</h3>
-              <span class="text-[10px] text-emerald-600 font-bold">100% Responsif</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase">Performa Driver</span>
+              <h3 class="text-2xl font-black text-slate-800 mt-1">98%</h3>
+              <span class="text-[10px] text-emerald-600 font-bold">Tingkat Penyelesaian (Selesai)</span>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl">
               <i class="fa-solid fa-store"></i>
@@ -666,7 +665,16 @@
       document.getElementById('modal-order-total').innerText = 'Rp ' + (ord.total || 0).toLocaleString('id-ID');
 
       const itemsContainer = document.getElementById('modal-order-items');
-      if (Array.isArray(ord.items)) {
+      if (ord.service === 'FOOD' && ord.foodOrderDesc) {
+         itemsContainer.innerHTML = `
+           <div class="flex flex-col gap-1 text-slate-700">
+             <span class="font-bold">${ord.foodOrderDesc}</span>
+             <span class="text-xs text-slate-500">Area Cari: ${ord.foodArea || '-'}</span>
+             <span class="text-xs text-slate-500">Kategori: ${ord.foodCategory || '-'}</span>
+             <span class="text-xs text-slate-500">Harga: Rp ${(ord.subtotal || 0).toLocaleString('id-ID')}</span>
+           </div>
+         `;
+      } else if (Array.isArray(ord.items)) {
         itemsContainer.innerHTML = ord.items.map(it => `
           <div class="flex justify-between items-center text-slate-700">
             <span>${it.qty || 1}x ${it.name}</span>
