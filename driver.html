@@ -111,17 +111,22 @@
         
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20">
-              👨‍✈️
+            <div id="driver-header-avatar" class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20 shadow-sm">
+              🛵
             </div>
             <div>
-              <h3 class="font-extrabold text-sm text-white">Dadang Sudrajat</h3>
-              <p class="text-[11px] text-emerald-200">Honda Vario 125 • T 4521 ZK</p>
+              <h3 id="driver-header-name" class="font-extrabold text-sm text-white">Nova (Driver 1)</h3>
+              <p id="driver-header-vehicle" class="text-[11px] text-emerald-200">Honda Beat Street • T 3819 ZB</p>
             </div>
           </div>
-          <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2.5 py-1 rounded-full font-bold">
-            ⭐ 4.9 (Ciater)
-          </span>
+          <div class="flex flex-col items-end gap-1">
+            <span id="driver-header-rating" class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2.5 py-0.5 rounded-full font-bold">
+              ⭐ 4.95 (Ciater)
+            </span>
+            <button onclick="openSwitchDriverModal()" class="text-[10px] bg-white/15 hover:bg-white/25 text-white px-2 py-0.5 rounded-lg font-bold flex items-center gap-1 transition">
+              <i class="fa-solid fa-arrows-rotate"></i> Ganti Driver
+            </button>
+          </div>
         </div>
 
         <!-- Online / Offline Switch Box -->
@@ -352,12 +357,12 @@
     <div id="driver-screen-profile" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
       
       <div class="bg-white p-5 border-b border-slate-200 flex items-center gap-3.5">
-        <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white text-2xl font-black flex items-center justify-center shadow-lg">
-          👨‍✈️
+        <div id="driver-profile-avatar" class="w-14 h-14 rounded-2xl bg-emerald-600 text-white text-3xl font-black flex items-center justify-center shadow-lg">
+          🛵
         </div>
         <div>
-          <h3 class="font-black text-base text-slate-800">Dadang Sudrajat</h3>
-          <p class="text-xs text-slate-500">+62 821-4455-6677 • ID #DRV-042</p>
+          <h3 id="driver-profile-name" class="font-black text-base text-slate-800">Nova Pratama</h3>
+          <p id="driver-profile-phone" class="text-xs text-slate-500">+62 821-2233-4455 • ID #DRV-001</p>
           <span class="inline-block mt-1 text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-extrabold">
             Status: Terverifikasi Aktif
           </span>
@@ -370,7 +375,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 text-xs">
           <div class="p-3.5 flex justify-between">
             <span class="text-slate-500">Kendaraan Terdaftar</span>
-            <span class="font-bold text-slate-800">Honda Vario 125 (T 4521 ZK)</span>
+            <span id="driver-profile-vehicle" class="font-bold text-slate-800">Honda Beat Street (T 3819 ZB)</span>
           </div>
           <div class="p-3.5 flex justify-between">
             <span class="text-slate-500">KTP & SIM C</span>
@@ -382,9 +387,14 @@
           </div>
           <div class="p-3.5 flex justify-between">
             <span class="text-slate-500">Wilayah Pangkalan</span>
-            <span class="font-bold text-slate-800">Kecamatan Ciater Subang</span>
+            <span id="driver-profile-location" class="font-bold text-slate-800">Sari Ater & Ciater Highland</span>
           </div>
         </div>
+
+        <button onclick="openSwitchDriverModal()" class="w-full py-3 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-2xl border border-emerald-200 hover:bg-emerald-100 flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>Ganti Driver (Nova ⇄ Leo)</span>
+        </button>
 
         <div class="space-y-2.5 pt-2">
           <a href="index.html" class="w-full py-3.5 bg-brand-50 text-brand-700 text-xs font-bold rounded-2xl border border-brand-200 hover:bg-brand-100 flex items-center justify-center gap-2 transition">
@@ -527,6 +537,62 @@
       </div>
     </div>
 
+    <!-- ==================== MODAL: GANTI DRIVER (NOVA / LEO) ==================== -->
+    <div id="modal-switch-driver" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[420px] rounded-t-[32px] sm:rounded-[32px] p-5 space-y-4 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🛵</span>
+            <h3 class="font-extrabold text-sm text-slate-800">Pilih / Ganti Akun Driver</h3>
+          </div>
+          <button onclick="closeSwitchDriverModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-500">Pilih akun driver aktif untuk bertugas di area Kecamatan Ciater:</p>
+
+        <!-- Driver Cards -->
+        <div class="space-y-2.5">
+          <!-- Nova -->
+          <div onclick="switchDriverAccount('nova')" class="p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 cursor-pointer hover:bg-emerald-100/50 transition flex items-center justify-between" id="card-driver-nova">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-xs">
+                🛵
+              </div>
+              <div>
+                <h4 class="text-xs font-black text-slate-900">Nova (Driver 1) <span class="text-[10px] text-emerald-700 bg-emerald-200 px-1.5 py-0.5 rounded font-bold">#DRV-001</span></h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">Honda Beat Street • Sari Ater</p>
+                <div class="text-[10px] font-bold text-amber-600">⭐ 4.95 Rating</div>
+              </div>
+            </div>
+            <span class="text-xs font-black text-emerald-600" id="badge-active-nova">✓ Aktif</span>
+          </div>
+
+          <!-- Leo -->
+          <div onclick="switchDriverAccount('leo')" class="p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between" id="card-driver-leo">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xl shadow-xs">
+                🏍️
+              </div>
+              <div>
+                <h4 class="text-xs font-black text-slate-900">Leo (Driver 2) <span class="text-[10px] text-teal-700 bg-teal-200 px-1.5 py-0.5 rounded font-bold">#DRV-002</span></h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">Yamaha NMAX 155 • Palasari</p>
+                <div class="text-[10px] font-bold text-amber-600">⭐ 4.90 Rating</div>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-slate-400 hidden" id="badge-active-leo">✓ Aktif</span>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button onclick="closeSwitchDriverModal()" class="w-full py-3 bg-slate-900 text-white font-bold text-xs rounded-xl shadow transition">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-msg" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-xs bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-2">
       <i class="fa-solid fa-circle-check text-emerald-400"></i>
@@ -537,6 +603,124 @@
 
   <!-- JAVASCRIPT LOGIC FOR DRIVER APP -->
   <script>
+    // ============================================================
+    // REGISTERED MITRA DRIVERS (NOVA & LEO)
+    // ============================================================
+    const REGISTERED_DRIVERS = {
+      nova: {
+        username: 'nova',
+        password: '12345',
+        name: 'Nova',
+        fullName: 'Nova Pratama',
+        phone: '+62 821-2233-4455',
+        vehicle: 'Honda Beat Street (T 3819 ZB)',
+        rating: '4.95',
+        id: '#DRV-001',
+        avatar: '🛵',
+        location: 'Sari Ater & Ciater Highland'
+      },
+      leo: {
+        username: 'leo',
+        password: '12345',
+        name: 'Leo',
+        fullName: 'Leo Firmansyah',
+        phone: '+62 822-6677-8899',
+        vehicle: 'Yamaha NMAX 155 (T 5920 AB)',
+        rating: '4.90',
+        id: '#DRV-002',
+        avatar: '🏍️',
+        location: 'Desa Palasari & Jalancagak'
+      }
+    };
+
+    let currentActiveDriver = REGISTERED_DRIVERS.nova;
+
+    function initActiveDriver() {
+      try {
+        const saved = localStorage.getItem('otw_active_driver');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.username && REGISTERED_DRIVERS[parsed.username]) {
+            currentActiveDriver = REGISTERED_DRIVERS[parsed.username];
+          }
+        }
+      } catch (e) {
+        console.log('Driver parse error:', e);
+      }
+      renderActiveDriverUI();
+    }
+
+    function renderActiveDriverUI() {
+      // Header elements
+      const hName = document.getElementById('driver-header-name');
+      const hVeh = document.getElementById('driver-header-vehicle');
+      const hRate = document.getElementById('driver-header-rating');
+      const hAva = document.getElementById('driver-header-avatar');
+      if (hName) hName.innerText = `${currentActiveDriver.name} (Driver)`;
+      if (hVeh) hVeh.innerText = currentActiveDriver.vehicle;
+      if (hRate) hRate.innerText = `⭐ ${currentActiveDriver.rating} (Ciater)`;
+      if (hAva) hAva.innerText = currentActiveDriver.avatar;
+
+      // Profile screen elements
+      const pName = document.getElementById('driver-profile-name');
+      const pPhone = document.getElementById('driver-profile-phone');
+      const pVeh = document.getElementById('driver-profile-vehicle');
+      const pLoc = document.getElementById('driver-profile-location');
+      const pAva = document.getElementById('driver-profile-avatar');
+      if (pName) pName.innerText = currentActiveDriver.fullName || currentActiveDriver.name;
+      if (pPhone) pPhone.innerText = `${currentActiveDriver.phone} • ID ${currentActiveDriver.id}`;
+      if (pVeh) pVeh.innerText = currentActiveDriver.vehicle;
+      if (pLoc) pLoc.innerText = currentActiveDriver.location;
+      if (pAva) pAva.innerText = currentActiveDriver.avatar;
+
+      // Update Modal active driver badges
+      const isNova = currentActiveDriver.username === 'nova';
+      const cardNova = document.getElementById('card-driver-nova');
+      const cardLeo = document.getElementById('card-driver-leo');
+      const badgeNova = document.getElementById('badge-active-nova');
+      const badgeLeo = document.getElementById('badge-active-leo');
+
+      if (cardNova && cardLeo) {
+        if (isNova) {
+          cardNova.className = 'p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 cursor-pointer hover:bg-emerald-100/50 transition flex items-center justify-between';
+          cardLeo.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+          badgeNova?.classList.remove('hidden');
+          badgeLeo?.classList.add('hidden');
+        } else {
+          cardLeo.className = 'p-3.5 rounded-2xl border-2 border-teal-500 bg-teal-50/60 cursor-pointer hover:bg-teal-100/50 transition flex items-center justify-between';
+          cardNova.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+          badgeLeo?.classList.remove('hidden');
+          badgeNova?.classList.add('hidden');
+        }
+      }
+    }
+
+    function openSwitchDriverModal() {
+      document.getElementById('modal-switch-driver')?.classList.remove('hidden');
+    }
+
+    function closeSwitchDriverModal() {
+      document.getElementById('modal-switch-driver')?.classList.add('hidden');
+    }
+
+    function switchDriverAccount(username) {
+      if (REGISTERED_DRIVERS[username]) {
+        currentActiveDriver = REGISTERED_DRIVERS[username];
+        localStorage.setItem('otw_active_driver', JSON.stringify(currentActiveDriver));
+        renderActiveDriverUI();
+        closeSwitchDriverModal();
+        showToast(`✅ Beralih ke Driver ${currentActiveDriver.name} (${currentActiveDriver.id})`);
+        
+        if (isDriverOnline && window.CiaterSync) {
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, {
+            driver: currentActiveDriver.fullName,
+            phone: currentActiveDriver.phone,
+            status: 'ONLINE'
+          });
+        }
+      }
+    }
+
     let isDriverOnline = true;
     let orderStep = 1; // 1: go to pickup, 2: pick up confirm, 3: deliver & finish
     let incomingTimerInterval = null;
@@ -576,6 +760,8 @@
     let currentHandlingOrder = null;
 
     window.addEventListener('DOMContentLoaded', () => {
+      initActiveDriver();
+
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg Error:', err));
       }
@@ -628,9 +814,13 @@
         text.innerText = 'STATUS: SIAP MENERIMA ORDER';
         btn.innerText = 'ONLINE';
         btn.className = 'px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition';
-        showToast('🟢 Anda sekarang Online & siap menerima order');
+        showToast(`🟢 Driver ${currentActiveDriver.name} Online & siap menerima order`);
         if (window.CiaterSync) {
-          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, { driver: 'Dadang Sudrajat', status: 'ONLINE' });
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, {
+            driver: currentActiveDriver.fullName || currentActiveDriver.name,
+            phone: currentActiveDriver.phone,
+            status: 'ONLINE'
+          });
         }
       } else {
         dot.className = 'w-3.5 h-3.5 rounded-full bg-slate-400 ring-4 ring-slate-400/30';
@@ -639,7 +829,11 @@
         btn.className = 'px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-black text-xs rounded-xl shadow transition';
         showToast('⚪ Anda sekarang Offline');
         if (window.CiaterSync) {
-          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, { driver: 'Dadang Sudrajat', status: 'OFFLINE' });
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, {
+            driver: currentActiveDriver.fullName || currentActiveDriver.name,
+            phone: currentActiveDriver.phone,
+            status: 'OFFLINE'
+          });
         }
       }
     }
@@ -701,12 +895,13 @@
 
       if (currentHandlingOrder && window.CiaterSync) {
         CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ASSIGNED', {
-          driverName: 'Dadang Sudrajat',
-          driverPhone: '+62 821-4455-6677'
+          driverName: currentActiveDriver.fullName || currentActiveDriver.name,
+          driverPhone: currentActiveDriver.phone,
+          driverVehicle: currentActiveDriver.vehicle
         });
       }
 
-      showToast('🎉 Order Diterima! Silakan menuju titik penjemputan.');
+      showToast(`🎉 Order Diterima oleh Driver ${currentActiveDriver.name}! Silakan menuju titik penjemputan.`);
       driverNavigate('driver-screen-active');
       initDriverLiveMap();
     }
@@ -848,8 +1043,9 @@
       if (!text) return;
 
       const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'OTW-9102';
+      const senderName = (currentActiveDriver.fullName || currentActiveDriver.name) + ' (Driver)';
       if (window.CiaterSync) {
-        CiaterSync.sendChatMessage(orderId, 'Dadang Sudrajat (Driver)', 'driver', text);
+        CiaterSync.sendChatMessage(orderId, senderName, 'driver', text);
       }
       input.value = '';
       renderDriverChatMessages();
@@ -857,8 +1053,9 @@
 
     function sendDriverQuickReply(text) {
       const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'OTW-9102';
+      const senderName = (currentActiveDriver.fullName || currentActiveDriver.name) + ' (Driver)';
       if (window.CiaterSync) {
-        CiaterSync.sendChatMessage(orderId, 'Dadang Sudrajat (Driver)', 'driver', text);
+        CiaterSync.sendChatMessage(orderId, senderName, 'driver', text);
       }
       renderDriverChatMessages();
     }

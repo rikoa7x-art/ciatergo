@@ -198,7 +198,8 @@
           </p>
         </div>
 
-        <div class="space-y-4">
+        <!-- FORM 1: CUSTOMER PHONE & OTP -->
+        <div id="auth-form-customer" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor Handphone / WhatsApp</label>
             <div class="flex items-center border-2 border-slate-200 focus-within:border-brand-600 rounded-2xl overflow-hidden px-3 py-1 transition">
@@ -211,14 +212,61 @@
             <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5 text-sm"></i>
             <p>Kode OTP simulasi demo adalah <strong class="underline font-bold">123456</strong>.</p>
           </div>
+
+          <div class="pt-4">
+            <button onclick="handleSendOTP()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-brand-600/30 transition">
+              Lanjut Verifikasi OTP <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+          </div>
         </div>
+
+        <!-- FORM 2: DRIVER USERNAME & PASSWORD -->
+        <div id="auth-form-driver" class="hidden space-y-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Username Mitra Driver</label>
+            <div class="flex items-center border-2 border-slate-200 focus-within:border-emerald-600 rounded-2xl overflow-hidden px-3 py-1 bg-slate-50 focus-within:bg-white transition">
+              <span class="text-sm text-slate-400 pr-2 border-r border-slate-200"><i class="fa-solid fa-id-badge"></i></span>
+              <input id="auth-driver-username" type="text" placeholder="Masukkan username (nova / leo)" value="nova" class="w-full py-2.5 px-3 text-slate-800 font-bold focus:outline-none text-sm bg-transparent">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
+            <div class="flex items-center border-2 border-slate-200 focus-within:border-emerald-600 rounded-2xl overflow-hidden px-3 py-1 bg-slate-50 focus-within:bg-white transition">
+              <span class="text-sm text-slate-400 pr-2 border-r border-slate-200"><i class="fa-solid fa-lock"></i></span>
+              <input id="auth-driver-password" type="password" placeholder="Masukkan password" value="12345" class="w-full py-2.5 px-3 text-slate-800 font-bold focus:outline-none text-sm bg-transparent">
+            </div>
+          </div>
+
+          <!-- Driver Accounts Available Info Box -->
+          <div class="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-900 text-xs space-y-1.5">
+            <div class="font-black flex items-center gap-1.5 text-emerald-800">
+              <i class="fa-solid fa-motorcycle text-emerald-600"></i> Akun Driver Terdaftar (Ciater):
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              <div onclick="fillDriverLogin('nova', '12345')" class="p-2 bg-white rounded-xl border border-emerald-200 cursor-pointer hover:bg-emerald-100/60 transition shadow-2xs">
+                <div class="font-extrabold text-slate-800">🛵 Driver 1: nova</div>
+                <div class="text-[10px] text-slate-500">Pass: <span class="font-mono font-bold">12345</span></div>
+              </div>
+              <div onclick="fillDriverLogin('leo', '12345')" class="p-2 bg-white rounded-xl border border-emerald-200 cursor-pointer hover:bg-emerald-100/60 transition shadow-2xs">
+                <div class="font-extrabold text-slate-800">🏍️ Driver 2: leo</div>
+                <div class="text-[10px] text-slate-500">Pass: <span class="font-mono font-bold">12345</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <button onclick="handleDriverLoginDirect()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition">
+              <span>Masuk Aplikasi Mitra Driver</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
       </div>
 
-      <div class="pt-6">
-        <button onclick="handleSendOTP()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-sm rounded-2xl shadow-lg transition">
-          Lanjut Verifikasi OTP
-        </button>
-        <p class="text-[11px] text-slate-400 text-center mt-3">
+      <div class="pt-4">
+        <p class="text-[11px] text-slate-400 text-center">
           Dengan masuk, Anda menyetujui Ketentuan Layanan & Kebijakan Privasi OTW keun.
         </p>
       </div>
@@ -1713,8 +1761,35 @@
     }
 
     // ============================================================
-    // AUTH ROLE SELECTION & FOOD ORDER BEBAS
+    // AUTH ROLE SELECTION & MITRA DRIVER CREDENTIALS
     // ============================================================
+
+    const REGISTERED_DRIVERS = {
+      nova: {
+        username: 'nova',
+        password: '12345',
+        name: 'Nova',
+        fullName: 'Nova Pratama',
+        phone: '+62 821-2233-4455',
+        vehicle: 'Honda Beat Street (T 3819 ZB)',
+        rating: '4.95',
+        id: '#DRV-001',
+        avatar: '🛵',
+        location: 'Sari Ater & Ciater Highland'
+      },
+      leo: {
+        username: 'leo',
+        password: '12345',
+        name: 'Leo',
+        fullName: 'Leo Firmansyah',
+        phone: '+62 822-6677-8899',
+        vehicle: 'Yamaha NMAX 155 (T 5920 AB)',
+        rating: '4.90',
+        id: '#DRV-002',
+        avatar: '🏍️',
+        location: 'Desa Palasari & Jalancagak'
+      }
+    };
 
     let selectedAuthRole = 'customer';
 
@@ -1723,15 +1798,56 @@
       const custBtn = document.getElementById('auth-role-customer');
       const driverBtn = document.getElementById('auth-role-driver');
       const desc = document.getElementById('auth-role-desc');
+      const custForm = document.getElementById('auth-form-customer');
+      const driverForm = document.getElementById('auth-form-driver');
 
       if (role === 'customer') {
         if (custBtn) custBtn.className = 'py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 bg-white text-brand-700 shadow-sm transition';
         if (driverBtn) driverBtn.className = 'py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition';
         if (desc) desc.innerText = '🛒 Masuk untuk memesan makanan, ojek, dan kirim barang.';
+        if (custForm) custForm.classList.remove('hidden');
+        if (driverForm) driverForm.classList.add('hidden');
       } else {
         if (driverBtn) driverBtn.className = 'py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 bg-emerald-600 text-white shadow-sm transition';
         if (custBtn) custBtn.className = 'py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition';
-        if (desc) desc.innerText = '🛵 Masuk ke aplikasi khusus Mitra Driver untuk menerima & mengantar pesanan.';
+        if (desc) desc.innerText = '🛵 Masuk ke portal Mitra Driver resmi untuk menerima & mengantar order.';
+        if (custForm) custForm.classList.add('hidden');
+        if (driverForm) driverForm.classList.remove('hidden');
+      }
+    }
+
+    function fillDriverLogin(username, password) {
+      const uInput = document.getElementById('auth-driver-username');
+      const pInput = document.getElementById('auth-driver-password');
+      if (uInput) uInput.value = username;
+      if (pInput) pInput.value = password;
+      showToast(`Form diisi: Driver ${username}`);
+    }
+
+    function handleDriverLoginDirect() {
+      const uInput = document.getElementById('auth-driver-username')?.value.toLowerCase().trim();
+      const pInput = document.getElementById('auth-driver-password')?.value.trim();
+
+      if (!uInput || !pInput) {
+        showToast('⚠️ Masukkan username & password driver!');
+        return;
+      }
+
+      const driver = REGISTERED_DRIVERS[uInput];
+      if (driver && driver.password === pInput) {
+        localStorage.setItem('otw_auth_role', 'driver');
+        localStorage.setItem('otw_active_driver', JSON.stringify(driver));
+        showToast(`🎉 Selamat datang Driver ${driver.name}! Mengalihkan...`);
+        setTimeout(() => {
+          window.location.href = 'driver.html';
+        }, 600);
+      } else {
+        showToast('❌ Username atau password salah! (nova / leo, pass: 12345)');
+        const box = document.getElementById('auth-driver-password');
+        if (box) {
+          box.classList.add('border-red-400');
+          setTimeout(() => box.classList.remove('border-red-400'), 1500);
+        }
       }
     }
 
