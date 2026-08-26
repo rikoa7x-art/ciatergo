@@ -1,9 +1,8 @@
-const CACHE_NAME = 'otwkeun-v2';
+const CACHE_NAME = 'otwkeun-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './driver.html',
-  './merchant.html',
   './admin.html',
   './manifest.json',
   './shared-sync.js',
@@ -11,10 +10,11 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -28,34 +28,39 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
+  const isHtml = event.request.headers.get('accept')?.includes('text/html');
+
+  if (isHtml || event.request.mode === 'navigate') {
+    // Network-First strategy for HTML navigation (always get fresh version)
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // Cache-First with Network fallback for static assets
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
       return fetch(event.request).then((networkResponse) => {
-        // Dynamically cache external CDN assets (Tailwind, Leaflet, etc.)
         if (event.request.url.startsWith('http') && event.request.method === 'GET') {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
         }
         return networkResponse;
-      }).catch(() => {
-        // Fallback for HTML navigation if offline
-        const accept = event.request.headers.get('accept');
-        if (accept && accept.includes('text/html')) {
-          const url = new URL(event.request.url);
-          if (url.pathname.includes('driver')) return caches.match('./driver.html');
-          if (url.pathname.includes('merchant')) return caches.match('./merchant.html');
-          if (url.pathname.includes('admin')) return caches.match('./admin.html');
-          return caches.match('./index.html');
-        }
       });
     })
   );
