@@ -339,25 +339,24 @@
           </div>
         </div>
 
-        <!-- OTWPay Quick Bar -->
+        <!-- Metode Pembayaran Siap COD & QRIS -->
         <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3.5 flex items-center justify-between border border-white/20 mb-3">
           <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-brand-500 text-white flex items-center justify-center text-sm font-bold shadow-inner">
-              <i class="fa-solid fa-wallet"></i>
+            <div class="w-9 h-9 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center text-sm font-black shadow-inner">
+              💵
             </div>
             <div>
-              <div class="text-[10px] text-brand-100 font-medium">Saldo OTWPay</div>
-              <div class="text-sm font-black text-white" id="user-balance-display">Rp 85.000</div>
+              <div class="text-[10px] text-brand-100 font-medium">Metode Pembayaran</div>
+              <div class="text-xs font-black text-white flex items-center gap-1.5">
+                <span>COD (Tunai)</span>
+                <span class="text-slate-300">•</span>
+                <span>QRIS Instan</span>
+              </div>
             </div>
           </div>
-          <div class="flex items-center gap-1.5">
-            <button onclick="topUpOTWPay()" class="px-3 py-1.5 bg-white text-brand-700 text-xs font-bold rounded-xl shadow hover:bg-brand-50 transition flex items-center gap-1">
-              <i class="fa-solid fa-plus text-[10px]"></i> Top Up
-            </button>
-            <button onclick="showToast('Riwayat transaksi saldo diperbarui')" class="w-8 h-8 bg-white/15 text-white text-xs font-bold rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-clock-rotate-left text-[11px]"></i>
-            </button>
-          </div>
+          <span class="text-[10px] bg-white/20 text-white font-extrabold px-2.5 py-1 rounded-xl border border-white/20">
+            Bayar ke Driver
+          </span>
         </div>
 
         <!-- Search Bar -->
@@ -744,39 +743,33 @@
           </div>
         </div>
 
-        <!-- Payment Method Selection -->
+        <!-- Payment Method Selection (COD & QRIS only) -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
           <h4 class="text-xs font-bold text-slate-800 mb-3 uppercase tracking-wide">Pilih Pembayaran</h4>
           
           <div class="space-y-2">
             <!-- COD -->
-            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+            <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition">
               <div class="flex items-center gap-3">
-                <input type="radio" name="payment-method" value="COD" checked class="text-brand-600 focus:ring-brand-500">
-                <div class="text-xs font-bold text-slate-800">💵 Bayar Tunai (COD)</div>
-              </div>
-              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Bayar ke Driver</span>
-            </label>
-
-            <!-- OTWPay -->
-            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
-              <div class="flex items-center gap-3">
-                <input type="radio" name="payment-method" value="OTWPay" class="text-brand-600 focus:ring-brand-500">
+                <input type="radio" name="payment-method" value="COD" checked class="text-brand-600 focus:ring-brand-500 w-4 h-4">
                 <div>
-                  <div class="text-xs font-bold text-slate-800">💳 OTWPay Saldo</div>
-                  <div class="text-[10px] text-slate-400">Saldo saat ini: <span id="checkout-otwpay-balance">Rp 85.000</span></div>
+                  <div class="text-xs font-bold text-slate-800">💵 Bayar Tunai (COD)</div>
+                  <div class="text-[10px] text-slate-400">Bayar langsung uang pas/kembalian ke driver</div>
                 </div>
               </div>
-              <span class="text-[10px] bg-brand-50 text-brand-700 px-2 py-0.5 rounded font-bold">Instan</span>
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded">Tunai</span>
             </label>
 
             <!-- QRIS / E-Wallet -->
-            <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
+            <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition">
               <div class="flex items-center gap-3">
-                <input type="radio" name="payment-method" value="QRIS" class="text-brand-600 focus:ring-brand-500">
-                <div class="text-xs font-bold text-slate-800">📱 QRIS / GoPay / DANA / OVO</div>
+                <input type="radio" name="payment-method" value="QRIS" class="text-brand-600 focus:ring-brand-500 w-4 h-4">
+                <div>
+                  <div class="text-xs font-bold text-slate-800">📱 QRIS / E-Wallet / Mobile Banking</div>
+                  <div class="text-[10px] text-slate-400">GoPay, DANA, OVO, ShopeePay, BCA, Mandiri</div>
+                </div>
               </div>
-              <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">Otomatis</span>
+              <span class="text-[10px] bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded">Scan QRIS</span>
             </label>
           </div>
         </div>
@@ -1207,20 +1200,18 @@
 
       <div class="p-4 space-y-4">
         
-        <!-- Wallet Card -->
-        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-md">
-          <div class="flex justify-between items-center mb-3">
+        <!-- Info Pembayaran Resmi Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 rounded-2xl shadow-md space-y-2">
+          <div class="flex justify-between items-center">
             <div>
-              <span class="text-[10px] text-slate-400 uppercase font-bold">Dompet OTWPay</span>
-              <h3 class="text-xl font-black text-emerald-400">Rp 85.000</h3>
+              <span class="text-[10px] text-slate-400 uppercase font-bold">Metode Pembayaran</span>
+              <h3 class="text-sm font-black text-emerald-400 mt-0.5">💵 Tunai (COD) & 📱 QRIS</h3>
             </div>
-            <button onclick="topUpOTWPay()" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs rounded-xl shadow transition">
-              + Isi Saldo
-            </button>
+            <span class="text-xl">🛡️</span>
           </div>
-          <div class="text-[11px] text-slate-400 flex items-center gap-1">
-            <i class="fa-solid fa-circle-check text-emerald-400"></i> Akun terverifikasi untuk pembayaran instan
-          </div>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            Pembayaran fleksibel & transparan: bayar tunai langsung ke driver atau scan QRIS saat pesanan tiba.
+          </p>
         </div>
 
         <!-- Menu List Group -->
@@ -2471,25 +2462,14 @@
       }
     }
 
-    // USER BALANCE & ACTIONS
-    function topUpOTWPay() {
-      userBalance += 50000;
-      const balanceStr = `Rp ${userBalance.toLocaleString('id-ID')}`;
-      document.getElementById('user-balance-display').innerText = balanceStr;
-      const checkoutBal = document.getElementById('checkout-otwpay-balance');
-      if (checkoutBal) checkoutBal.innerText = balanceStr;
-      showToast('💳 Top Up Rp 50.000 via QRIS Berhasil!');
-    }
-    const topUpGassPay = topUpOTWPay; // Compatibility alias
-
-    // Ride payment cycle helper
-    const ridePaymentOptions = ['Tunai / COD', 'OTWPay Saldo', 'QRIS / E-Wallet'];
+    // Payment options helper (COD & QRIS only)
+    const ridePaymentOptions = ['💵 Tunai / COD', '📱 QRIS / E-Wallet'];
     let ridePaymentIndex = 0;
     function cycleRidePayment() {
       ridePaymentIndex = (ridePaymentIndex + 1) % ridePaymentOptions.length;
       const label = document.getElementById('ride-payment-label');
       if (label) label.innerText = `Metode Bayar: ${ridePaymentOptions[ridePaymentIndex]}`;
-      showToast(`Metode bayar diubah: ${ridePaymentOptions[ridePaymentIndex]}`);
+      showToast(`Metode bayar: ${ridePaymentOptions[ridePaymentIndex]}`);
     }
 
     function renderTrackingDriverInfo(driverData) {

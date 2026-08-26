@@ -92,7 +92,7 @@ function getStoredOrders() {
         driverName: 'Ujang Berkah',
         driverPhone: '+62 812-7788-9900',
         total: 10000,
-        paymentMethod: 'OTWPay',
+        paymentMethod: 'QRIS',
         status: 'COMPLETED',
         createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
         timeDisplay: '1 jam lalu'
