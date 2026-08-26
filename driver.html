@@ -801,7 +801,8 @@
       const title = order.foodOrderDesc || order.title || 'Pesanan Makanan';
       document.getElementById('incoming-title').innerText = title.length > 55 ? title.substring(0, 55) + '...' : title;
       
-      document.getElementById('incoming-fare').innerText = `Rp ${((order.total || 30000) * 0.35).toLocaleString('id-ID')} (Ongkos Bersih)`;
+      const driverFare = order.deliveryFee || (order.service === 'FOOD' ? 9000 : (order.total || 9000));
+      document.getElementById('incoming-fare').innerText = `Rp ${driverFare.toLocaleString('id-ID')} (Ongkos Jasa Driver)`;
       
       // Pickup: tampilkan area cari warung (hint dari pelanggan), bukan nama merchant
       const pickupHint = order.foodArea || order.pickupLocation || 'Sekitar Ciater';

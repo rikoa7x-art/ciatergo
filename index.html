@@ -504,12 +504,18 @@
       <!-- ORDER FORM -->
       <div class="p-4 space-y-4">
 
-        <!-- Info Banner -->
-        <div class="bg-orange-50 border border-orange-200 rounded-2xl p-3.5 flex items-start gap-3">
-          <div class="text-xl shrink-0">🛵</div>
-          <div>
-            <h4 class="text-xs font-extrabold text-orange-800">Driver belikan, bukan warung yang kirim!</h4>
-            <p class="text-[10px] text-orange-600 mt-0.5 leading-relaxed">Ceritakan saja makanan yang kamu mau. Driver kami akan mencari warung terbaik di area pilihanmu & langsung mengantarkan ke alamatmu.</p>
+        <!-- Info Banner & Tarif Jasa -->
+        <div class="bg-orange-50 border border-orange-200 rounded-2xl p-3.5 space-y-2">
+          <div class="flex items-start gap-3">
+            <div class="text-xl shrink-0">🛵</div>
+            <div>
+              <h4 class="text-xs font-extrabold text-orange-900">Driver belikan, bukan warung yang kirim!</h4>
+              <p class="text-[10px] text-orange-700 mt-0.5 leading-relaxed">Ceritakan makanan yang kamu mau. Driver akan mencari warung terbaik & mengantarkan langsung ke titik lokasimu.</p>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-orange-200/60 flex items-center justify-between text-[10px] font-bold text-orange-800">
+            <span>🏷️ Tarif Ongkos Kirim:</span>
+            <span class="bg-white/80 px-2 py-0.5 rounded-lg border border-orange-300">Rp 9.000 (≤ 4 km) + Rp 2.700/km</span>
           </div>
         </div>
 
@@ -781,9 +787,9 @@
             <span>Estimasi Harga Makanan</span>
             <span id="cost-subtotal">Rp 0</span>
           </div>
-          <div class="flex justify-between text-slate-500">
-            <span>Ongkos Driver (jasa beli + antar)</span>
-            <span id="cost-delivery">Rp 8.000</span>
+          <div class="flex justify-between text-slate-500 items-start">
+            <span>Ongkos Driver (jasa beli & antar)</span>
+            <span id="cost-delivery" class="text-right font-bold text-slate-800">Rp 9.000</span>
           </div>
           <div class="flex justify-between text-slate-500">
             <span>Biaya Layanan Aplikasi</span>
@@ -797,7 +803,9 @@
             <span>Total Pembayaran</span>
             <span id="cost-grand-total" class="text-brand-600">Rp 0</span>
           </div>
-          <p class="text-[10px] text-slate-400 pt-1">* Harga makanan final mungkin berbeda sesuai yang dibeli driver. Kembalian diberikan langsung oleh driver.</p>
+          <p class="text-[10px] text-slate-400 pt-1 leading-relaxed">
+            * Tarif ongkir: <strong>Rp 9.000 (≤ 4 km pertama)</strong> + <strong>Rp 2.700/km</strong> berikutnya. Harga makanan final dibayarkan sesuai nota/struk dari warung.
+          </p>
         </div>
 
       </div>
@@ -2032,6 +2040,63 @@
       dispatchOrder(serviceType);
     }
 
+    // ============================================================
+    // TARIF ONGKOS KIRIM / JASA DRIVER CIATER
+    // - Biaya Jasa Minimal : Rp 9.000 (≤ 4 km pertama)
+    // - Penambahan Jarak   : Rp 2.700 per km berikutnya (> 4 km)
+    // ============================================================
+    const CIATER_AREAS = {
+      'Sekitar Ciater (terserah driver)': { coords: [-6.7360, 107.6570], baseDistanceKm: 2.0 },
+      'Area Sari Ater & Palasari': { coords: [-6.7412, 107.6534], baseDistanceKm: 2.5 },
+      'Pasar Ciater & Sekitarnya': { coords: [-6.7280, 107.6620], baseDistanceKm: 3.2 },
+      'Desa Cisaat, Ciater': { coords: [-6.7150, 107.6750], baseDistanceKm: 4.8 },
+      'Jalancagak & Sagalaherang': { coords: [-6.6850, 107.6830], baseDistanceKm: 6.5 },
+      'Bebas, driver yang tahu': { coords: [-6.7350, 107.6580], baseDistanceKm: 2.0 }
+    };
+
+    function calculateDeliveryFee(areaName, customerCoords) {
+      const BASE_FARE = 9000;
+      const BASE_KM = 4.0;
+      const PER_KM_RATE = 2700;
+
+      let distanceKm = 2.5;
+
+      if (areaName && CIATER_AREAS[areaName]) {
+        const area = CIATER_AREAS[areaName];
+        if (customerCoords && Array.isArray(customerCoords) && customerCoords.length === 2) {
+          const computedDist = calcDistanceKm(area.coords[0], area.coords[1], customerCoords[0], customerCoords[1]);
+          if (computedDist && computedDist > 0.4) {
+            distanceKm = Math.round(computedDist * 10) / 10;
+          } else {
+            distanceKm = area.baseDistanceKm || 2.5;
+          }
+        } else {
+          distanceKm = area.baseDistanceKm || 2.5;
+        }
+      }
+
+      let totalFee = BASE_FARE;
+      let extraKm = 0;
+      let extraFee = 0;
+
+      if (distanceKm > BASE_KM) {
+        extraKm = Math.round((distanceKm - BASE_KM) * 10) / 10;
+        extraFee = Math.round(extraKm * PER_KM_RATE);
+        totalFee = BASE_FARE + extraFee;
+      }
+
+      return {
+        distanceKm: distanceKm,
+        baseFare: BASE_FARE,
+        extraKm: extraKm,
+        extraFee: extraFee,
+        totalFee: totalFee,
+        detailText: distanceKm <= BASE_KM 
+          ? `(Jarak ~${distanceKm.toFixed(1)} km ≤ 4 km: Rp 9.000)`
+          : `(Jarak ~${distanceKm.toFixed(1)} km: Rp 9.000 + ${extraKm.toFixed(1)} km × Rp 2.700)`
+      };
+    }
+
     // Tampilkan ringkasan pesanan di cart screen (preview sebelum konfirmasi)
     function renderFoodOrderSummaryInCart() {
       const name = document.getElementById('food-order-name')?.value.trim() || 'Pesanan Makanan Bebas';
@@ -2040,7 +2105,10 @@
       const area = document.getElementById('food-area-warung')?.value || 'Sekitar Ciater';
       const rawBudget = parseInt(document.getElementById('food-budget-input')?.value || document.getElementById('food-budget-value')?.value || '40000');
       const budget = Math.max(5000, rawBudget);
-      const deliveryFee = 8000;
+
+      // Hitung ongkir dinamis: Rp 9.000 (≤ 4 km) + Rp 2.700 / km berikutnya
+      const feeObj = calculateDeliveryFee(area, currentUserLocation.coords);
+      const deliveryFee = feeObj.totalFee;
       const serviceFee = 1000;
       let discount = (activePromo === 'CIATERKULINER' || activePromo === 'GRATISONGKIR') ? 5000 : 0;
       const grandTotal = Math.max(0, budget + deliveryFee + serviceFee - discount);
@@ -2058,7 +2126,7 @@
             </div>
             <div class="flex items-center gap-2 text-slate-500 pt-0.5">
               <i class="fa-solid fa-location-dot text-brand-600 text-xs"></i>
-              <span>Area cari warung: <strong class="text-slate-700">${area}</strong></span>
+              <span>Area cari warung: <strong class="text-slate-700">${area}</strong> <span class="text-[10px] text-brand-600 font-bold">(~${feeObj.distanceKm.toFixed(1)} km)</span></span>
             </div>
             <div class="flex items-center gap-2 text-slate-500">
               <i class="fa-solid fa-tag text-brand-600 text-xs"></i>
@@ -2078,7 +2146,9 @@
       const discountEl = document.getElementById('cost-discount');
       const grandEl = document.getElementById('cost-grand-total');
       if (subtotalEl) subtotalEl.innerText = `Rp ${budget.toLocaleString('id-ID')}`;
-      if (deliveryEl) deliveryEl.innerText = `Rp ${deliveryFee.toLocaleString('id-ID')}`;
+      if (deliveryEl) {
+        deliveryEl.innerHTML = `<span>Rp ${deliveryFee.toLocaleString('id-ID')}</span> <span class="text-[10px] text-slate-400 font-normal block">${feeObj.detailText}</span>`;
+      }
       if (discountEl) discountEl.innerText = `- Rp ${discount.toLocaleString('id-ID')}`;
       if (grandEl) grandEl.innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
     }
@@ -2144,21 +2214,28 @@
         const rawBudget = parseInt(document.getElementById('food-budget-input')?.value || document.getElementById('food-budget-value')?.value || '40000');
         const budget = Math.max(5000, rawBudget);
         
+        // Kalkulasi Ongkir Akurat
+        const feeObj = calculateDeliveryFee(foodArea, customerCoords);
+        deliveryFee = feeObj.totalFee;
+
         foodOrderDesc = `${foodQty}x ${foodName}${extraNote ? ' (' + extraNote + ')' : ''}`;
         orderTitle = foodOrderDesc.length > 40 ? foodOrderDesc.substring(0, 40) + '...' : foodOrderDesc;
         subtotal = budget;
-        deliveryFee = 8000;
         discount = (activePromo === 'CIATERKULINER' || activePromo === 'GRATISONGKIR') ? 5000 : 0;
         total = Math.max(0, subtotal + deliveryFee + serviceFee - discount);
         pickupLocation = foodArea;
-        itemsSummary = `${foodOrderDesc} • Area: ${foodArea}`;
+        itemsSummary = `${foodOrderDesc} • Area: ${foodArea} (~${feeObj.distanceKm.toFixed(1)} km)`;
         orderItems = [{ name: foodName, qty: foodQty, price: subtotal, area: foodArea, note: extraNote, category: selectedFoodCategory }];
       } else if (serviceType === 'RIDE') {
         pickupLocation = document.getElementById('ride-pickup-input')?.value || 'Pemandian Air Panas Sari Ater';
         dropLocation = document.getElementById('ride-drop-input')?.value || 'Pasar Ciater / Terminal Jalancagak';
         const vehicle = document.querySelector('input[name="ride-vehicle"]:checked')?.value || 'BIKE';
         orderTitle = `OTWRide (${vehicle === 'BIKE' ? 'Motor' : 'Mobil'})`;
-        total = vehicle === 'BIKE' ? 10000 : 25000;
+        
+        // Tarif Ride: Rp 9.000 (≤ 4 km) + 2.700/km (Mobil x1.8)
+        const rideDist = 3.5;
+        const bikeBase = rideDist <= 4.0 ? 9000 : 9000 + Math.round((rideDist - 4.0) * 2700);
+        total = vehicle === 'BIKE' ? bikeBase : Math.round(bikeBase * 1.8);
         subtotal = total;
         deliveryFee = 0;
         discount = activePromo === 'RIDEHEMAT' ? Math.round(total * 0.3) : 0;
@@ -2169,7 +2246,10 @@
         pickupLocation = document.getElementById('kirim-sender-loc')?.value || 'Desa Cisaat, Ciater';
         dropLocation = document.getElementById('kirim-receiver-loc')?.value || 'Villa Palasari Blok C';
         orderTitle = 'OTWKirim Paket Lokal';
-        total = 12000;
+        
+        // Tarif Kirim: Rp 9.000 (≤ 4 km) + 2.700/km
+        const kirimDist = 3.8;
+        total = kirimDist <= 4.0 ? 9000 : 9000 + Math.round((kirimDist - 4.0) * 2700);
         subtotal = total;
         deliveryFee = 0;
         orderItems = [{ name: `Antar Paket: ${pickupLocation} ➔ ${dropLocation}`, qty: 1, price: total }];
