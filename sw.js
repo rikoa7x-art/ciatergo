@@ -1,4 +1,4 @@
-const CACHE_NAME = 'otwkeun-v11';
+const CACHE_NAME = 'otwkeun-v12';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -6,9 +6,11 @@ const ASSETS_TO_CACHE = [
   './merchant.html',
   './admin.html',
   './manifest.json',
+  './manifest-driver.json',
   './shared-sync.js',
   './supabase-config.js',
-  './icon.svg'
+  './icon.svg',
+  './icon-driver.svg'
 ];
 
 self.addEventListener('install', (event) => {

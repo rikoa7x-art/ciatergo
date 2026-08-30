@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="driver-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#15803d" />
+      <stop offset="100%" stop-color="#052e16" />
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded App Icon Background -->
+  <rect width="512" height="512" rx="128" fill="url(#driver-grad)" />
+  <circle cx="256" cy="256" r="230" fill="none" stroke="#22c55e" stroke-width="8" opacity="0.4" />
+  
+  <!-- Outer glowing ring -->
+  <circle cx="256" cy="256" r="190" fill="#14532d" />
+  
+  <!-- Motorcycle Silhouette Icon -->
+  <g transform="translate(106, 130) scale(0.6)">
+    <!-- Back Wheel -->
+    <circle cx="100" cy="300" r="70" fill="none" stroke="#ffffff" stroke-width="24" />
+    <circle cx="100" cy="300" r="28" fill="url(#gold-grad)" />
+    
+    <!-- Front Wheel -->
+    <circle cx="400" cy="300" r="70" fill="none" stroke="#ffffff" stroke-width="24" />
+    <circle cx="400" cy="300" r="28" fill="url(#gold-grad)" />
+    
+    <!-- Frame & Body -->
+    <path d="M 100 300 L 220 300 L 290 180 L 170 180 Z" fill="#22c55e" />
+    <path d="M 220 300 L 320 200 L 390 200 L 400 300" fill="none" stroke="#ffffff" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 290 180 L 350 100 L 330 90" fill="none" stroke="#ffffff" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- Driver Rider Silhouette -->
+    <!-- Helmet -->
+    <circle cx="230" cy="80" r="45" fill="url(#gold-grad)" />
+    <!-- Visor -->
+    <path d="M 245 75 Q 275 80 265 105 L 235 105 Z" fill="#0f172a" />
+    <!-- Body / Jacket -->
+    <path d="M 200 130 Q 230 115 260 130 L 280 190 L 190 190 Z" fill="#ffffff" />
+    <!-- Arms reaching handlebar -->
+    <path d="M 240 145 L 340 105" stroke="#ffffff" stroke-width="18" stroke-linecap="round" />
+  </g>
+  
+  <!-- Badge text "DRIVER" -->
+  <rect x="136" y="390" width="240" height="58" rx="29" fill="url(#gold-grad)" />
+  <text x="256" y="430" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="30" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="3">DRIVER</text>
+</svg>

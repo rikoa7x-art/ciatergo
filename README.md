@@ -8,44 +8,36 @@ Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk lay
 
 ---
 
-## 🌟 Fitur Utama
+## 🌟 Dua Aplikasi PWA Mandiri yang Terpisah
 
-- **👤 1. Aplikasi Pelanggan (`index.html`)**:
-  - PWA Installable ke homescreen HP Android & iOS (*Add to Home Screen*).
-  - Pesan Makanan (*OTWFood*) dari warung nasi liwet, sate maranggi, kedai kopi, & oleh-oleh nanas khas Subang.
-  - Ojek & Mobil (*OTWRide*) dengan tarif zonasi per-km lokal.
-  - Kirim Paket & Dokumen (*OTWKirim*) antar desa & villa.
-  - **Peta Interaktif Real-Time (Leaflet OSM)** berpusat di Ciater dengan live driver movement GPS tracking.
-  - **In-App Chat Real-Time** dengan Driver partner dilengkapi quick reply chips.
-  - Voucher & Promo system (`CIATERKULINER`, `RIDEHEMAT`, `GRATISONGKIR`).
-  - Dompet digital OTWPay + COD (Bayar di Tempat) + QRIS.
+Aplikasi ini dirancang sebagai **dua aplikasi PWA independen** yang terpisah untuk kenyamanan pengguna, namun tetap terhubung ke satu backend cloud real-time:
 
-- **🏍️ 2. Aplikasi Mitra Driver (`driver.html`)**:
-  - Tombol toggle Online/Offline instan.
-  - Radar order masuk otomatis dengan **audio chime synthesizer** Web Audio API dan hitung mundur 20 detik.
-  - Navigasi rute 3 langkah (*Menuju Warung ➔ Konfirmasi Ambil ➔ Menuju Alamat Antar*).
-  - Peta Leaflet navigasi GPS aktif.
-  - In-App Chat langsung dengan pelanggan.
-  - Dompet penghasilan harian/mingguan dan simulasi penarikan instan (*withdrawal*).
+### 👤 1. Aplikasi Pelanggan (`index.html`)
+- **Nama PWA**: *OTW keun - Layanan Antar & Ojek Ciater*
+- **Manifest**: `manifest.json` | **Ikon**: `icon.svg`
+- **Fokus Fitur**:
+  - Pemesanan makanan (*OTWFood*), ojek & mobil (*OTWRide*), dan kurir paket (*OTWKirim*).
+  - Pelacakan live map GPS posisi driver di peta (*Leaflet OSM*).
+  - In-App Chat langsung dengan driver yang bertugas.
+  - Pembayaran COD & QRIS.
+  - Login khusus pelanggan dengan No. Handphone & OTP.
 
-- **🏪 3. Aplikasi Mitra Warung / Resto (`merchant.html`)**:
-  - Antrean dapur (*Kitchen Display System*) dengan 3 tab: *Pesanan Baru, Sedang Dimasak, Siap Diambil*.
-  - Notifikasi audio lonceng dapur saat ada pesanan makanan baru masuk.
-  - Buka / Tutup toko instan.
-  - Manajemen ketersediaan menu (*Tersedia / Habis*).
-  - Ringkasan omzet & riwayat penjualan.
+### 🏍️ 2. Aplikasi Mitra Driver (`driver.html`)
+- **Nama PWA**: *OTW keun Driver - Mitra Pengemudi*
+- **Manifest**: `manifest-driver.json` | **Ikon**: `icon-driver.svg`
+- **Fokus Fitur**:
+  - Tombol status kerja Online / Offline.
+  - Radar order masuk otomatis dengan **audio chime synthesizer** & hitung mundur.
+  - Navigasi rute 3 langkah (*Cari Warung / Titik Jemput ➔ Konfirmasi Ambil ➔ Antar ke Alamat Pelanggan*).
+  - Live broadcast koordinat GPS driver ke pelanggan.
+  - In-App Chat langsung dengan pelanggan pemesan.
+  - Dompet saldo penghasilan driver dan simulasi pencairan dana (*withdraw*).
 
-- **⚙️ 4. Console Admin & Dispatcher (`admin.html`)**:
-  - Monitoring transaksi live dengan pencarian instan.
-  - Ringkasan KPI (Total Order, GMV, Driver Online, Warung Buka).
-  - Modal detail transaksi & integrasi struk WhatsApp.
-  - Manajemen verifikasi mitra pengemudi & merchant.
-  - Konfigurasi tarif per kilometer & zona wilayah.
+---
 
-- **⚡ 5. Backend Storage & Cloud Realtime (Supabase)**:
-  - PostgreSQL Database di cloud untuk menyimpan pesanan (`orders`), pesan obrolan (`chats`), pedagang (`merchants`), menu (`menus`), dan riwayat koordinat supir (`driver_locations`).
-  - Real-time WebSocket subscriptions (`postgres_changes`) untuk sinkronisasi multi-device instan.
-  - Hybrid Offline-First Architecture (`localStorage` + `BroadcastChannel` + Supabase Cloud).
+### 🏪 3. Aplikasi Pendukung
+- **Mitra Warung / Dapur (`merchant.html`)**: Manajemen antrean dapur (*Kitchen Display System*) & katalog menu.
+- **Admin Console (`admin.html`)**: Monitoring seluruh pesanan live, manajemen tarif, kelola driver/warung, & konfigurasi Supabase.
 
 ---
 
@@ -53,18 +45,21 @@ Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk lay
 
 ```
 berangkat/
-├── index.html            # 👤 Aplikasi Web Pelanggan (PWA & Live Map Tracking)
-├── driver.html           # 🏍️ Aplikasi Web Mitra Pengemudi & Kurir
-├── merchant.html         # 🏪 Aplikasi Web Mitra Warung / Dapur Resto
-├── admin.html            # ⚙️ Console Admin & Central Dispatcher
-├── supabase_schema.sql   # 🗄️ SQL Schema Tables, RLS, Realtime Publication & Seeds
-├── supabase-config.js    # ☁️ Supabase Client, CRUD Methods & Realtime Channels
-├── shared-sync.js        # ⚡ Real-time State & Cross-Role Event Bus
-├── manifest.json         # 📱 Progressive Web App (PWA) Manifest
-├── sw.js                 # 🚀 Service Worker (Cache Offline & Performa Instan)
-├── server.js             # 🌐 Local Node.js Testing Server
-├── package.json          # 📦 Project Configuration
-└── README.md             # 📖 Dokumentasi Proyek
+├── index.html              # 👤 Aplikasi PWA Pelanggan
+├── driver.html             # 🏍️ Aplikasi PWA Mitra Driver
+├── merchant.html           # 🏪 Portal Dapur / Warung Kuliner
+├── admin.html              # ⚙️ Console Admin & Central Dispatcher
+├── manifest.json           # 📱 Manifest PWA Pelanggan
+├── manifest-driver.json    # 📱 Manifest PWA Mitra Driver
+├── icon.svg                # 🖼️ Ikon Aplikasi Pelanggan
+├── icon-driver.svg         # 🖼️ Ikon Aplikasi Mitra Driver
+├── supabase_schema.sql     # 🗄️ SQL Schema PostgreSQL & Realtime
+├── supabase-config.js      # ☁️ Supabase JS Client & Cloud Methods
+├── shared-sync.js          # ⚡ Sync Bus (Supabase + BroadcastChannel)
+├── sw.js                   # 🚀 Service Worker Multi-App Offline-First
+├── server.js               # 🌐 Local Node.js Multi-App Server
+├── package.json            # 📦 Project Config
+└── README.md               # 📖 Dokumentasi Proyek
 ```
 
 ---
