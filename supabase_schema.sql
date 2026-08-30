@@ -128,8 +128,45 @@ ALTER TABLE public.driver_locations REPLICA IDENTITY FULL;
 
 -- ==============================================================================
 -- PUBLIKASI REALTIME (Supabase Realtime WebSocket)
+-- Menggunakan blok DO agar aman dijalankan berulang kali tanpa error 42710
 -- ==============================================================================
-ALTER PUBLICATION supabase_realtime ADD TABLE public.orders, public.chats, public.merchants, public.menus, public.driver_locations;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'orders'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.orders;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'chats'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.chats;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'merchants'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.merchants;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'menus'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.menus;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'driver_locations'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.driver_locations;
+    END IF;
+END $$;
 
 -- ==============================================================================
 -- SEED INITIAL DATA (Data Awal Warung & Driver)
