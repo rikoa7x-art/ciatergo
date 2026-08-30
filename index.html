@@ -156,16 +156,33 @@
     <!-- ==================== SCREEN 2: AUTH / LOGIN ==================== -->
     <div id="screen-auth" class="screen hidden min-h-screen bg-white flex flex-col justify-between p-6">
       <div>
-        <button onclick="navigate('screen-home')" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-6">
+        <button onclick="navigate('screen-splash')" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-6">
           <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <div class="mb-6">
-          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">Portal Masuk Pelanggan</span>
-          <h2 class="text-2xl font-extrabold text-slate-800 mt-3">Masuk / Daftar</h2>
-          <p class="text-slate-500 text-xs mt-1">Masukkan nomor handphone aktif Anda untuk melanjutkan.</p>
+        <div class="mb-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">Portal Masuk Akun</span>
+          <h2 class="text-2xl font-extrabold text-slate-800 mt-2.5">Masuk / Daftar</h2>
+          <p class="text-slate-500 text-xs mt-1">Pilih peran akun Anda untuk melanjutkan.</p>
         </div>
 
-        <!-- FORM CUSTOMER PHONE & OTP -->
+        <!-- ROLE SELECTOR TABS -->
+        <div class="mb-5">
+          <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl">
+            <button type="button" onclick="selectAuthRole('customer', this)" id="auth-role-customer" class="py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 bg-white text-brand-700 shadow-sm transition">
+              <i class="fa-solid fa-user"></i>
+              <span>Pelanggan</span>
+            </button>
+            <button type="button" onclick="selectAuthRole('driver', this)" id="auth-role-driver" class="py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
+              <i class="fa-solid fa-motorcycle"></i>
+              <span>Mitra Driver</span>
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1.5 px-1 font-medium" id="auth-role-desc">
+            🛒 Masuk untuk pesan makanan, ojek, dan kirim barang di Ciater.
+          </p>
+        </div>
+
+        <!-- FORM 1: CUSTOMER PHONE & OTP -->
         <div id="auth-form-customer" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor Handphone / WhatsApp</label>
@@ -180,9 +197,46 @@
             <p>Kode OTP simulasi demo adalah <strong class="underline font-bold">123456</strong>.</p>
           </div>
 
-          <div class="pt-4">
+          <div class="pt-2">
             <button onclick="handleSendOTP()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-brand-600/30 transition">
               Lanjut Verifikasi OTP <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- FORM 2: DRIVER USERNAME & PASSWORD -->
+        <div id="auth-form-driver" class="hidden space-y-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih / Masukkan Akun Driver</label>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+              <div onclick="fillDriverLogin('nova', '12345')" class="driver-auth-pill p-2.5 bg-emerald-50 rounded-xl border-2 border-emerald-500 cursor-pointer hover:bg-emerald-100 transition shadow-2xs">
+                <div class="font-extrabold text-xs text-slate-900">🛵 Nova Pratama</div>
+                <div class="text-[10px] text-emerald-700 font-semibold">#DRV-001 • Beat</div>
+              </div>
+              <div onclick="fillDriverLogin('leo', '12345')" class="driver-auth-pill p-2.5 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100 transition shadow-2xs">
+                <div class="font-extrabold text-xs text-slate-900">🏍️ Leo Firmansyah</div>
+                <div class="text-[10px] text-teal-700 font-semibold">#DRV-002 • NMAX</div>
+              </div>
+            </div>
+            
+            <div class="flex items-center border-2 border-slate-200 focus-within:border-emerald-600 rounded-2xl overflow-hidden px-3 py-1 bg-slate-50 focus-within:bg-white transition">
+              <span class="text-sm text-slate-400 pr-2 border-r border-slate-200"><i class="fa-solid fa-id-badge"></i></span>
+              <input id="auth-driver-username" type="text" placeholder="Username (nova / leo)" value="nova" class="w-full py-2.5 px-3 text-slate-800 font-bold focus:outline-none text-sm bg-transparent">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Password Driver</label>
+            <div class="flex items-center border-2 border-slate-200 focus-within:border-emerald-600 rounded-2xl overflow-hidden px-3 py-1 bg-slate-50 focus-within:bg-white transition">
+              <span class="text-sm text-slate-400 pr-2 border-r border-slate-200"><i class="fa-solid fa-lock"></i></span>
+              <input id="auth-driver-password" type="password" placeholder="Masukkan password" value="12345" class="w-full py-2.5 px-3 text-slate-800 font-bold focus:outline-none text-sm bg-transparent">
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <button onclick="handleDriverLoginDirect()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition">
+              <span>Masuk Sebagai Mitra Driver</span>
+              <i class="fa-solid fa-motorcycle"></i>
             </button>
           </div>
         </div>
@@ -1353,12 +1407,507 @@
         </div>
 
       </div>
+    <!-- ==================== DRIVER SCREEN 1: DASHBOARD ==================== -->
+    <div id="driver-screen-dashboard" class="screen hidden flex-1 flex flex-col pb-24">
+      
+      <!-- Top Driver Header & Online Toggle -->
+      <div class="bg-gradient-to-br from-driver-700 via-driver-800 to-driver-900 text-white p-5 rounded-b-[32px] shadow-lg">
+        
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div id="driver-header-avatar" class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20 shadow-sm">
+              🛵
+            </div>
+            <div>
+              <h3 id="driver-header-name" class="font-extrabold text-sm text-white">Nova (Driver 1)</h3>
+              <p id="driver-header-vehicle" class="text-[11px] text-emerald-200">Honda Beat Street • T 3819 ZB</p>
+            </div>
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            <span id="driver-header-rating" class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2.5 py-0.5 rounded-full font-bold">
+              ⭐ 4.95 (Ciater)
+            </span>
+            <button onclick="openSwitchDriverModal()" class="text-[10px] text-emerald-300 underline font-semibold hover:text-white">
+              Ganti Driver ⇄
+            </button>
+          </div>
+        </div>
+
+        <!-- Online / Offline Switch Box -->
+        <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/15 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div id="status-indicator-dot" class="w-3.5 h-3.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse"></div>
+            <div>
+              <div class="text-[11px] font-black uppercase tracking-wide text-emerald-100" id="driver-status-text">STATUS: SIAP MENERIMA ORDER</div>
+              <div class="text-[10px] text-emerald-200/70">Radar order Ciater aktif</div>
+            </div>
+          </div>
+          <button id="btn-toggle-online" onclick="toggleDriverOnline()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition">
+            ONLINE
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Driver Main Content -->
+      <div class="p-4 space-y-4">
+        
+        <!-- Live Radar Pulse Box -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 text-white text-center shadow-xl border border-slate-700">
+          <div class="relative z-10 space-y-3">
+            <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center mx-auto text-3xl">
+              📡
+            </div>
+            <div>
+              <h3 class="text-sm font-black tracking-wide text-white">Radar Order Ciater</h3>
+              <p class="text-[11px] text-slate-300 mt-0.5">Memindai pesanan di sekitar Sari Ater, Palasari & Cisaat...</p>
+            </div>
+            <button onclick="triggerSimulatedIncomingOrder()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg transition">
+              <i class="fa-solid fa-play mr-1"></i> Tes Simulasi Order Masuk
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Action & Info Cards -->
+        <div class="grid grid-cols-2 gap-3">
+          <div onclick="driverNavigate('driver-screen-earnings')" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm cursor-pointer hover:border-emerald-500 transition">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-sm mb-2">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="text-xs font-extrabold text-slate-800">Dompet & Saldo</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Saldo: Rp 450.000</div>
+          </div>
+
+          <div onclick="showToast('Area ramai: Sari Ater & Cisaat')" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm cursor-pointer hover:border-emerald-500 transition">
+            <div class="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-sm mb-2">
+              <i class="fa-solid fa-fire"></i>
+            </div>
+            <div class="text-xs font-extrabold text-slate-800">Zona Ramai Ciater</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Potensi order tinggi 🔥</div>
+          </div>
+        </div>
+
+        <!-- Recent Trips Log -->
+        <div>
+          <h4 class="text-xs font-extrabold text-slate-800 mb-2.5 px-1">Riwayat Perjalanan</h4>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🍔</span>
+                <div>
+                  <div class="font-bold text-slate-800">Antar Makanan ke Desa Palasari</div>
+                  <div class="text-slate-400 text-[10px]">Hari ini, 12:45 • Bakso & Mie</div>
+                </div>
+              </div>
+              <span class="font-bold text-emerald-600">+Rp 12.000</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl text-xs">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🏍️</span>
+                <div>
+                  <div class="font-bold text-slate-800">OTWRide ke Sari Ater</div>
+                  <div class="text-slate-400 text-[10px]">Hari ini, 11:20</div>
+                </div>
+              </div>
+              <span class="font-bold text-emerald-600">+Rp 10.000</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== DRIVER SCREEN 2: ACTIVE ORDER ==================== -->
+    <div id="driver-screen-active" class="screen hidden flex-1 flex flex-col bg-slate-900 text-white relative">
+      
+      <!-- Top Order Type Bar -->
+      <div class="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl" id="active-order-icon">🍔</span>
+          <div>
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wide" id="active-order-type-badge">OTWFOOD</div>
+            <h3 class="text-xs font-black text-white" id="active-order-code">#OTW-9102</h3>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-[10px] text-slate-400">Ongkos Bersih</div>
+          <div class="text-sm font-black text-emerald-400" id="active-order-fare">Rp 12.000</div>
+        </div>
+      </div>
+
+      <!-- Navigation & Step Progress Real Leaflet Map -->
+      <div class="flex-1 bg-slate-950 relative overflow-hidden min-h-[300px]">
+        <div id="driver-live-map" class="w-full h-full min-h-[300px] z-0"></div>
+        
+        <!-- Floating Navigation Overlay -->
+        <div class="absolute top-3 left-3 right-3 z-10 bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl border border-white/15 text-white shadow-xl flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm shrink-0">
+              <i class="fa-solid fa-location-arrow"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="text-[9px] text-emerald-300 font-extrabold uppercase" id="step-badge">LANGKAH 1 DARI 3</div>
+              <div class="text-xs font-black truncate max-w-[200px]" id="nav-instruction-text">Cari & Beli Makanan Pesanan</div>
+              <div class="text-[10px] text-slate-300 truncate max-w-[200px]" id="nav-location-name">Cari warung sesuai pesanan pelanggan di area Sari Ater</div>
+            </div>
+          </div>
+          <button onclick="showToast('Navigasi GPS Aktif')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-[10px] font-bold shrink-0">
+            GPS ON
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Customer / Order Card & Action Buttons -->
+      <div class="bg-white text-slate-800 rounded-t-[32px] p-5 shadow-2xl space-y-4 z-20">
+        
+        <!-- Customer details -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center font-bold text-slate-700 text-xs" id="active-customer-avatar">
+              AG
+            </div>
+            <div>
+              <h4 class="text-xs font-extrabold text-slate-800" id="active-customer-name">Asep Gunawan (Pelanggan)</h4>
+              <p class="text-[10px] text-slate-400" id="active-payment-info">Metode Bayar: <strong class="text-emerald-700">Tunai COD (Rp 35.000)</strong></p>
+            </div>
+          </div>
+          
+          <div class="flex gap-2">
+            <button onclick="showToast('Menghubungi pelanggan...')" class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-phone"></i>
+            </button>
+            <button onclick="openDriverChatModal()" class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center text-xs">
+              <i class="fa-solid fa-comment"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Big Action Advance Button -->
+        <button id="btn-advance-order" onclick="advanceOrderStatus()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-2xl shadow-xl shadow-emerald-600/30 flex items-center justify-center gap-2 active:scale-98 transition">
+          <span id="btn-advance-text">Makanan Sudah Dibeli ✓</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== DRIVER SCREEN 3: EARNINGS ==================== -->
+    <div id="driver-screen-earnings" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <div class="bg-white p-4 border-b border-slate-200 sticky top-0 z-30 flex items-center gap-3">
+        <button onclick="driverNavigate('driver-screen-dashboard')" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+        </button>
+        <div>
+          <h2 class="text-base font-extrabold text-slate-800">💰 Pendapatan & Dompet</h2>
+          <p class="text-[11px] text-slate-400">Rekap penghasilan mitra OTW keun</p>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Total Balance Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-3xl shadow-lg">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Saldo Dompet Driver</span>
+              <h3 class="text-2xl font-black text-emerald-400 mt-1">Rp 450.000</h3>
+            </div>
+            <button onclick="withdrawDriverEarnings()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs rounded-xl shadow transition">
+              Tarik Saldo
+            </button>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-300 flex justify-between">
+            <span>Rekening: BCA ***8821 (Dadang)</span>
+            <span class="text-emerald-400 font-bold">Bebas Biaya Admin</span>
+          </div>
+        </div>
+
+        <!-- Weekly Chart Simulation (CSS Bars) -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Pendapatan 7 Hari Terakhir</h4>
+            <span class="text-xs font-black text-emerald-600">Rp 820.000</span>
+          </div>
+
+          <div class="flex items-end justify-between h-32 pt-6 pb-2 gap-2 text-center text-[10px] font-bold text-slate-400">
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-100 rounded-t-lg h-16"></div>
+              <span>Sen</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-200 rounded-t-lg h-20"></div>
+              <span>Sel</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-300 rounded-t-lg h-14"></div>
+              <span>Rab</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-400 rounded-t-lg h-24"></div>
+              <span>Kam</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-500 rounded-t-lg h-28"></div>
+              <span>Jum</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-600 rounded-t-lg h-32 shadow-sm"></div>
+              <span class="text-emerald-700 font-black">Sab</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-400 rounded-t-lg h-20"></div>
+              <span>Min</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== DRIVER SCREEN 4: PROFILE ==================== -->
+    <div id="driver-screen-profile" class="screen hidden flex-1 flex flex-col bg-slate-50 pb-24">
+      
+      <div class="bg-white p-5 border-b border-slate-200 flex items-center gap-3.5">
+        <div id="driver-profile-avatar" class="w-14 h-14 rounded-2xl bg-emerald-600 text-white text-3xl font-black flex items-center justify-center shadow-lg">
+          🛵
+        </div>
+        <div>
+          <h3 id="driver-profile-name" class="font-black text-base text-slate-800">Nova Pratama</h3>
+          <p id="driver-profile-phone" class="text-xs text-slate-500">+62 821-2233-4455 • ID #DRV-001</p>
+          <span class="inline-block mt-1 text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-extrabold">
+            Status: Terverifikasi Aktif
+          </span>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- Vehicle & Docs Info -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 text-xs">
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">Kendaraan Terdaftar</span>
+            <span id="driver-profile-vehicle" class="font-bold text-slate-800">Honda Beat Street (T 3819 ZB)</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">KTP & SIM C</span>
+            <span class="font-bold text-emerald-600">✅ Terverifikasi</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">STNK & Pajak Kendaraan</span>
+            <span class="font-bold text-emerald-600">✅ Aktif s/d 2028</span>
+          </div>
+          <div class="p-3.5 flex justify-between">
+            <span class="text-slate-500">Wilayah Pangkalan</span>
+            <span id="driver-profile-location" class="font-bold text-slate-800">Sari Ater & Ciater Highland</span>
+          </div>
+        </div>
+
+        <button onclick="openSwitchDriverModal()" class="w-full py-3 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-2xl border border-emerald-200 hover:bg-emerald-100 flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>Ganti Driver (Nova ⇄ Leo)</span>
+        </button>
+
+        <div class="space-y-2.5 pt-2">
+          <button onclick="handleDriverLogout()" class="w-full py-3.5 bg-red-50 text-red-600 text-xs font-bold rounded-2xl border border-red-200 hover:bg-red-100 flex items-center justify-center gap-2 transition">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>Keluar Akun Driver (Logout)</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== DRIVER BOTTOM NAVIGATION ==================== -->
+    <div id="driver-bottom-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2 flex justify-between items-center z-40 sm:rounded-b-[36px]">
+      
+      <button onclick="driverNavigate('driver-screen-dashboard')" class="d-nav-item flex flex-col items-center gap-1 text-emerald-600 py-1 flex-1">
+        <i class="fa-solid fa-gauge-high text-base"></i>
+        <span class="text-[10px] font-bold">Beranda</span>
+      </button>
+
+      <button onclick="driverNavigate('driver-screen-active')" class="d-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1 relative">
+        <i class="fa-solid fa-route text-base"></i>
+        <span class="text-[10px] font-medium">Trip Aktif</span>
+        <span id="driver-order-dot" class="hidden absolute top-0 right-4 w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+      </button>
+
+      <button onclick="driverNavigate('driver-screen-earnings')" class="d-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1">
+        <i class="fa-solid fa-wallet text-base"></i>
+        <span class="text-[10px] font-medium">Dompet</span>
+      </button>
+
+      <button onclick="driverNavigate('driver-screen-profile')" class="d-nav-item flex flex-col items-center gap-1 text-slate-400 py-1 flex-1">
+        <i class="fa-solid fa-id-card text-base"></i>
+        <span class="text-[10px] font-medium">Profil</span>
+      </button>
+
+    </div>
+
+    <!-- ==================== MODAL: INCOMING ORDER RADAR POPUP ==================== -->
+    <div id="modal-incoming-order" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[420px] rounded-t-[36px] sm:rounded-[36px] p-6 space-y-4 animate-bounce-once border-2 border-emerald-500 shadow-2xl">
+        
+        <!-- Order Header & Timer Bar -->
+        <div class="text-center space-y-1">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl mx-auto shadow-inner">
+            🔔
+          </div>
+          <span class="text-[10px] bg-orange-100 text-orange-700 font-extrabold px-3 py-1 rounded-full uppercase" id="incoming-service-badge">
+            PESANAN MAKANAN BARU
+          </span>
+          <h3 class="text-base font-black text-slate-900 mt-2 leading-snug" id="incoming-title">Nasi liwet ayam bakar 2 porsi...</h3>
+          <div class="text-xl font-black text-emerald-600" id="incoming-fare">Rp 12.000 (Ongkos Anda)</div>
+        </div>
+
+        <!-- Route Details -->
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+            <span class="text-slate-500">Cari warung di: <strong class="text-slate-800" id="incoming-pickup">Area Sari Ater & Palasari</strong></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="text-slate-500">Antar: <strong class="text-slate-800" id="incoming-drop">Desa Palasari RT 02 (1.2 km)</strong></span>
+          </div>
+        </div>
+
+        <!-- Timer bar countdown -->
+        <div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div id="incoming-timer-bar" class="bg-emerald-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+          </div>
+          <div class="text-[10px] text-center text-slate-400 mt-1">Terima dalam <span id="countdown-num" class="font-bold text-slate-700">20</span> detik</div>
+        </div>
+
+        <!-- Action Buttons: Reject vs Accept -->
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <button onclick="rejectIncomingOrder()" class="py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-2xl transition">
+            ❌ Tolak Order
+          </button>
+          <button onclick="acceptIncomingOrder()" class="py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-1.5">
+            ✅ Terima Order
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: IN-APP CHAT DRIVER WITH CUSTOMER ==================== -->
+    <div id="modal-driver-chat" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[440px] rounded-t-[32px] sm:rounded-[32px] flex flex-col h-[80vh] max-h-[600px] overflow-hidden shadow-2xl">
+        
+        <!-- Chat Header -->
+        <div class="p-4 bg-emerald-600 text-white flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl" id="driver-chat-customer-avatar">
+              👤
+            </div>
+            <div>
+              <h4 class="text-xs font-black text-white flex items-center gap-1.5" id="driver-chat-customer-name">
+                Asep Gunawan (Pelanggan) <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
+              </h4>
+              <p class="text-[10px] text-emerald-100 font-medium" id="driver-chat-customer-info">Order #OTW-9102 • Palasari Ciater</p>
+            </div>
+          </div>
+          <button onclick="closeDriverChatModal()" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white text-xs">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Messages Bubble Area -->
+        <div id="driver-chat-messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-xs">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Quick Reply Chips for Driver -->
+        <div class="px-3 py-2 bg-white border-t border-slate-100 flex gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+          <button onclick="sendDriverQuickReply('Halo kak, saya sudah di warung menunggu makanan ya')" class="bg-slate-100 hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            🍳 Sudah di warung
+          </button>
+          <button onclick="sendDriverQuickReply('Pesanan sudah saya bawa dan sedang meluncur ke alamat!')" class="bg-slate-100 hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            🛵 Sedang meluncur
+          </button>
+          <button onclick="sendDriverQuickReply('Saya sudah sampai di depan lokasi ya kak')" class="bg-slate-100 hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-xl whitespace-nowrap font-medium border border-slate-200">
+            📍 Sudah sampai di depan
+          </button>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+          <input id="driver-chat-text-input" type="text" placeholder="Tulis pesan ke pelanggan..." class="flex-1 text-xs bg-slate-100 px-3.5 py-2.5 rounded-2xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500 font-medium" onkeydown="if(event.key==='Enter') sendDriverChat()">
+          <button onclick="sendDriverChat()" class="w-10 h-10 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center active:scale-95 transition shadow-md shadow-emerald-600/30">
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: GANTI DRIVER (NOVA / LEO) ==================== -->
+    <div id="modal-switch-driver" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-[420px] rounded-t-[32px] sm:rounded-[32px] p-5 space-y-4 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🛵</span>
+            <h3 class="font-extrabold text-sm text-slate-800">Pilih / Ganti Akun Driver</h3>
+          </div>
+          <button onclick="closeSwitchDriverModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-500">Pilih akun driver aktif untuk bertugas di area Kecamatan Ciater:</p>
+
+        <!-- Driver Cards -->
+        <div class="space-y-2.5">
+          <!-- Nova -->
+          <div onclick="switchDriverAccount('nova')" class="p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 cursor-pointer hover:bg-emerald-100/50 transition flex items-center justify-between" id="card-driver-nova">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-xs">
+                🛵
+              </div>
+              <div>
+                <h4 class="text-xs font-black text-slate-900">Nova (Driver 1) <span class="text-[10px] text-emerald-700 bg-emerald-200 px-1.5 py-0.5 rounded font-bold">#DRV-001</span></h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">Honda Beat Street • Sari Ater</p>
+                <div class="text-[10px] font-bold text-amber-600">⭐ 4.95 Rating</div>
+              </div>
+            </div>
+            <span class="text-xs font-black text-emerald-600" id="badge-active-nova">✓ Aktif</span>
+          </div>
+
+          <!-- Leo -->
+          <div onclick="switchDriverAccount('leo')" class="p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between" id="card-driver-leo">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xl shadow-xs">
+                🏍️
+              </div>
+              <div>
+                <h4 class="text-xs font-black text-slate-900">Leo (Driver 2) <span class="text-[10px] text-teal-700 bg-teal-200 px-1.5 py-0.5 rounded font-bold">#DRV-002</span></h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">Yamaha NMAX 155 • Palasari</p>
+                <div class="text-[10px] font-bold text-amber-600">⭐ 4.90 Rating</div>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-slate-400 hidden" id="badge-active-leo">✓ Aktif</span>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button onclick="closeSwitchDriverModal()" class="w-full py-3 bg-slate-900 text-white font-bold text-xs rounded-xl shadow transition">
+            Tutup
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-msg" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-xs bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-2 transition-all">
       <i class="fa-solid fa-circle-check text-emerald-400"></i>
-      <span id="toast-text">Berhasil menambahkan ke keranjang</span>
+      <span id="toast-text">Berhasil</span>
     </div>
 
   </div>
@@ -1614,6 +2163,9 @@
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg Error:', err));
       }
 
+      // Initialize Driver state from storage
+      initActiveDriver();
+
       // Auto-request GPS on startup if supported
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition((pos) => {
@@ -1623,15 +2175,39 @@
         }, () => {}, { enableHighAccuracy: true, timeout: 5000 });
       }
 
-      // Load Orders from Shared Sync DB
+      // Load Orders from Shared Sync DB & listen to events
       if (window.CiaterSync) {
         const stored = CiaterSync.getStoredOrders();
         if (stored && stored.length > 0) {
           orderHistory = stored;
         }
-        // Listen to Realtime Events from Driver / Admin
+
         CiaterSync.listenSyncEvents((type, payload) => {
-          console.log('[User App] Sync Event:', type, payload);
+          console.log('[OTW App] Sync Event:', type, payload);
+          const currentRole = localStorage.getItem('otw_auth_role');
+
+          // If in Driver mode
+          if (currentRole === 'driver') {
+            if ((type === 'ORDER_CREATED' || type === 'ORDER_READY_FOR_PICKUP') && isDriverOnline) {
+              handleIncomingSyncOrder(payload);
+            } else if (type === 'STATUS_UPDATED' && currentHandlingOrder && currentHandlingOrder.id === payload.orderId) {
+              currentHandlingOrder.status = payload.status;
+              if (payload.status === 'COOKING') {
+                showToast('🍳 Warung mulai memasak pesanan makanan!');
+              } else if (payload.status === 'READY') {
+                playOrderChime();
+                showToast('📦 Makanan sudah selesai dimasak di warung! Silakan ambil.');
+              }
+            } else if (type === 'CHAT_MESSAGE') {
+              renderDriverChatMessages();
+              if (payload.message && payload.message.role === 'customer') {
+                playOrderChime();
+                showToast(`💬 Pesan Pelanggan: "${payload.message.text}"`);
+              }
+            }
+          }
+
+          // If in Customer mode (or general sync)
           if (type === 'STATUS_UPDATED' || type === 'ORDER_CREATED') {
             orderHistory = CiaterSync.getStoredOrders();
             renderOrdersHistory();
@@ -1653,12 +2229,20 @@
 
       renderOrdersHistory();
       
-      // Auto advance splash screen
+      // Auto advance splash screen to corresponding authenticated role or auth screen
       setTimeout(() => {
         if (currentScreen === 'screen-splash') {
-          navigate('screen-home');
+          const authRole = localStorage.getItem('otw_auth_role');
+          if (authRole === 'driver') {
+            navigate('driver-screen-dashboard');
+          } else if (authRole === 'customer') {
+            navigate('screen-home');
+          } else {
+            navigate('screen-auth');
+          }
         }
-      }, 2200);
+      }, 1800);
+
       // Handle OTP boxes auto focus
       const otpInputs = document.querySelectorAll('.otp-box');
       otpInputs.forEach((input, index) => {
@@ -1721,22 +2305,42 @@
         }
       }
 
-      // Hide bottom nav on specific fullscreen/order flow views so buttons are never blocked
-      const hideNavScreens = [
-        'screen-splash', 'screen-auth', 'screen-otp', 'screen-tracking', 
-        'screen-cart', 'screen-food', 'screen-ride', 'screen-kirim'
-      ];
-      const navBar = document.getElementById('bottom-nav-bar');
-      if (navBar) {
-        if (hideNavScreens.includes(screenId)) {
-          navBar.classList.add('hidden');
-        } else {
-          navBar.classList.remove('hidden');
+      const custNav = document.getElementById('bottom-nav-bar');
+      const driverNav = document.getElementById('driver-bottom-nav');
+
+      const isDriverScreen = screenId.startsWith('driver-screen');
+      const isAuthScreen = screenId === 'screen-splash' || screenId === 'screen-auth' || screenId === 'screen-otp';
+
+      if (isAuthScreen) {
+        if (custNav) custNav.classList.add('hidden');
+        if (driverNav) driverNav.classList.add('hidden');
+      } else if (isDriverScreen) {
+        if (custNav) custNav.classList.add('hidden');
+        if (driverNav) driverNav.classList.remove('hidden');
+        updateDriverBottomNavActive(screenId);
+        if (screenId === 'driver-screen-active' && driverMapInstance) {
+          setTimeout(() => driverMapInstance.invalidateSize(), 250);
+        }
+      } else {
+        if (driverNav) driverNav.classList.add('hidden');
+        // Hide customer bottom nav on specific customer sub-screens
+        const hideCustNavScreens = ['screen-tracking', 'screen-cart', 'screen-food', 'screen-ride', 'screen-kirim'];
+        if (custNav) {
+          if (hideCustNavScreens.includes(screenId)) {
+            custNav.classList.add('hidden');
+          } else {
+            custNav.classList.remove('hidden');
+          }
+        }
+        updateBottomNavActive(screenId);
+        if (screenId === 'screen-home' && homeMapInstance) {
+          setTimeout(() => homeMapInstance.invalidateSize(), 250);
         }
       }
+    }
 
-      // Update Nav active icon colors
-      updateBottomNavActive(screenId);
+    function driverNavigate(screenId) {
+      navigate(screenId);
     }
 
     function updateBottomNavActive(screenId) {
@@ -1749,6 +2353,17 @@
       if (screenId === 'screen-orders') document.querySelectorAll('.nav-item')[2]?.classList.add('text-brand-600');
       if (screenId === 'screen-promo') document.querySelectorAll('.nav-item')[3]?.classList.add('text-brand-600');
       if (screenId === 'screen-profile') document.querySelectorAll('.nav-item')[4]?.classList.add('text-brand-600');
+    }
+
+    function updateDriverBottomNavActive(screenId) {
+      document.querySelectorAll('.d-nav-item').forEach(item => {
+        item.classList.remove('text-emerald-600');
+        item.classList.add('text-slate-400');
+      });
+      if (screenId === 'driver-screen-dashboard') document.querySelectorAll('.d-nav-item')[0]?.classList.add('text-emerald-600');
+      if (screenId === 'driver-screen-active') document.querySelectorAll('.d-nav-item')[1]?.classList.add('text-emerald-600');
+      if (screenId === 'driver-screen-earnings') document.querySelectorAll('.d-nav-item')[2]?.classList.add('text-emerald-600');
+      if (screenId === 'driver-screen-profile') document.querySelectorAll('.d-nav-item')[3]?.classList.add('text-emerald-600');
     }
 
     // ============================================================
@@ -1871,10 +2486,12 @@
       if (driver && driver.password === pInput) {
         localStorage.setItem('otw_auth_role', 'driver');
         localStorage.setItem('otw_active_driver', JSON.stringify(driver));
-        showToast(`🎉 Selamat datang Driver ${driver.name}! Mengalihkan...`);
+        currentActiveDriver = driver;
+        renderActiveDriverUI();
+        showToast(`🎉 Selamat datang Driver ${driver.name}!`);
         setTimeout(() => {
-          window.location.href = 'driver.html';
-        }, 600);
+          navigate('driver-screen-dashboard');
+        }, 400);
       } else {
         showToast('❌ Username atau password salah! (nova / leo, pass: 12345)');
         const box = document.getElementById('auth-driver-password');
@@ -2619,10 +3236,11 @@
         if (selectedAuthRole === 'driver') {
           localStorage.setItem('otw_auth_role', 'driver');
           localStorage.setItem('otw_user_phone', phone);
-          showToast('🛵 Login Mitra Driver Berhasil! Mengalihkan ke aplikasi Driver...');
+          showToast('🛵 Login Mitra Driver Berhasil!');
+          renderActiveDriverUI();
           setTimeout(() => {
-            window.location.href = 'driver.html';
-          }, 800);
+            navigate('driver-screen-dashboard');
+          }, 400);
         } else {
           localStorage.setItem('otw_auth_role', 'customer');
           localStorage.setItem('otw_user_phone', phone);
@@ -2640,8 +3258,488 @@
     function handleLogout() {
       localStorage.removeItem('otw_auth_role');
       localStorage.removeItem('otw_user_phone');
-      showToast('Berhasil keluar akun.');
+      showToast('Berhasil keluar akun Pelanggan.');
       navigate('screen-auth');
+    }
+
+    function handleDriverLogout() {
+      localStorage.removeItem('otw_auth_role');
+      showToast('Berhasil keluar akun Driver.');
+      navigate('screen-auth');
+    }
+
+    // ============================================================
+    // MITRA DRIVER MODULE CONTROLLER & STATE
+    // ============================================================
+    let currentActiveDriver = REGISTERED_DRIVERS.nova;
+    let isDriverOnline = true;
+    let orderStep = 1; // 1: go to pickup, 2: pick up confirm, 3: deliver & finish
+    let incomingTimerInterval = null;
+    let currentHandlingOrder = null;
+
+    function initActiveDriver() {
+      try {
+        const saved = localStorage.getItem('otw_active_driver');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.username && REGISTERED_DRIVERS[parsed.username]) {
+            currentActiveDriver = REGISTERED_DRIVERS[parsed.username];
+          }
+        }
+      } catch (e) {
+        console.log('Driver parse error:', e);
+      }
+      renderActiveDriverUI();
+    }
+
+    function renderActiveDriverUI() {
+      // Header elements
+      const hName = document.getElementById('driver-header-name');
+      const hVeh = document.getElementById('driver-header-vehicle');
+      const hRate = document.getElementById('driver-header-rating');
+      const hAva = document.getElementById('driver-header-avatar');
+      if (hName) hName.innerText = `${currentActiveDriver.name} (Driver)`;
+      if (hVeh) hVeh.innerText = currentActiveDriver.vehicle;
+      if (hRate) hRate.innerText = `⭐ ${currentActiveDriver.rating} (Ciater)`;
+      if (hAva) hAva.innerText = currentActiveDriver.avatar;
+
+      // Profile screen elements
+      const pName = document.getElementById('driver-profile-name');
+      const pPhone = document.getElementById('driver-profile-phone');
+      const pVeh = document.getElementById('driver-profile-vehicle');
+      const pLoc = document.getElementById('driver-profile-location');
+      const pAva = document.getElementById('driver-profile-avatar');
+      if (pName) pName.innerText = currentActiveDriver.fullName || currentActiveDriver.name;
+      if (pPhone) pPhone.innerText = `${currentActiveDriver.phone} • ID ${currentActiveDriver.id}`;
+      if (pVeh) pVeh.innerText = currentActiveDriver.vehicle;
+      if (pLoc) pLoc.innerText = currentActiveDriver.location;
+      if (pAva) pAva.innerText = currentActiveDriver.avatar;
+
+      // Update Modal active driver badges
+      const isNova = currentActiveDriver.username === 'nova';
+      const cardNova = document.getElementById('card-driver-nova');
+      const cardLeo = document.getElementById('card-driver-leo');
+      const badgeNova = document.getElementById('badge-active-nova');
+      const badgeLeo = document.getElementById('badge-active-leo');
+
+      if (cardNova && cardLeo) {
+        if (isNova) {
+          cardNova.className = 'p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 cursor-pointer hover:bg-emerald-100/50 transition flex items-center justify-between';
+          cardLeo.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+          badgeNova?.classList.remove('hidden');
+          badgeLeo?.classList.add('hidden');
+        } else {
+          cardLeo.className = 'p-3.5 rounded-2xl border-2 border-teal-500 bg-teal-50/60 cursor-pointer hover:bg-teal-100/50 transition flex items-center justify-between';
+          cardNova.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+          badgeLeo?.classList.remove('hidden');
+          badgeNova?.classList.add('hidden');
+        }
+      }
+    }
+
+    function openSwitchDriverModal() {
+      document.getElementById('modal-switch-driver')?.classList.remove('hidden');
+    }
+
+    function closeSwitchDriverModal() {
+      document.getElementById('modal-switch-driver')?.classList.add('hidden');
+    }
+
+    function switchDriverAccount(username) {
+      if (REGISTERED_DRIVERS[username]) {
+        currentActiveDriver = REGISTERED_DRIVERS[username];
+        localStorage.setItem('otw_active_driver', JSON.stringify(currentActiveDriver));
+        renderActiveDriverUI();
+        closeSwitchDriverModal();
+        showToast(`✅ Beralih ke Driver ${currentActiveDriver.name} (${currentActiveDriver.id})`);
+        
+        if (isDriverOnline && window.CiaterSync) {
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, {
+            driver: currentActiveDriver.fullName,
+            phone: currentActiveDriver.phone,
+            status: 'ONLINE'
+          });
+        }
+      }
+    }
+
+    // SYNTHESIZE CHIME SOUND USING WEB AUDIO API
+    function playOrderChime() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.15); // A5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {
+        console.log('Audio not allowed without gesture', e);
+      }
+    }
+
+    function handleIncomingSyncOrder(order) {
+      currentHandlingOrder = order;
+      
+      let serviceBadge = `PESANAN ${order.serviceName || order.service || 'OTW KEUN'}`;
+      if (order.service === 'FOOD') serviceBadge = 'PESANAN MAKANAN';
+      if (order.targetDriver && order.targetDriver === currentActiveDriver.username) {
+        serviceBadge = `🎯 PESANAN LANGSUNG UNTUK ANDA (${currentActiveDriver.name.toUpperCase()})`;
+      } else if (order.targetDriver) {
+        serviceBadge = `PESANAN (DITUJUKAN KE DRIVER ${order.targetDriver.toUpperCase()})`;
+      }
+      const badgeEl = document.getElementById('incoming-service-badge');
+      if (badgeEl) badgeEl.innerText = serviceBadge;
+      
+      const title = order.foodOrderDesc || order.title || 'Pesanan Makanan';
+      const titleEl = document.getElementById('incoming-title');
+      if (titleEl) titleEl.innerText = title.length > 55 ? title.substring(0, 55) + '...' : title;
+      
+      const driverFare = order.deliveryFee || (order.service === 'FOOD' ? 9000 : (order.total || 9000));
+      const fareEl = document.getElementById('incoming-fare');
+      if (fareEl) fareEl.innerText = `Rp ${driverFare.toLocaleString('id-ID')} (Ongkos Jasa Driver)`;
+      
+      const pickupHint = order.foodArea || order.pickupLocation || 'Sekitar Ciater';
+      const pickupEl = document.getElementById('incoming-pickup');
+      if (pickupEl) pickupEl.innerText = pickupHint;
+      const dropEl = document.getElementById('incoming-drop');
+      if (dropEl) dropEl.innerText = order.dropLocation || order.customerLocation || 'Desa Palasari';
+      
+      triggerSimulatedIncomingOrder(true);
+    }
+
+    function toggleDriverOnline() {
+      isDriverOnline = !isDriverOnline;
+      const dot = document.getElementById('status-indicator-dot');
+      const text = document.getElementById('driver-status-text');
+      const btn = document.getElementById('btn-toggle-online');
+
+      if (isDriverOnline) {
+        if (dot) dot.className = 'w-3.5 h-3.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse';
+        if (text) text.innerText = 'STATUS: SIAP MENERIMA ORDER';
+        if (btn) {
+          btn.innerText = 'ONLINE';
+          btn.className = 'px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition';
+        }
+        showToast(`🟢 Driver ${currentActiveDriver.name} Online & siap menerima order`);
+        if (window.CiaterSync) {
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, {
+            driver: currentActiveDriver.fullName || currentActiveDriver.name,
+            phone: currentActiveDriver.phone,
+            status: 'ONLINE'
+          });
+        }
+      } else {
+        if (dot) dot.className = 'w-3.5 h-3.5 rounded-full bg-slate-400 ring-4 ring-slate-400/30';
+        if (text) text.innerText = 'STATUS: SEDANG ISTIRAHAT (OFFLINE)';
+        if (btn) {
+          btn.innerText = 'OFFLINE';
+          btn.className = 'px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-black text-xs rounded-xl shadow transition';
+        }
+        showToast('⚪ Anda sekarang Offline');
+        if (window.CiaterSync) {
+          CiaterSync.broadcastEvent(CiaterSync.SYNC_EVENTS.DRIVER_STATUS_CHANGE, {
+            driver: currentActiveDriver.fullName || currentActiveDriver.name,
+            phone: currentActiveDriver.phone,
+            status: 'OFFLINE'
+          });
+        }
+      }
+    }
+
+    function triggerSimulatedIncomingOrder(isSync = false) {
+      if (!isDriverOnline) {
+        showToast('Nyalakan status ONLINE terlebih dahulu!');
+        return;
+      }
+      playOrderChime();
+      const modal = document.getElementById('modal-incoming-order');
+      if (modal) modal.classList.remove('hidden');
+
+      let seconds = 20;
+      const bar = document.getElementById('incoming-timer-bar');
+      const num = document.getElementById('countdown-num');
+      if (bar) bar.style.width = '100%';
+      if (num) num.innerText = seconds;
+
+      clearInterval(incomingTimerInterval);
+      incomingTimerInterval = setInterval(() => {
+        seconds--;
+        if (num) num.innerText = seconds;
+        if (bar) bar.style.width = (seconds / 20 * 100) + '%';
+        if (seconds <= 0) {
+          clearInterval(incomingTimerInterval);
+          rejectIncomingOrder();
+        }
+      }, 1000);
+    }
+
+    function rejectIncomingOrder() {
+      clearInterval(incomingTimerInterval);
+      document.getElementById('modal-incoming-order')?.classList.add('hidden');
+      showToast('Pesanan dilewati. Mencari pesanan berikutnya...');
+    }
+
+    function acceptIncomingOrder() {
+      clearInterval(incomingTimerInterval);
+      document.getElementById('modal-incoming-order')?.classList.add('hidden');
+      orderStep = 1;
+      
+      if (currentHandlingOrder) {
+        const codeEl = document.getElementById('active-order-code');
+        if (codeEl) codeEl.innerText = '#' + currentHandlingOrder.id;
+        const fare = currentHandlingOrder.deliveryFee || Math.round((currentHandlingOrder.total || 30000) * 0.35);
+        const fareEl = document.getElementById('active-order-fare');
+        if (fareEl) fareEl.innerText = 'Rp ' + (fare || 12000).toLocaleString('id-ID');
+        const badgeEl = document.getElementById('active-order-type-badge');
+        if (badgeEl) badgeEl.innerText = (currentHandlingOrder.serviceName || currentHandlingOrder.service || 'OTWFOOD').toUpperCase();
+        const iconEl = document.getElementById('active-order-icon');
+        if (iconEl) iconEl.innerText = currentHandlingOrder.service === 'FOOD' ? '🍔' : currentHandlingOrder.service === 'RIDE' ? '🏍️' : '📦';
+        if (currentHandlingOrder.customerName) {
+          const custEl = document.getElementById('active-customer-name');
+          if (custEl) custEl.innerText = currentHandlingOrder.customerName + ' (Pelanggan)';
+        }
+        if (currentHandlingOrder.paymentMethod) {
+          const payEl = document.getElementById('active-payment-info');
+          if (payEl) payEl.innerHTML = `Metode Bayar: <strong class="text-emerald-700">${currentHandlingOrder.paymentMethod} (Rp ${(currentHandlingOrder.total || 0).toLocaleString('id-ID')})</strong>`;
+        }
+      }
+
+      updateOrderStepUI();
+      document.getElementById('driver-order-dot')?.classList.remove('hidden');
+
+      if (currentHandlingOrder && window.CiaterSync) {
+        CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ASSIGNED', {
+          driverName: currentActiveDriver.fullName || currentActiveDriver.name,
+          driverPhone: currentActiveDriver.phone,
+          driverVehicle: currentActiveDriver.vehicle
+        });
+      }
+
+      showToast(`🎉 Order Diterima oleh Driver ${currentActiveDriver.name}! Silakan menuju titik penjemputan.`);
+      driverNavigate('driver-screen-active');
+      initDriverLiveMap();
+    }
+
+    // REAL LEAFLET MAP ON DRIVER SCREEN WITH REAL GPS
+    let driverMapInstance = null;
+    let driverCurrentMarker = null;
+    let driverGPSWatchId = null;
+    let driverCurrentCoords = [-6.7360, 107.6570];
+
+    function startDriverGPSWatcher() {
+      if (!('geolocation' in navigator)) return;
+      if (driverGPSWatchId !== null) return;
+
+      driverGPSWatchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          driverCurrentCoords = [lat, lng];
+
+          if (driverCurrentMarker && driverMapInstance) {
+            driverCurrentMarker.setLatLng([lat, lng]);
+          }
+
+          // Broadcast Driver GPS to Customer in Real-Time
+          if (currentHandlingOrder && window.CiaterSync) {
+            CiaterSync.broadcastEvent('DRIVER_GPS_MOVE', {
+              orderId: currentHandlingOrder.id,
+              coords: [lat, lng],
+              timestamp: Date.now()
+            });
+          }
+        },
+        (err) => console.log('Driver GPS Watch Err:', err),
+        { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+      );
+    }
+
+    function initDriverLiveMap() {
+      startDriverGPSWatcher();
+
+      setTimeout(() => {
+        const mapDiv = document.getElementById('driver-live-map');
+        if (!mapDiv || typeof L === 'undefined') return;
+
+        if (driverMapInstance) {
+          driverMapInstance.remove();
+          driverMapInstance = null;
+        }
+
+        const driverCoords = driverCurrentCoords;
+        const storeCoords = currentHandlingOrder?.pickupCoords || [-6.7350, 107.6580];
+        const customerCoords = currentHandlingOrder?.dropCoords || [-6.7412, 107.6534];
+
+        driverMapInstance = L.map('driver-live-map', {
+          zoomControl: false,
+          attributionControl: false
+        }).setView(driverCoords, 15);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          maxZoom: 19,
+          subdomains: 'abcd'
+        }).addTo(driverMapInstance);
+
+        const driverIcon = L.divIcon({
+          className: 'd-driver-icon',
+          html: `<div class="w-10 h-10 rounded-2xl bg-emerald-600 border-2 border-white shadow-xl flex items-center justify-center text-xl text-white transform -translate-x-1/2 -translate-y-1/2 animate-bounce">🛵</div>`,
+          iconSize: [40, 40]
+        });
+
+        const storeIcon = L.divIcon({
+          className: 'd-store-icon',
+          html: `<div class="w-8 h-8 rounded-full bg-orange-500 border-2 border-white shadow-lg flex items-center justify-center text-sm text-white transform -translate-x-1/2 -translate-y-1/2">🥘</div>`,
+          iconSize: [32, 32]
+        });
+
+        const userIcon = L.divIcon({
+          className: 'd-user-icon',
+          html: `<div class="w-9 h-9 rounded-full bg-red-500 border-2 border-white shadow-xl flex items-center justify-center text-sm text-white transform -translate-x-1/2 -translate-y-1/2 ring-4 ring-red-400/30">📍</div>`,
+          iconSize: [36, 36]
+        });
+
+        const pickupLabel = currentHandlingOrder?.pickupLocation || currentHandlingOrder?.merchantName || 'Area Belanja';
+        const dropLabel = currentHandlingOrder?.customerName ? `${currentHandlingOrder.customerName} (Titik GPS Pelanggan)` : 'Tujuan Antar';
+
+        L.marker(storeCoords, { icon: storeIcon }).addTo(driverMapInstance).bindPopup(`<b>${pickupLabel}</b><br>Area Cari / Beli Makanan`);
+        L.marker(customerCoords, { icon: userIcon }).addTo(driverMapInstance).bindPopup(`<b>${dropLabel}</b><br>Koordinat: ${customerCoords[0].toFixed(5)}, ${customerCoords[1].toFixed(5)}`).openPopup();
+        driverCurrentMarker = L.marker(driverCoords, { icon: driverIcon }).addTo(driverMapInstance);
+
+        const route = L.polyline([driverCoords, storeCoords, customerCoords], {
+          color: '#059669',
+          weight: 5,
+          opacity: 0.85,
+          dashArray: '6, 6'
+        }).addTo(driverMapInstance);
+
+        driverMapInstance.fitBounds(route.getBounds(), { padding: [35, 35] });
+        driverMapInstance.invalidateSize();
+      }, 300);
+    }
+
+    // DRIVER IN-APP CHAT CONTROLLER
+    function openDriverChatModal() {
+      const modal = document.getElementById('modal-driver-chat');
+      if (modal) {
+        const custNameEl = document.getElementById('driver-chat-customer-name');
+        const custInfoEl = document.getElementById('driver-chat-customer-info');
+        const custName = currentHandlingOrder?.customerName || 'Asep Gunawan';
+        const orderId = currentHandlingOrder?.id || 'OTW-9102';
+        const loc = currentHandlingOrder?.customerLocation || currentHandlingOrder?.dropLocation || 'Palasari Ciater';
+        if (custNameEl) custNameEl.innerHTML = `${custName} (Pelanggan) <span class="w-2 h-2 rounded-full bg-emerald-300"></span>`;
+        if (custInfoEl) custInfoEl.innerText = `Order #${orderId} • ${loc}`;
+        modal.classList.remove('hidden');
+        renderDriverChatMessages();
+      }
+    }
+
+    function closeDriverChatModal() {
+      document.getElementById('modal-driver-chat')?.classList.add('hidden');
+    }
+
+    function renderDriverChatMessages() {
+      const container = document.getElementById('driver-chat-messages-container');
+      if (!container) return;
+
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'OTW-9102';
+      const messages = window.CiaterSync ? CiaterSync.getChatMessages(orderId) : [];
+
+      container.innerHTML = messages.map(msg => `
+        <div class="flex flex-col ${msg.role === 'driver' ? 'items-end' : 'items-start'}">
+          <div class="max-w-[78%] p-3 rounded-2xl ${msg.role === 'driver' ? 'bg-emerald-600 text-white rounded-br-none shadow-sm' : 'bg-white text-slate-800 rounded-bl-none border border-slate-200 shadow-sm'}">
+            <p class="font-medium leading-relaxed">${msg.text}</p>
+          </div>
+          <span class="text-[9px] text-slate-400 mt-1 px-1">${msg.time}</span>
+        </div>
+      `).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendDriverChat() {
+      const input = document.getElementById('driver-chat-text-input');
+      const text = input?.value.trim();
+      if (!text) return;
+
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'OTW-9102';
+      const senderName = (currentActiveDriver.fullName || currentActiveDriver.name) + ' (Driver)';
+      if (window.CiaterSync) {
+        CiaterSync.sendChatMessage(orderId, senderName, 'driver', text);
+      }
+      if (input) input.value = '';
+      renderDriverChatMessages();
+    }
+
+    function sendDriverQuickReply(text) {
+      const orderId = currentHandlingOrder ? currentHandlingOrder.id : 'OTW-9102';
+      const senderName = (currentActiveDriver.fullName || currentActiveDriver.name) + ' (Driver)';
+      if (window.CiaterSync) {
+        CiaterSync.sendChatMessage(orderId, senderName, 'driver', text);
+      }
+      renderDriverChatMessages();
+    }
+
+    function advanceOrderStatus() {
+      if (orderStep === 1) {
+        orderStep = 2;
+        updateOrderStepUI();
+        if (currentHandlingOrder && window.CiaterSync) {
+          CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ARRIVED_PICKUP');
+        }
+        showToast('✅ Makanan berhasil dibeli! Periksa pesanan sebelum mengantar.');
+      } else if (orderStep === 2) {
+        orderStep = 3;
+        updateOrderStepUI();
+        if (currentHandlingOrder && window.CiaterSync) {
+          CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'DRIVER_ON_WAY');
+        }
+        showToast('🛵 Berangkat! Sedang mengantar makanan ke alamat pelanggan.');
+      } else if (orderStep === 3) {
+        if (currentHandlingOrder && window.CiaterSync) {
+          CiaterSync.updateOrderStatus(currentHandlingOrder.id, 'COMPLETED');
+        }
+        document.getElementById('driver-order-dot')?.classList.add('hidden');
+        showToast('✅ Trip Selesai! Saldo +Rp 12.000 masuk ke dompet Anda.');
+        driverNavigate('driver-screen-dashboard');
+      }
+    }
+
+    function updateOrderStepUI() {
+      const stepBadge = document.getElementById('step-badge');
+      const navInst = document.getElementById('nav-instruction-text');
+      const navLoc = document.getElementById('nav-location-name');
+      const btnText = document.getElementById('btn-advance-text');
+
+      const pickupArea = currentHandlingOrder ? (currentHandlingOrder.pickupLocation || currentHandlingOrder.foodArea || 'Sekitar Ciater') : 'Area Sari Ater & Palasari';
+      const orderDesc = currentHandlingOrder ? (currentHandlingOrder.foodOrderDesc || currentHandlingOrder.title || 'Pesanan Makanan') : 'Nasi Liwet Ayam Bakar 2 Porsi';
+      const dropName = currentHandlingOrder ? (currentHandlingOrder.dropLocation || currentHandlingOrder.customerLocation || 'Desa Palasari RT 02/03') : 'Desa Palasari RT 02/03, Ciater';
+
+      if (orderStep === 1) {
+        if (stepBadge) stepBadge.innerText = 'LANGKAH 1 DARI 3';
+        if (navInst) navInst.innerText = 'Cari & Beli Makanan Pesanan';
+        if (navLoc) navLoc.innerText = `${orderDesc} — cari di: ${pickupArea}`;
+        if (btnText) btnText.innerText = 'Makanan Sudah Dibeli ✓';
+      } else if (orderStep === 2) {
+        if (stepBadge) stepBadge.innerText = 'LANGKAH 2 DARI 3';
+        if (navInst) navInst.innerText = 'Konfirmasi Pesanan Sudah Dibeli';
+        if (navLoc) navLoc.innerText = 'Periksa kelengkapan pesanan sebelum berangkat';
+        if (btnText) btnText.innerText = 'Pesanan Lengkap ➔ Mulai Antar';
+      } else if (orderStep === 3) {
+        if (stepBadge) stepBadge.innerText = 'LANGKAH 3 DARI 3';
+        if (navInst) navInst.innerText = 'Antar ke Alamat Pelanggan';
+        if (navLoc) navLoc.innerText = dropName;
+        if (btnText) btnText.innerText = 'Selesaikan Pesanan & Terima Pembayaran';
+      }
+    }
+
+    function withdrawDriverEarnings() {
+      showToast('💸 Penarikan Rp 450.000 ke BCA Pak Dadang sedang diproses (instan)');
     }
 
     // QR CODE MODAL HELPERS
@@ -2654,8 +3752,7 @@
     }
 
     function closeQrModal() {
-      const modal = document.getElementById('modal-qr');
-      if (modal) modal.classList.add('hidden');
+      document.getElementById('modal-qr')?.classList.add('hidden');
     }
 
     function updateQrTarget(filename) {
@@ -2673,12 +3770,14 @@
     function showToast(msg) {
       const toast = document.getElementById('toast-msg');
       const text = document.getElementById('toast-text');
-      text.innerText = msg;
-      toast.classList.remove('hidden');
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 3000);
+      if (text) text.innerText = msg;
+      if (toast) {
+        toast.classList.remove('hidden');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 3000);
+      }
     }
   </script>
 </body>

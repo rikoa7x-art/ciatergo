@@ -8,26 +8,23 @@ Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk lay
 
 ---
 
-## 🌟 Dua Aplikasi PWA Mandiri yang Terpisah
+## 🌟 Satu Aplikasi Tunggal Berbasis Role Login
 
-Aplikasi ini dirancang sebagai **dua aplikasi PWA independen** yang terpisah untuk kenyamanan pengguna, namun tetap terhubung ke satu backend cloud real-time:
+Aplikasi ini disatukan menjadi **1 aplikasi web & PWA tunggal (`index.html`)**, di mana tampilan dan pengalaman pengguna disesuaikan secara otomatis berdasarkan pilihan login:
 
-### 👤 1. Aplikasi Pelanggan (`index.html`)
-- **Nama PWA**: *OTW keun - Layanan Antar & Ojek Ciater*
-- **Manifest**: `manifest.json` | **Ikon**: `icon.svg`
-- **Fokus Fitur**:
-  - Pemesanan makanan (*OTWFood*), ojek & mobil (*OTWRide*), dan kurir paket (*OTWKirim*).
-  - Pelacakan live map GPS posisi driver di peta (*Leaflet OSM*).
+### 👤 1. Mode Pelanggan (Masuk sebagai Pelanggan)
+- Masuk menggunakan Nomor WhatsApp / HP + OTP (simulasi `123456`).
+- **Fitur Utama**:
+  - Pemesanan makanan (*OTWFood*), ojek (*OTWRide*), dan kurir paket (*OTWKirim*).
+  - Peta live tracking GPS posisi motor driver di peta (*Leaflet OSM*).
   - In-App Chat langsung dengan driver yang bertugas.
   - Pembayaran COD & QRIS.
-  - Login khusus pelanggan dengan No. Handphone & OTP.
 
-### 🏍️ 2. Aplikasi Mitra Driver (`driver.html`)
-- **Nama PWA**: *OTW keun Driver - Mitra Pengemudi*
-- **Manifest**: `manifest-driver.json` | **Ikon**: `icon-driver.svg`
-- **Fokus Fitur**:
+### 🏍️ 2. Mode Mitra Driver (Masuk sebagai Mitra Driver)
+- Masuk menggunakan Akun Driver terdaftar (**Nova Pratama `#DRV-001`** / **Leo Firmansyah `#DRV-002`**, Password `12345`).
+- **Fitur Utama**:
   - Tombol status kerja Online / Offline.
-  - Radar order masuk otomatis dengan **audio chime synthesizer** & hitung mundur.
+  - Radar order masuk otomatis dengan **audio chime synthesizer** & hitung mundur 20 detik.
   - Navigasi rute 3 langkah (*Cari Warung / Titik Jemput ➔ Konfirmasi Ambil ➔ Antar ke Alamat Pelanggan*).
   - Live broadcast koordinat GPS driver ke pelanggan.
   - In-App Chat langsung dengan pelanggan pemesan.
@@ -35,7 +32,7 @@ Aplikasi ini dirancang sebagai **dua aplikasi PWA independen** yang terpisah unt
 
 ---
 
-### 🏪 3. Aplikasi Pendukung
+### 🏪 3. Portal Pendukung
 - **Mitra Warung / Dapur (`merchant.html`)**: Manajemen antrean dapur (*Kitchen Display System*) & katalog menu.
 - **Admin Console (`admin.html`)**: Monitoring seluruh pesanan live, manajemen tarif, kelola driver/warung, & konfigurasi Supabase.
 
@@ -45,19 +42,16 @@ Aplikasi ini dirancang sebagai **dua aplikasi PWA independen** yang terpisah unt
 
 ```
 berangkat/
-├── index.html              # 👤 Aplikasi PWA Pelanggan
-├── driver.html             # 🏍️ Aplikasi PWA Mitra Driver
+├── index.html              # 📱 Satu Aplikasi Tunggal (Role: Pelanggan & Mitra Driver)
 ├── merchant.html           # 🏪 Portal Dapur / Warung Kuliner
 ├── admin.html              # ⚙️ Console Admin & Central Dispatcher
-├── manifest.json           # 📱 Manifest PWA Pelanggan
-├── manifest-driver.json    # 📱 Manifest PWA Mitra Driver
-├── icon.svg                # 🖼️ Ikon Aplikasi Pelanggan
-├── icon-driver.svg         # 🖼️ Ikon Aplikasi Mitra Driver
+├── manifest.json           # 📱 Progressive Web App (PWA) Manifest
+├── icon.svg                # 🖼️ Ikon Aplikasi Utama
 ├── supabase_schema.sql     # 🗄️ SQL Schema PostgreSQL & Realtime
 ├── supabase-config.js      # ☁️ Supabase JS Client & Cloud Methods
 ├── shared-sync.js          # ⚡ Sync Bus (Supabase + BroadcastChannel)
-├── sw.js                   # 🚀 Service Worker Multi-App Offline-First
-├── server.js               # 🌐 Local Node.js Multi-App Server
+├── sw.js                   # 🚀 Service Worker Offline-First Cache
+├── server.js               # 🌐 Local Node.js Testing Server
 ├── package.json            # 📦 Project Config
 └── README.md               # 📖 Dokumentasi Proyek
 ```
