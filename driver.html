@@ -577,6 +577,21 @@
             </div>
             <span class="text-xs font-bold text-slate-400 hidden" id="badge-active-leo">✓ Aktif</span>
           </div>
+
+          <!-- Kasim -->
+          <div onclick="switchDriverAccount('kasim')" class="p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between" id="card-driver-kasim">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center text-xl shadow-xs">
+                🛵
+              </div>
+              <div>
+                <h4 class="text-xs font-black text-slate-900">Kasim (Driver 3) <span class="text-[10px] text-amber-700 bg-amber-200 px-1.5 py-0.5 rounded font-bold">#DRV-003</span></h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">Honda Vario 160 • Cisaat</p>
+                <div class="text-[10px] font-bold text-amber-600">⭐ 4.92 Rating</div>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-slate-400 hidden" id="badge-active-kasim">✓ Aktif</span>
+          </div>
         </div>
 
         <div class="pt-2">
@@ -598,12 +613,12 @@
   <!-- JAVASCRIPT LOGIC FOR DRIVER APP -->
   <script>
     // ============================================================
-    // REGISTERED MITRA DRIVERS (NOVA & LEO)
+    // REGISTERED MITRA DRIVERS (NOVA, LEO, KASIM)
     // ============================================================
     const REGISTERED_DRIVERS = {
       nova: {
         username: 'nova',
-        password: '12345',
+        password: 'otwkeun1234',
         name: 'Nova',
         fullName: 'Nova Pratama',
         phone: '089630537250',
@@ -616,7 +631,7 @@
       },
       leo: {
         username: 'leo',
-        password: '12345',
+        password: 'otwkeun1234',
         name: 'Leo',
         fullName: 'Leo Firmansyah',
         phone: '087700692352',
@@ -626,6 +641,19 @@
         id: '#DRV-002',
         avatar: '🏍️',
         location: 'Desa Palasari & Jalancagak'
+      },
+      kasim: {
+        username: 'kasim',
+        password: 'otwkeun1234',
+        name: 'Kasim',
+        fullName: 'Kasim Sanjaya',
+        phone: '085812349876',
+        phoneDisplay: '0858-1234-9876',
+        vehicle: 'Honda Vario 160 (T 4128 AC)',
+        rating: '4.92',
+        id: '#DRV-003',
+        avatar: '🛵',
+        location: 'Desa Cisaat & Nagrak Ciater'
       }
     };
 
@@ -670,24 +698,30 @@
       if (pAva) pAva.innerText = currentActiveDriver.avatar;
 
       // Update Modal active driver badges
-      const isNova = currentActiveDriver.username === 'nova';
       const cardNova = document.getElementById('card-driver-nova');
       const cardLeo = document.getElementById('card-driver-leo');
+      const cardKasim = document.getElementById('card-driver-kasim');
       const badgeNova = document.getElementById('badge-active-nova');
       const badgeLeo = document.getElementById('badge-active-leo');
+      const badgeKasim = document.getElementById('badge-active-kasim');
 
-      if (cardNova && cardLeo) {
-        if (isNova) {
-          cardNova.className = 'p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 cursor-pointer hover:bg-emerald-100/50 transition flex items-center justify-between';
-          cardLeo.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
-          badgeNova?.classList.remove('hidden');
-          badgeLeo?.classList.add('hidden');
-        } else {
-          cardLeo.className = 'p-3.5 rounded-2xl border-2 border-teal-500 bg-teal-50/60 cursor-pointer hover:bg-teal-100/50 transition flex items-center justify-between';
-          cardNova.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
-          badgeLeo?.classList.remove('hidden');
-          badgeNova?.classList.add('hidden');
-        }
+      if (cardNova) cardNova.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+      if (cardLeo) cardLeo.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+      if (cardKasim) cardKasim.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+
+      if (badgeNova) badgeNova.classList.add('hidden');
+      if (badgeLeo) badgeLeo.classList.add('hidden');
+      if (badgeKasim) badgeKasim.classList.add('hidden');
+
+      if (currentActiveDriver.username === 'nova') {
+        if (cardNova) cardNova.className = 'p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 cursor-pointer hover:bg-emerald-100/50 transition flex items-center justify-between';
+        if (badgeNova) badgeNova.classList.remove('hidden');
+      } else if (currentActiveDriver.username === 'leo') {
+        if (cardLeo) cardLeo.className = 'p-3.5 rounded-2xl border-2 border-teal-500 bg-teal-50/60 cursor-pointer hover:bg-teal-100/50 transition flex items-center justify-between';
+        if (badgeLeo) badgeLeo.classList.remove('hidden');
+      } else if (currentActiveDriver.username === 'kasim') {
+        if (cardKasim) cardKasim.className = 'p-3.5 rounded-2xl border-2 border-amber-500 bg-amber-50/60 cursor-pointer hover:bg-amber-100/50 transition flex items-center justify-between';
+        if (badgeKasim) badgeKasim.classList.remove('hidden');
       }
     }
 

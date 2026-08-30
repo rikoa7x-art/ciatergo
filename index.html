@@ -182,7 +182,7 @@
           </p>
         </div>
 
-        <!-- FORM 1: CUSTOMER PHONE & OTP -->
+        <!-- FORM 1: CUSTOMER PHONE (LOGIN LANGSUNG TANPA PASSWORD / OTP) -->
         <div id="auth-form-customer" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor Handphone / WhatsApp</label>
@@ -192,36 +192,44 @@
             </div>
           </div>
 
-          <div class="p-3.5 bg-amber-50 rounded-2xl border border-amber-200/80 text-amber-800 text-xs flex items-start gap-2.5">
-            <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5 text-sm"></i>
-            <p>Kode OTP simulasi demo adalah <strong class="underline font-bold">123456</strong>.</p>
+          <div class="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200/80 text-emerald-800 text-xs flex items-center gap-2.5">
+            <i class="fa-solid fa-circle-check text-emerald-600 text-base shrink-0"></i>
+            <p class="leading-relaxed">Khusus pelanggan: <strong>Login langsung tanpa password</strong> untuk kemudahan & kecepatan pemesanan.</p>
           </div>
 
           <div class="pt-2">
-            <button onclick="handleSendOTP()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-brand-600/30 transition">
-              Lanjut Verifikasi OTP <i class="fa-solid fa-arrow-right ml-1"></i>
+            <button onclick="handleCustomerDirectLogin()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 active:scale-98 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition">
+              <span>Masuk Sebagai Pelanggan</span>
+              <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
         </div>
 
-        <!-- FORM 2: DRIVER USERNAME & PASSWORD -->
+        <!-- FORM 2: DRIVER USERNAME & PASSWORD (3 DRIVERS: NOVA, LEO, KASIM) -->
         <div id="auth-form-driver" class="hidden space-y-3.5">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih / Masukkan Akun Driver</label>
-            <div class="grid grid-cols-2 gap-2 mb-2">
-              <div onclick="fillDriverLogin('nova', '12345')" class="driver-auth-pill p-2.5 bg-emerald-50 rounded-xl border-2 border-emerald-500 cursor-pointer hover:bg-emerald-100 transition shadow-2xs">
-                <div class="font-extrabold text-xs text-slate-900">🛵 Nova Pratama</div>
-                <div class="text-[10px] text-emerald-700 font-semibold">#DRV-001 • Beat</div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Akun Driver Terdaftar (3 Mitra):</label>
+            <div class="grid grid-cols-3 gap-1.5 mb-2">
+              <div onclick="fillDriverLogin('nova', 'otwkeun1234', this)" class="driver-auth-pill p-2 bg-emerald-50 rounded-xl border-2 border-emerald-500 cursor-pointer hover:bg-emerald-100 transition shadow-2xs text-center">
+                <div class="text-lg">🛵</div>
+                <div class="font-extrabold text-[11px] text-slate-900 leading-tight">Nova</div>
+                <div class="text-[9px] text-emerald-700 font-semibold">#DRV-001</div>
               </div>
-              <div onclick="fillDriverLogin('leo', '12345')" class="driver-auth-pill p-2.5 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100 transition shadow-2xs">
-                <div class="font-extrabold text-xs text-slate-900">🏍️ Leo Firmansyah</div>
-                <div class="text-[10px] text-teal-700 font-semibold">#DRV-002 • NMAX</div>
+              <div onclick="fillDriverLogin('leo', 'otwkeun1234', this)" class="driver-auth-pill p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100 transition shadow-2xs text-center">
+                <div class="text-lg">🏍️</div>
+                <div class="font-extrabold text-[11px] text-slate-900 leading-tight">Leo</div>
+                <div class="text-[9px] text-teal-700 font-semibold">#DRV-002</div>
+              </div>
+              <div onclick="fillDriverLogin('kasim', 'otwkeun1234', this)" class="driver-auth-pill p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100 transition shadow-2xs text-center">
+                <div class="text-lg">🛵</div>
+                <div class="font-extrabold text-[11px] text-slate-900 leading-tight">Kasim</div>
+                <div class="text-[9px] text-amber-700 font-semibold">#DRV-003</div>
               </div>
             </div>
             
             <div class="flex items-center border-2 border-slate-200 focus-within:border-emerald-600 rounded-2xl overflow-hidden px-3 py-1 bg-slate-50 focus-within:bg-white transition">
               <span class="text-sm text-slate-400 pr-2 border-r border-slate-200"><i class="fa-solid fa-id-badge"></i></span>
-              <input id="auth-driver-username" type="text" placeholder="Username (nova / leo)" value="nova" class="w-full py-2.5 px-3 text-slate-800 font-bold focus:outline-none text-sm bg-transparent">
+              <input id="auth-driver-username" type="text" placeholder="Username (nova / leo / kasim)" value="nova" class="w-full py-2.5 px-3 text-slate-800 font-bold focus:outline-none text-sm bg-transparent">
             </div>
           </div>
 
@@ -229,11 +237,12 @@
             <label class="block text-xs font-bold text-slate-700 mb-1.5">Password Driver</label>
             <div class="flex items-center border-2 border-slate-200 focus-within:border-emerald-600 rounded-2xl overflow-hidden px-3 py-1 bg-slate-50 focus-within:bg-white transition">
               <span class="text-sm text-slate-400 pr-2 border-r border-slate-200"><i class="fa-solid fa-lock"></i></span>
-              <input id="auth-driver-password" type="password" placeholder="Masukkan password" value="12345" class="w-full py-2.5 px-3 text-slate-800 font-bold focus:outline-none text-sm bg-transparent">
+              <input id="auth-driver-password" type="password" placeholder="Masukkan password" value="otwkeun1234" class="w-full py-2.5 px-3 text-slate-800 font-bold focus:outline-none text-sm bg-transparent">
             </div>
+            <p class="text-[10px] text-slate-400 mt-1 px-1">Password driver: <code class="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">otwkeun1234</code></p>
           </div>
 
-          <div class="pt-2">
+          <div class="pt-1">
             <button onclick="handleDriverLoginDirect()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition">
               <span>Masuk Sebagai Mitra Driver</span>
               <i class="fa-solid fa-motorcycle"></i>
@@ -580,33 +589,47 @@
             <span class="text-[10px] text-emerald-600 font-bold">Driver Siap di Ciater</span>
           </div>
           
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-3 gap-1.5">
             <!-- Driver Nova -->
-            <div onclick="selectDriverChoice('nova')" id="choice-driver-nova" class="driver-choice-box p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 cursor-pointer transition shadow-2xs relative">
+            <div onclick="selectDriverChoice('nova')" id="choice-driver-nova" class="driver-choice-box p-2.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 cursor-pointer transition shadow-2xs relative">
               <div class="flex items-start justify-between">
-                <span class="text-xl">🛵</span>
-                <span class="text-[9px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-extrabold">⭐ 4.95</span>
+                <span class="text-lg">🛵</span>
+                <span class="text-[8px] bg-emerald-200 text-emerald-800 px-1 py-0.5 rounded font-extrabold">⭐ 4.95</span>
               </div>
-              <div class="mt-1.5">
-                <h4 class="text-xs font-black text-slate-900">Nova (Driver 1)</h4>
-                <p class="text-[10px] text-slate-600 font-medium">0896-3053-7250</p>
-                <span class="text-[9px] text-emerald-700 font-bold block mt-0.5">Beat • Sari Ater</span>
+              <div class="mt-1">
+                <h4 class="text-[11px] font-black text-slate-900 leading-tight">Nova</h4>
+                <p class="text-[9px] text-slate-500 font-medium">#DRV-001</p>
+                <span class="text-[8px] text-emerald-700 font-bold block mt-0.5 truncate">Beat • Sari Ater</span>
               </div>
-              <div id="check-driver-nova" class="absolute top-2 right-2 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-[9px] text-white">✓</div>
+              <div id="check-driver-nova" class="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-[8px] text-white">✓</div>
             </div>
 
             <!-- Driver Leo -->
-            <div onclick="selectDriverChoice('leo')" id="choice-driver-leo" class="driver-choice-box p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative">
+            <div onclick="selectDriverChoice('leo')" id="choice-driver-leo" class="driver-choice-box p-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative">
               <div class="flex items-start justify-between">
-                <span class="text-xl">🏍️</span>
-                <span class="text-[9px] bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-extrabold">⭐ 4.90</span>
+                <span class="text-lg">🏍️</span>
+                <span class="text-[8px] bg-teal-100 text-teal-800 px-1 py-0.5 rounded font-extrabold">⭐ 4.90</span>
               </div>
-              <div class="mt-1.5">
-                <h4 class="text-xs font-black text-slate-900">Leo (Driver 2)</h4>
-                <p class="text-[10px] text-slate-600 font-medium">0877-0069-2352</p>
-                <span class="text-[9px] text-teal-700 font-bold block mt-0.5">NMAX • Palasari</span>
+              <div class="mt-1">
+                <h4 class="text-[11px] font-black text-slate-900 leading-tight">Leo</h4>
+                <p class="text-[9px] text-slate-500 font-medium">#DRV-002</p>
+                <span class="text-[8px] text-teal-700 font-bold block mt-0.5 truncate">NMAX • Palasari</span>
               </div>
-              <div id="check-driver-leo" class="hidden absolute top-2 right-2 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-[9px] text-white">✓</div>
+              <div id="check-driver-leo" class="hidden absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-[8px] text-white">✓</div>
+            </div>
+
+            <!-- Driver Kasim -->
+            <div onclick="selectDriverChoice('kasim')" id="choice-driver-kasim" class="driver-choice-box p-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative">
+              <div class="flex items-start justify-between">
+                <span class="text-lg">🛵</span>
+                <span class="text-[8px] bg-amber-100 text-amber-800 px-1 py-0.5 rounded font-extrabold">⭐ 4.92</span>
+              </div>
+              <div class="mt-1">
+                <h4 class="text-[11px] font-black text-slate-900 leading-tight">Kasim</h4>
+                <p class="text-[9px] text-slate-500 font-medium">#DRV-003</p>
+                <span class="text-[8px] text-amber-700 font-bold block mt-0.5 truncate">Vario • Cisaat</span>
+              </div>
+              <div id="check-driver-kasim" class="hidden absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center text-[8px] text-white">✓</div>
             </div>
           </div>
         </div>
@@ -1894,6 +1917,21 @@
             </div>
             <span class="text-xs font-bold text-slate-400 hidden" id="badge-active-leo">✓ Aktif</span>
           </div>
+
+          <!-- Kasim -->
+          <div onclick="switchDriverAccount('kasim')" class="p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between" id="card-driver-kasim">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center text-xl shadow-xs">
+                🛵
+              </div>
+              <div>
+                <h4 class="text-xs font-black text-slate-900">Kasim (Driver 3) <span class="text-[10px] text-amber-700 bg-amber-200 px-1.5 py-0.5 rounded font-bold">#DRV-003</span></h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">Honda Vario 160 • Cisaat</p>
+                <div class="text-[10px] font-bold text-amber-600">⭐ 4.92 Rating</div>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-slate-400 hidden" id="badge-active-kasim">✓ Aktif</span>
+          </div>
         </div>
 
         <div class="pt-2">
@@ -2373,7 +2411,7 @@
     const REGISTERED_DRIVERS = {
       nova: {
         username: 'nova',
-        password: '12345',
+        password: 'otwkeun1234',
         name: 'Nova',
         fullName: 'Nova Pratama',
         phone: '089630537250',
@@ -2387,7 +2425,7 @@
       },
       leo: {
         username: 'leo',
-        password: '12345',
+        password: 'otwkeun1234',
         name: 'Leo',
         fullName: 'Leo Firmansyah',
         phone: '087700692352',
@@ -2398,13 +2436,27 @@
         id: '#DRV-002',
         avatar: '🏍️',
         location: 'Desa Palasari & Jalancagak'
+      },
+      kasim: {
+        username: 'kasim',
+        password: 'otwkeun1234',
+        name: 'Kasim',
+        fullName: 'Kasim Sanjaya',
+        phone: '085812349876',
+        phoneDisplay: '0858-1234-9876',
+        waLink: 'https://wa.me/6285812349876',
+        vehicle: 'Honda Vario 160 (T 4128 AC)',
+        rating: '4.92',
+        id: '#DRV-003',
+        avatar: '🛵',
+        location: 'Desa Cisaat & Nagrak Ciater'
       }
     };
 
     let selectedAuthRole = 'customer';
     let selectedDriverChoice = 'nova'; // Default to Nova
 
-    // Pilihan Driver oleh Pelanggan (Nova / Leo)
+    // Pilihan Driver oleh Pelanggan (Nova / Leo / Kasim)
     function selectDriverChoice(driverKey) {
       if (!REGISTERED_DRIVERS[driverKey]) return;
       selectedDriverChoice = driverKey;
@@ -2412,19 +2464,29 @@
 
       const boxNova = document.getElementById('choice-driver-nova');
       const boxLeo = document.getElementById('choice-driver-leo');
+      const boxKasim = document.getElementById('choice-driver-kasim');
       const checkNova = document.getElementById('check-driver-nova');
       const checkLeo = document.getElementById('check-driver-leo');
+      const checkKasim = document.getElementById('check-driver-kasim');
+
+      // Reset all boxes
+      if (boxNova) boxNova.className = 'driver-choice-box p-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative';
+      if (boxLeo) boxLeo.className = 'driver-choice-box p-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative';
+      if (boxKasim) boxKasim.className = 'driver-choice-box p-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative';
+
+      if (checkNova) checkNova.classList.add('hidden');
+      if (checkLeo) checkLeo.classList.add('hidden');
+      if (checkKasim) checkKasim.classList.add('hidden');
 
       if (driverKey === 'nova') {
-        if (boxNova) boxNova.className = 'driver-choice-box p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 cursor-pointer transition shadow-2xs relative';
-        if (boxLeo) boxLeo.className = 'driver-choice-box p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative';
+        if (boxNova) boxNova.className = 'driver-choice-box p-2.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 cursor-pointer transition shadow-2xs relative';
         if (checkNova) checkNova.classList.remove('hidden');
-        if (checkLeo) checkLeo.classList.add('hidden');
-      } else {
-        if (boxLeo) boxLeo.className = 'driver-choice-box p-3 rounded-2xl border-2 border-teal-500 bg-teal-50/70 cursor-pointer transition shadow-2xs relative';
-        if (boxNova) boxNova.className = 'driver-choice-box p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition shadow-2xs relative';
+      } else if (driverKey === 'leo') {
+        if (boxLeo) boxLeo.className = 'driver-choice-box p-2.5 rounded-2xl border-2 border-teal-500 bg-teal-50/70 cursor-pointer transition shadow-2xs relative';
         if (checkLeo) checkLeo.classList.remove('hidden');
-        if (checkNova) checkNova.classList.add('hidden');
+      } else if (driverKey === 'kasim') {
+        if (boxKasim) boxKasim.className = 'driver-choice-box p-2.5 rounded-2xl border-2 border-amber-500 bg-amber-50/70 cursor-pointer transition shadow-2xs relative';
+        if (checkKasim) checkKasim.classList.remove('hidden');
       }
 
       // Update Cart Preview
@@ -2433,7 +2495,7 @@
       const cartVeh = document.getElementById('cart-driver-vehicle');
       const cartRate = document.getElementById('cart-driver-rating');
       const cartAva = document.getElementById('cart-driver-avatar');
-      if (cartName) cartName.innerText = `${driver.name} (Driver)`;
+      if (cartName) cartName.innerText = `${driver.name} (${driver.id})`;
       if (cartPhone) cartPhone.innerText = driver.phoneDisplay;
       if (cartVeh) cartVeh.innerText = `${driver.vehicle} • ${driver.location}`;
       if (cartRate) cartRate.innerText = `⭐ ${driver.rating}`;
@@ -2465,12 +2527,34 @@
       }
     }
 
-    function fillDriverLogin(username, password) {
+    function fillDriverLogin(username, password, el) {
       const uInput = document.getElementById('auth-driver-username');
       const pInput = document.getElementById('auth-driver-password');
       if (uInput) uInput.value = username;
-      if (pInput) pInput.value = password;
-      showToast(`Form diisi: Driver ${username}`);
+      if (pInput) pInput.value = password || 'otwkeun1234';
+
+      document.querySelectorAll('.driver-auth-pill').forEach(p => {
+        p.classList.remove('border-2', 'border-emerald-500', 'bg-emerald-50');
+        p.classList.add('border', 'border-slate-200', 'bg-slate-50');
+      });
+      if (el) {
+        el.classList.remove('border', 'border-slate-200', 'bg-slate-50');
+        el.classList.add('border-2', 'border-emerald-500', 'bg-emerald-50');
+      }
+      showToast(`Driver ${username.toUpperCase()} dipilih`);
+    }
+
+    // LOGIN PELANGGAN LANGSUNG TANPA PASSWORD / OTP
+    function handleCustomerDirectLogin() {
+      const phoneInput = document.getElementById('auth-phone');
+      const phone = phoneInput ? phoneInput.value.trim() : '82119887766';
+      
+      localStorage.setItem('otw_auth_role', 'customer');
+      localStorage.setItem('otw_user_phone', phone || '82119887766');
+      showToast('✅ Selamat datang di OTW keun!');
+      setTimeout(() => {
+        navigate('screen-home');
+      }, 300);
     }
 
     function handleDriverLoginDirect() {
@@ -2483,7 +2567,7 @@
       }
 
       const driver = REGISTERED_DRIVERS[uInput];
-      if (driver && driver.password === pInput) {
+      if (driver && (driver.password === pInput || pInput === 'otwkeun1234')) {
         localStorage.setItem('otw_auth_role', 'driver');
         localStorage.setItem('otw_active_driver', JSON.stringify(driver));
         currentActiveDriver = driver;
@@ -2493,7 +2577,7 @@
           navigate('driver-screen-dashboard');
         }, 400);
       } else {
-        showToast('❌ Username atau password salah! (nova / leo, pass: 12345)');
+        showToast('❌ Password salah! (Gunakan password: otwkeun1234)');
         const box = document.getElementById('auth-driver-password');
         if (box) {
           box.classList.add('border-red-400');
@@ -3316,24 +3400,30 @@
       if (pAva) pAva.innerText = currentActiveDriver.avatar;
 
       // Update Modal active driver badges
-      const isNova = currentActiveDriver.username === 'nova';
       const cardNova = document.getElementById('card-driver-nova');
       const cardLeo = document.getElementById('card-driver-leo');
+      const cardKasim = document.getElementById('card-driver-kasim');
       const badgeNova = document.getElementById('badge-active-nova');
       const badgeLeo = document.getElementById('badge-active-leo');
+      const badgeKasim = document.getElementById('badge-active-kasim');
 
-      if (cardNova && cardLeo) {
-        if (isNova) {
-          cardNova.className = 'p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 cursor-pointer hover:bg-emerald-100/50 transition flex items-center justify-between';
-          cardLeo.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
-          badgeNova?.classList.remove('hidden');
-          badgeLeo?.classList.add('hidden');
-        } else {
-          cardLeo.className = 'p-3.5 rounded-2xl border-2 border-teal-500 bg-teal-50/60 cursor-pointer hover:bg-teal-100/50 transition flex items-center justify-between';
-          cardNova.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
-          badgeLeo?.classList.remove('hidden');
-          badgeNova?.classList.add('hidden');
-        }
+      if (cardNova) cardNova.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+      if (cardLeo) cardLeo.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+      if (cardKasim) cardKasim.className = 'p-3.5 rounded-2xl border border-slate-200 bg-white cursor-pointer hover:bg-slate-50 transition flex items-center justify-between';
+
+      if (badgeNova) badgeNova.classList.add('hidden');
+      if (badgeLeo) badgeLeo.classList.add('hidden');
+      if (badgeKasim) badgeKasim.classList.add('hidden');
+
+      if (currentActiveDriver.username === 'nova') {
+        if (cardNova) cardNova.className = 'p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/60 cursor-pointer hover:bg-emerald-100/50 transition flex items-center justify-between';
+        if (badgeNova) badgeNova.classList.remove('hidden');
+      } else if (currentActiveDriver.username === 'leo') {
+        if (cardLeo) cardLeo.className = 'p-3.5 rounded-2xl border-2 border-teal-500 bg-teal-50/60 cursor-pointer hover:bg-teal-100/50 transition flex items-center justify-between';
+        if (badgeLeo) badgeLeo.classList.remove('hidden');
+      } else if (currentActiveDriver.username === 'kasim') {
+        if (cardKasim) cardKasim.className = 'p-3.5 rounded-2xl border-2 border-amber-500 bg-amber-50/60 cursor-pointer hover:bg-amber-100/50 transition flex items-center justify-between';
+        if (badgeKasim) badgeKasim.classList.remove('hidden');
       }
     }
 

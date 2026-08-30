@@ -13,15 +13,20 @@ Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk lay
 Aplikasi ini disatukan menjadi **1 aplikasi web & PWA tunggal (`index.html`)**, di mana tampilan dan pengalaman pengguna disesuaikan secara otomatis berdasarkan pilihan login:
 
 ### 👤 1. Mode Pelanggan (Masuk sebagai Pelanggan)
-- Masuk menggunakan Nomor WhatsApp / HP + OTP (simulasi `123456`).
+- **Login Langsung Tanpa Password**: Cukup masukkan No. WhatsApp / HP (atau langsung klik Masuk).
 - **Fitur Utama**:
   - Pemesanan makanan (*OTWFood*), ojek (*OTWRide*), dan kurir paket (*OTWKirim*).
+  - Pilihan 3 Mitra Driver terdaftar (**Nova**, **Leo**, **Kasim**).
   - Peta live tracking GPS posisi motor driver di peta (*Leaflet OSM*).
   - In-App Chat langsung dengan driver yang bertugas.
   - Pembayaran COD & QRIS.
 
 ### 🏍️ 2. Mode Mitra Driver (Masuk sebagai Mitra Driver)
-- Masuk menggunakan Akun Driver terdaftar (**Nova Pratama `#DRV-001`** / **Leo Firmansyah `#DRV-002`**, Password `12345`).
+- **3 Akun Mitra Driver Terdaftar**:
+  1. **Nova Pratama (`nova`)** — `#DRV-001` (Honda Beat Street)
+  2. **Leo Firmansyah (`leo`)** — `#DRV-002` (Yamaha NMAX 155)
+  3. **Kasim Sanjaya (`kasim`)** — `#DRV-003` (Honda Vario 160)
+- **Password Semua Driver**: `otwkeun1234`
 - **Fitur Utama**:
   - Tombol status kerja Online / Offline.
   - Radar order masuk otomatis dengan **audio chime synthesizer** & hitung mundur 20 detik.

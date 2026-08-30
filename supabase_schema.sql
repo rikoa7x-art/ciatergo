@@ -145,7 +145,8 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.driver_locations (username, name, phone, vehicle, lat, lng, status)
 VALUES
 ('nova', 'Nova Pratama', '0896-3053-7250', 'Honda Beat Street (T 3819 ZB)', -6.7360, 107.6570, 'ONLINE'),
-('leo', 'Leo Firmansyah', '0877-0069-2352', 'Yamaha NMAX 155 (T 5920 AB)', -6.7350, 107.6580, 'ONLINE')
+('leo', 'Leo Firmansyah', '0877-0069-2352', 'Yamaha NMAX 155 (T 5920 AB)', -6.7350, 107.6580, 'ONLINE'),
+('kasim', 'Kasim Sanjaya', '0858-1234-9876', 'Honda Vario 160 (T 4128 AC)', -6.7340, 107.6590, 'ONLINE')
 ON CONFLICT (username) DO UPDATE 
 SET lat = EXCLUDED.lat, lng = EXCLUDED.lng, status = EXCLUDED.status;
 
