@@ -9,6 +9,9 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   
+  <!-- Supabase JS Client & Realtime Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="shared-sync.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -22,6 +25,24 @@
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
           },
           colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              dark: '#052e16'
+            },
+            driver: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              dark: '#052e16'
+            },
             merchant: {
               50: '#fff7ed',
               100: '#ffedd5',
@@ -29,6 +50,10 @@
               600: '#ea580c',
               700: '#c2410c',
               dark: '#431407'
+            },
+            accent: {
+              500: '#f97316',
+              600: '#ea580c',
             }
           }
         }
@@ -88,7 +113,7 @@
         <i class="fa-solid fa-bolt text-amber-400"></i> OTW keun Warung
       </span>
       <div class="flex items-center gap-1.5">
-        <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">User</a>
+        <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Pelanggan</a>
         <a href="driver.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Driver</a>
         <a href="admin.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Admin</a>
       </div>
@@ -605,22 +630,40 @@
     }
 
     function triggerSimulatedKitchenOrder() {
+      const orderId = 'OTW-' + Math.floor(1000 + Math.random() * 9000);
       const newOrd = {
-        id: 'OTW-' + Math.floor(1000 + Math.random() * 9000),
-        customer: 'Bu Rina (Villa Ciater)',
-        status: 'NEW',
-        time: 'Baru saja',
+        id: orderId,
+        service: 'FOOD',
+        serviceName: 'OTWFood',
+        title: 'Sate Maranggi Sapi (10 Tusuk) 2 Porsi',
+        customerName: 'Bu Rina (Villa Ciater)',
+        customerPhone: '+62 813-9900-1122',
+        customerLocation: 'Villa Ciater Highland Blok D',
+        pickupLocation: 'Warung Nasi Liwet Bu Tini',
+        dropLocation: 'Villa Ciater Highland Blok D',
+        foodOrderDesc: '2x Sate Maranggi Sapi (10 Tusuk), 2x Ketan Bakar Oncom',
+        foodArea: 'Sari Ater & Palasari',
+        status: 'PENDING',
+        timeDisplay: 'Baru saja',
         items: [
-          { name: 'Sate Maranggi Sapi (10 Tusuk)', qty: 2, note: 'Pedas sedang' },
-          { name: 'Ketan Bakar Oncom', qty: 2, note: '' }
+          { name: 'Sate Maranggi Sapi (10 Tusuk)', qty: 2, price: 35000, note: 'Pedas sedang' },
+          { name: 'Ketan Bakar Oncom', qty: 2, price: 10000, note: '' }
         ],
-        total: 90000,
-        driver: 'Mencari driver...'
+        subtotal: 90000,
+        deliveryFee: 9000,
+        serviceFee: 1000,
+        total: 100000,
+        paymentMethod: 'COD',
+        driverName: 'Nova Pratama',
+        driverPhone: '089630537250',
+        driverVehicle: 'Honda Beat Street (T 3819 ZB)'
       };
-      merchantOrders.unshift(newOrd);
+      if (window.CiaterSync) {
+        CiaterSync.addOrder(newOrd);
+      }
+      loadMerchantOrdersFromSync();
       playMerchantChime();
-      showToast('🔔 Pesanan Baru Masuk ke Dapur!');
-      renderMerchantOrders('new');
+      showToast('🔔 Pesanan Baru Masuk ke Dapur & Tersinkronisasi!');
     }
 
     function playMerchantChime() {

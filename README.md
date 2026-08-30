@@ -42,8 +42,10 @@ Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk lay
   - Manajemen verifikasi mitra pengemudi & merchant.
   - Konfigurasi tarif per kilometer & zona wilayah.
 
-- **⚡ 5. Real-Time Event Bus (`shared-sync.js`)**:
-  - Menghubungkan seluruh tab dan perangkat tanpa backend yang rumit via `BroadcastChannel` dan `localStorage`.
+- **⚡ 5. Backend Storage & Cloud Realtime (Supabase)**:
+  - PostgreSQL Database di cloud untuk menyimpan pesanan (`orders`), pesan obrolan (`chats`), pedagang (`merchants`), menu (`menus`), dan riwayat koordinat supir (`driver_locations`).
+  - Real-time WebSocket subscriptions (`postgres_changes`) untuk sinkronisasi multi-device instan.
+  - Hybrid Offline-First Architecture (`localStorage` + `BroadcastChannel` + Supabase Cloud).
 
 ---
 
@@ -51,17 +53,45 @@ Aplikasi web berbasis mobile-first & Progressive Web App (PWA) lengkap untuk lay
 
 ```
 berangkat/
-├── index.html         # 👤 Aplikasi Web Pelanggan (PWA & Live Map Tracking)
-├── driver.html        # 🏍️ Aplikasi Web Mitra Pengemudi & Kurir
-├── merchant.html      # 🏪 Aplikasi Web Mitra Warung / Dapur Resto
-├── admin.html         # ⚙️ Console Admin & Central Dispatcher
-├── shared-sync.js     # ⚡ Real-time State & Cross-Role Event Bus
-├── manifest.json      # 📱 Progressive Web App (PWA) Manifest
-├── sw.js              # 🚀 Service Worker (Cache Offline & Performa Instan)
-├── server.js          # 🌐 Local Node.js Testing Server
-├── package.json       # 📦 Project Configuration
-└── README.md          # 📖 Dokumentasi Proyek
+├── index.html            # 👤 Aplikasi Web Pelanggan (PWA & Live Map Tracking)
+├── driver.html           # 🏍️ Aplikasi Web Mitra Pengemudi & Kurir
+├── merchant.html         # 🏪 Aplikasi Web Mitra Warung / Dapur Resto
+├── admin.html            # ⚙️ Console Admin & Central Dispatcher
+├── supabase_schema.sql   # 🗄️ SQL Schema Tables, RLS, Realtime Publication & Seeds
+├── supabase-config.js    # ☁️ Supabase Client, CRUD Methods & Realtime Channels
+├── shared-sync.js        # ⚡ Real-time State & Cross-Role Event Bus
+├── manifest.json         # 📱 Progressive Web App (PWA) Manifest
+├── sw.js                 # 🚀 Service Worker (Cache Offline & Performa Instan)
+├── server.js             # 🌐 Local Node.js Testing Server
+├── package.json          # 📦 Project Configuration
+└── README.md             # 📖 Dokumentasi Proyek
 ```
+
+---
+
+## 🗄️ Panduan Setup Supabase Backend (5 Menit)
+
+Aplikasi **OTW keun** dapat bekerja secara **offline/lokal** dan juga terhubung ke **Supabase Cloud** untuk sinkronisasi multi-perangkat real-time:
+
+### 1. Buat Proyek Supabase
+1. Buka [supabase.com](https://supabase.com) dan buat proyek baru (contoh nama: `ciatergo-backend`).
+2. Pilih wilayah terdekat (misal: *Singapore / Southeast Asia*).
+
+### 2. Eksekusi SQL Schema
+1. Di Dashboard Supabase, buka menu **SQL Editor** (ikon terminal).
+2. Salin seluruh isi berkas [`supabase_schema.sql`](supabase_schema.sql) dan tempel ke SQL Editor.
+3. Klik tombol **Run**. Tabel `orders`, `chats`, `merchants`, `menus`, dan `driver_locations` beserta RLS dan Realtime Publication akan langsung aktif.
+
+### 3. Masukkan Kredensial ke Aplikasi
+Ada 2 cara mudah memasukkan kredensial Supabase:
+- **Cara A (Melalui Panel Admin)**:
+  Buka `admin.html` ➔ Klik menu **Pengaturan** ➔ Gulir ke bagian **Integrasi Supabase Cloud Backend** ➔ Masukkan **Project URL** dan **Anon Key** ➔ Klik **Simpan Pengaturan**.
+- **Cara B (Langsung di `supabase-config.js`)**:
+  Buka berkas `supabase-config.js` dan isi variabel default:
+  ```javascript
+  const DEFAULT_SUPABASE_URL = 'https://your-project-id.supabase.co';
+  const DEFAULT_SUPABASE_ANON_KEY = 'your-anon-key-here';
+  ```
 
 ---
 

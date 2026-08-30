@@ -1,11 +1,13 @@
-const CACHE_NAME = 'otwkeun-v9';
+const CACHE_NAME = 'otwkeun-v11';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './driver.html',
+  './merchant.html',
   './admin.html',
   './manifest.json',
   './shared-sync.js',
+  './supabase-config.js',
   './icon.svg'
 ];
 
@@ -33,6 +35,16 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Never intercept or cache Supabase API/Realtime, WebSockets, or OSM Nominatim
+  if (
+    event.request.url.includes('supabase.co') ||
+    event.request.url.includes('nominatim.openstreetmap.org') ||
+    event.request.url.startsWith('ws://') ||
+    event.request.url.startsWith('wss://')
+  ) {
+    return;
+  }
+
   const isHtml = event.request.headers.get('accept')?.includes('text/html');
 
   if (isHtml || event.request.mode === 'navigate') {

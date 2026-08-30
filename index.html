@@ -10,6 +10,9 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   
+  <!-- Supabase JS Client & Realtime Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <!-- Shared Realtime Sync Bus -->
   <script src="shared-sync.js"></script>
   <!-- Tailwind CSS CDN -->
@@ -40,6 +43,24 @@
               600: '#16a34a',
               700: '#15803d',
               dark: '#052e16'
+            },
+            driver: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              dark: '#052e16'
+            },
+            merchant: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              dark: '#431407'
             },
             accent: {
               500: '#f97316',
@@ -123,6 +144,9 @@
     <a href="driver.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
       <i class="fa-solid fa-motorcycle text-green-400"></i> Driver
     </a>
+    <a href="merchant.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-store text-orange-400"></i> Warung/Resto
+    </a>
     <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
       <i class="fa-solid fa-shield-halved text-blue-400"></i> Admin
     </a>
@@ -141,6 +165,7 @@
       </span>
       <div class="flex items-center gap-1.5">
         <a href="driver.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Driver</a>
+        <a href="merchant.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Warung</a>
         <a href="admin.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Admin</a>
       </div>
     </div>
@@ -1262,9 +1287,12 @@
         <!-- App Switcher inside Profile for easy testing -->
         <div class="bg-brand-50 p-4 rounded-2xl border border-brand-200">
           <h4 class="text-xs font-bold text-brand-900 uppercase tracking-wide mb-2">Buka Aplikasi Mitra</h4>
-          <div class="grid grid-cols-2 gap-2 text-center text-xs">
+          <div class="grid grid-cols-3 gap-2 text-center text-xs">
             <a href="driver.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-emerald-50 border border-slate-200">
               🏍️ Driver
+            </a>
+            <a href="merchant.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-orange-50 border border-slate-200">
+              🏪 Warung
             </a>
             <a href="admin.html" class="p-2 bg-white rounded-xl font-bold text-slate-800 shadow-sm hover:bg-blue-50 border border-slate-200">
               ⚙️ Admin
@@ -1354,14 +1382,14 @@
         <!-- Chat Header -->
         <div class="p-4 bg-brand-600 text-white flex items-center justify-between shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl">
-              👨‍✈️
+            <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl" id="chat-modal-driver-avatar">
+              🛵
             </div>
             <div>
-              <h4 class="text-xs font-black text-white flex items-center gap-1.5">
-                Dadang Sudrajat <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
+              <h4 class="text-xs font-black text-white flex items-center gap-1.5" id="chat-modal-driver-name">
+                Nova Pratama <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
               </h4>
-              <p class="text-[10px] text-brand-100 font-medium">Honda Vario 125 • T 4521 ZK</p>
+              <p class="text-[10px] text-brand-100 font-medium" id="chat-modal-driver-vehicle">Honda Beat Street • T 3819 ZB</p>
             </div>
           </div>
           <button onclick="closeChatModal()" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white text-xs">
@@ -1757,8 +1785,14 @@
 
     function handleRemoteStatusUpdate(newStatus) {
       const statusPill = document.getElementById('tracking-status-pill');
-      if (newStatus === 'DRIVER_ASSIGNED' || newStatus === 'ACCEPTED') {
-        if (statusPill) statusPill.innerText = 'Driver Ditemukan! Sedang Mencari & Membeli Pesanan Anda';
+      if (newStatus === 'COOKING') {
+        if (statusPill) statusPill.innerText = 'Warung Sedang Menyiapkan & Memasak Pesanan Anda';
+        showToast('🍳 Warung mulai memasak pesanan Anda!');
+      } else if (newStatus === 'READY') {
+        if (statusPill) statusPill.innerText = 'Pesanan Siap! Menunggu Driver Mengambil di Warung';
+        showToast('📦 Pesanan sudah matang & siap diambil driver!');
+      } else if (newStatus === 'DRIVER_ASSIGNED' || newStatus === 'ACCEPTED') {
+        if (statusPill) statusPill.innerText = 'Driver Ditemukan! Sedang Menuju Warung / Menjemput';
         showToast('🛵 Driver telah menerima pesanan Anda!');
       } else if (newStatus === 'DRIVER_ARRIVED_PICKUP') {
         if (statusPill) statusPill.innerText = 'Driver Sudah Membeli Pesanan — Menuju Alamat Anda';
@@ -2602,6 +2636,16 @@
     function openChatModal() {
       const modal = document.getElementById('modal-chat');
       if (modal) {
+        // Set dynamic driver details
+        const activeDriver = currentActiveOrder ? (REGISTERED_DRIVERS[currentActiveOrder.driverChoice || 'nova'] || REGISTERED_DRIVERS['nova']) : REGISTERED_DRIVERS[selectedDriverChoice || 'nova'];
+        if (activeDriver) {
+          const nameEl = document.getElementById('chat-modal-driver-name');
+          const vehEl = document.getElementById('chat-modal-driver-vehicle');
+          const avaEl = document.getElementById('chat-modal-driver-avatar');
+          if (nameEl) nameEl.innerHTML = `${activeDriver.fullName || activeDriver.name} <span class="w-2 h-2 rounded-full bg-emerald-300"></span>`;
+          if (vehEl) vehEl.innerText = `${activeDriver.vehicle}`;
+          if (avaEl) avaEl.innerText = activeDriver.avatar || '🛵';
+        }
         modal.classList.remove('hidden');
         renderChatMessages();
       }

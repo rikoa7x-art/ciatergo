@@ -9,6 +9,9 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   
+  <!-- Supabase JS Client & Realtime Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="shared-sync.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -25,6 +28,14 @@
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
           },
           colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              dark: '#052e16'
+            },
             driver: {
               50: '#f0fdf4',
               100: '#dcfce7',
@@ -34,6 +45,18 @@
               800: '#166534',
               900: '#14532d',
               dark: '#052e16'
+            },
+            merchant: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              dark: '#431407'
+            },
+            accent: {
+              500: '#f97316',
+              600: '#ea580c',
             }
           }
         }
@@ -85,6 +108,9 @@
     <a href="driver.html" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
       <i class="fa-solid fa-motorcycle"></i> Driver
     </a>
+    <a href="merchant.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
+      <i class="fa-solid fa-store text-orange-400"></i> Warung/Resto
+    </a>
     <a href="admin.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-3 py-1.5 rounded-xl transition">
       <i class="fa-solid fa-shield-halved text-blue-400"></i> Admin
     </a>
@@ -98,7 +124,8 @@
         <i class="fa-solid fa-bolt text-amber-400"></i> OTW keun Driver
       </span>
       <div class="flex items-center gap-1.5">
-        <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">User</a>
+        <a href="index.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Pelanggan</a>
+        <a href="merchant.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Warung</a>
         <a href="admin.html" class="px-2 py-0.5 bg-slate-800 rounded text-slate-300">Admin</a>
       </div>
     </div>
@@ -493,14 +520,14 @@
         <!-- Chat Header -->
         <div class="p-4 bg-emerald-600 text-white flex items-center justify-between shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl">
+            <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl" id="driver-chat-customer-avatar">
               👤
             </div>
             <div>
-              <h4 class="text-xs font-black text-white flex items-center gap-1.5">
+              <h4 class="text-xs font-black text-white flex items-center gap-1.5" id="driver-chat-customer-name">
                 Asep Gunawan (Pelanggan) <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
               </h4>
-              <p class="text-[10px] text-emerald-100 font-medium">Order #OTW-9102 • Palasari Ciater</p>
+              <p class="text-[10px] text-emerald-100 font-medium" id="driver-chat-customer-info">Order #OTW-9102 • Palasari Ciater</p>
             </div>
           </div>
           <button onclick="closeDriverChatModal()" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white text-xs">
@@ -773,6 +800,14 @@
           console.log('[Driver App] Event Received:', type, payload);
           if ((type === 'ORDER_CREATED' || type === 'ORDER_READY_FOR_PICKUP') && isDriverOnline) {
             handleIncomingSyncOrder(payload);
+          } else if (type === 'STATUS_UPDATED' && currentHandlingOrder && currentHandlingOrder.id === payload.orderId) {
+            currentHandlingOrder.status = payload.status;
+            if (payload.status === 'COOKING') {
+              showToast('🍳 Warung mulai memasak pesanan makanan!');
+            } else if (payload.status === 'READY') {
+              playOrderChime();
+              showToast('📦 Makanan sudah selesai dimasak di warung! Silakan ambil.');
+            }
           } else if (type === 'CHAT_MESSAGE') {
             renderDriverChatMessages();
             if (payload.message && payload.message.role === 'customer') {
@@ -1017,6 +1052,13 @@
     function openDriverChatModal() {
       const modal = document.getElementById('modal-driver-chat');
       if (modal) {
+        const custNameEl = document.getElementById('driver-chat-customer-name');
+        const custInfoEl = document.getElementById('driver-chat-customer-info');
+        const custName = currentHandlingOrder?.customerName || 'Asep Gunawan';
+        const orderId = currentHandlingOrder?.id || 'OTW-9102';
+        const loc = currentHandlingOrder?.customerLocation || currentHandlingOrder?.dropLocation || 'Palasari Ciater';
+        if (custNameEl) custNameEl.innerHTML = `${custName} (Pelanggan) <span class="w-2 h-2 rounded-full bg-emerald-300"></span>`;
+        if (custInfoEl) custInfoEl.innerText = `Order #${orderId} • ${loc}`;
         modal.classList.remove('hidden');
         renderDriverChatMessages();
       }

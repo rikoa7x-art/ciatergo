@@ -10,6 +10,9 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   
+  <!-- Supabase JS Client & Realtime Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="shared-sync.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -23,6 +26,36 @@
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
           },
           colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              dark: '#052e16'
+            },
+            driver: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              dark: '#052e16'
+            },
+            merchant: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              dark: '#431407'
+            },
+            accent: {
+              500: '#f97316',
+              600: '#ea580c',
+            },
             admin: {
               50: '#f8fafc',
               800: '#1e293b',
@@ -78,7 +111,7 @@
           <span>Kelola Mitra Driver</span>
         </button>
 
-        <button onclick="adminNav('panel-merchants', this)" class="hidden admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+        <button onclick="adminNav('panel-merchants', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
           <i class="fa-solid fa-store w-4 text-center"></i>
           <span>Kelola Warung & Resto</span>
         </button>
@@ -90,7 +123,7 @@
 
         <button onclick="adminNav('panel-settings', this)" class="admin-nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
           <i class="fa-solid fa-sliders w-4 text-center"></i>
-          <span>Tarif & Zona Ciater</span>
+          <span>Tarif & Backend Supabase</span>
         </button>
       </nav>
     </div>
@@ -98,10 +131,11 @@
     <!-- Bottom Role Links & Admin Profile -->
     <div class="p-4 border-t border-slate-800 space-y-3">
       <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700 text-xs">
-        <div class="text-[10px] text-slate-400 font-bold uppercase mb-1">Buka Aplikasi Demo:</div>
-        <div class="grid grid-cols-2 gap-1 text-center font-bold">
-          <a href="index.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white">User</a>
-          <a href="driver.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white">Driver</a>
+        <div class="text-[10px] text-slate-400 font-bold uppercase mb-1.5">Buka Demo Role:</div>
+        <div class="grid grid-cols-3 gap-1 text-center font-bold text-[11px]">
+          <a href="index.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white transition">Pelanggan</a>
+          <a href="driver.html" class="p-1 bg-slate-700 hover:bg-emerald-600 rounded text-white transition">Driver</a>
+          <a href="merchant.html" class="p-1 bg-slate-700 hover:bg-orange-600 rounded text-white transition">Warung</a>
         </div>
       </div>
 
@@ -131,10 +165,15 @@
       </div>
 
       <div class="flex items-center gap-3">
+        <!-- Supabase Cloud Connection Badge -->
+        <div id="admin-sb-badge" onclick="adminNav('panel-settings', document.querySelectorAll('.admin-nav-btn')[5])" class="cursor-pointer px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition">
+          <span id="admin-sb-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="admin-sb-text">Supabase Cloud: Siap Terhubung</span>
+        </div>
+
         <button onclick="refreshAdminData()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 transition">
           <i class="fa-solid fa-arrows-rotate text-xs"></i> Refresh
         </button>
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></span>
       </div>
     </header>
 
@@ -322,25 +361,37 @@
             </thead>
             <tbody class="divide-y divide-slate-100 font-medium">
               <tr>
-                <td class="py-3 px-4 font-bold text-slate-800">Dadang Sudrajat</td>
-                <td class="py-3 px-4">0821-4455-6677</td>
-                <td class="py-3 px-4">Honda Vario (T 4521 ZK)</td>
-                <td class="py-3 px-4 text-amber-500 font-bold">⭐ 4.9</td>
+                <td class="py-3 px-4 font-bold text-slate-800 flex items-center gap-2">
+                  <span class="text-base">🛵</span>
+                  <div>
+                    <div>Nova Pratama</div>
+                    <span class="text-[10px] text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-bold">#DRV-001</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">0896-3053-7250</td>
+                <td class="py-3 px-4">Honda Beat Street (T 3819 ZB)</td>
+                <td class="py-3 px-4 text-amber-500 font-bold">⭐ 4.95</td>
                 <td class="py-3 px-4 font-bold">420 Trip</td>
-                <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Online</span></td>
+                <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">Online</span></td>
                 <td class="py-3 px-4">
-                  <button onclick="showAdminToast('Akun driver diverifikasi')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-bold">Kelola</button>
+                  <button onclick="showAdminToast('Akun driver Nova aktif & terverifikasi')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-bold">Kelola</button>
                 </td>
               </tr>
               <tr>
-                <td class="py-3 px-4 font-bold text-slate-800">Ujang Berkah</td>
-                <td class="py-3 px-4">0812-7788-9900</td>
-                <td class="py-3 px-4">Yamaha NMAX (T 3311 AA)</td>
-                <td class="py-3 px-4 text-amber-500 font-bold">⭐ 4.8</td>
+                <td class="py-3 px-4 font-bold text-slate-800 flex items-center gap-2">
+                  <span class="text-base">🏍️</span>
+                  <div>
+                    <div>Leo Firmansyah</div>
+                    <span class="text-[10px] text-teal-700 bg-teal-100 px-1.5 py-0.5 rounded font-bold">#DRV-002</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">0877-0069-2352</td>
+                <td class="py-3 px-4">Yamaha NMAX 155 (T 5920 AB)</td>
+                <td class="py-3 px-4 text-amber-500 font-bold">⭐ 4.90</td>
                 <td class="py-3 px-4 font-bold">310 Trip</td>
-                <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Online</span></td>
+                <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">Online</span></td>
                 <td class="py-3 px-4">
-                  <button onclick="showAdminToast('Akun driver diverifikasi')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-bold">Kelola</button>
+                  <button onclick="showAdminToast('Akun driver Leo aktif & terverifikasi')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-bold">Kelola</button>
                 </td>
               </tr>
             </tbody>
@@ -410,39 +461,85 @@
         </div>
       </div>
 
-      <!-- ==================== PANEL 6: SETTINGS (TARIF & ZONA) ==================== -->
-      <div id="panel-settings" class="admin-panel hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-        <h3 class="font-extrabold text-sm text-slate-800">Pengaturan Tarif Wilayah Kecamatan Ciater</h3>
+      <!-- ==================== PANEL 6: SETTINGS (TARIF & SUPABASE) ==================== -->
+      <div id="panel-settings" class="admin-panel hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div class="p-4 rounded-2xl border border-slate-200 space-y-3">
-            <h4 class="font-bold text-slate-800 uppercase">🛵 Tarif OTWRide (Ojek)</h4>
+        <!-- Supabase Cloud Config Section -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-2xl border border-slate-700 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">⚡</span>
+              <div>
+                <h4 class="text-sm font-black text-white">Supabase Cloud Database & Realtime</h4>
+                <p class="text-[11px] text-slate-400">Backend Cloud Storage untuk seluruh transaksi, chat, GPS driver & resto OTW keun</p>
+              </div>
+            </div>
+            <span id="sb-config-status-badge" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              ● Default / Local Sync Aktif
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
             <div>
-              <label class="block text-slate-500 mb-1">Tarif Dasar (0-2 km pertama)</label>
-              <input type="text" value="Rp 8.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+              <label class="block text-slate-300 font-bold mb-1">Supabase Project URL</label>
+              <input id="input-sb-url" type="text" placeholder="https://xyzcompany.supabase.co" class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-mono focus:outline-none focus:border-emerald-500">
             </div>
             <div>
-              <label class="block text-slate-500 mb-1">Tarif per Kilometer berikutnya</label>
-              <input type="text" value="Rp 2.500 / km" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+              <label class="block text-slate-300 font-bold mb-1">Supabase Anon Key</label>
+              <input id="input-sb-key" type="password" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-mono focus:outline-none focus:border-emerald-500">
             </div>
           </div>
 
-          <div class="p-4 rounded-2xl border border-slate-200 space-y-3">
-            <h4 class="font-bold text-slate-800 uppercase">🍔 Biaya Layanan OTWFood</h4>
-            <div>
-              <label class="block text-slate-500 mb-1">Ongkir Dasar Pengiriman Makanan</label>
-              <input type="text" value="Rp 5.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
-            </div>
-            <div>
-              <label class="block text-slate-500 mb-1">Biaya Layanan Platform per Transaksi</label>
-              <input type="text" value="Rp 1.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
-            </div>
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <button onclick="saveSupabaseSettings()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition">
+              Simpan & Hubungkan Supabase
+            </button>
+            <button onclick="testSupabaseConnection()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-600 transition">
+              <i class="fa-solid fa-bolt text-amber-400"></i> Tes Koneksi
+            </button>
+            <button onclick="resetSupabaseToDefault()" class="px-3 py-2 text-slate-400 hover:text-slate-200 text-xs transition">
+              Reset ke Pengaturan Default
+            </button>
           </div>
         </div>
 
-        <button onclick="showAdminToast('Pengaturan tarif berhasil disimpan')" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">
-          Simpan Konfigurasi Tarif
-        </button>
+        <!-- Tariff Config Section -->
+        <div>
+          <h3 class="font-extrabold text-sm text-slate-800 mb-3">Pengaturan Tarif Wilayah Kecamatan Ciater</h3>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-2xl border border-slate-200 space-y-3">
+              <h4 class="font-bold text-slate-800 uppercase">🛵 Tarif OTWRide (Ojek)</h4>
+              <div>
+                <label class="block text-slate-500 mb-1">Tarif Dasar (0-2 km pertama)</label>
+                <input type="text" value="Rp 8.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-1">Tarif per Kilometer berikutnya</label>
+                <input type="text" value="Rp 2.500 / km" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl border border-slate-200 space-y-3">
+              <h4 class="font-bold text-slate-800 uppercase">🍔 Biaya Layanan OTWFood</h4>
+              <div>
+                <label class="block text-slate-500 mb-1">Ongkir Dasar Pengiriman Makanan</label>
+                <input type="text" value="Rp 5.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-1">Biaya Layanan Platform per Transaksi</label>
+                <input type="text" value="Rp 1.000" class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl font-bold">
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3">
+            <button onclick="showAdminToast('Pengaturan tarif berhasil disimpan')" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow">
+              Simpan Konfigurasi Tarif
+            </button>
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -524,6 +621,7 @@
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg Error:', err));
       }
 
+      loadSupabaseSettings();
       renderAdminOrders();
 
       if (window.CiaterSync) {
@@ -536,6 +634,82 @@
         });
       }
     });
+
+    function loadSupabaseSettings() {
+      if (window.OtwSupabase) {
+        const cfg = OtwSupabase.getSavedConfig();
+        const urlInput = document.getElementById('input-sb-url');
+        const keyInput = document.getElementById('input-sb-key');
+        if (urlInput) urlInput.value = cfg.url || '';
+        if (keyInput) keyInput.value = cfg.anonKey || '';
+        updateSupabaseBadge(OtwSupabase.isConnected());
+      }
+    }
+
+    function saveSupabaseSettings() {
+      const url = document.getElementById('input-sb-url')?.value.trim() || '';
+      const key = document.getElementById('input-sb-key')?.value.trim() || '';
+
+      if (window.OtwSupabase) {
+        OtwSupabase.saveConfig(url, key);
+        const ok = OtwSupabase.init();
+        updateSupabaseBadge(ok);
+        if (ok) {
+          showAdminToast('✅ Pengaturan Supabase berhasil disimpan & dikoneksikan!');
+        } else {
+          showAdminToast('⚠️ Supabase disimpan. Menunggu URL & Key valid untuk sinkronisasi cloud.');
+        }
+      }
+    }
+
+    async function testSupabaseConnection() {
+      if (!window.OtwSupabase || !OtwSupabase.isConnected()) {
+        showAdminToast('⚠️ Klien Supabase belum terhubung. Periksa URL dan Anon Key!');
+        return;
+      }
+      showAdminToast('🔄 Menguji koneksi ke Supabase...');
+      const orders = await OtwSupabase.fetchOrders();
+      if (orders !== null) {
+        showAdminToast(`✅ Terhubung ke Supabase! Ditemukan ${orders.length} pesanan di Cloud.`);
+        updateSupabaseBadge(true);
+      } else {
+        showAdminToast('❌ Gagal menghubungi tabel Supabase. Pastikan supabase_schema.sql sudah dijalankan di Dashboard SQL Editor!');
+        updateSupabaseBadge(false);
+      }
+    }
+
+    function resetSupabaseToDefault() {
+      if (window.OtwSupabase) {
+        OtwSupabase.saveConfig('', '');
+        loadSupabaseSettings();
+        showAdminToast('🔄 Pengaturan Supabase direset ke konfigurasi default');
+      }
+    }
+
+    function updateSupabaseBadge(isConnected) {
+      const badge = document.getElementById('admin-sb-badge');
+      const dot = document.getElementById('admin-sb-dot');
+      const text = document.getElementById('admin-sb-text');
+      const configBadge = document.getElementById('sb-config-status-badge');
+
+      if (isConnected) {
+        if (badge) badge.className = 'cursor-pointer px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 transition';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        if (text) text.innerText = 'Supabase Cloud: Terhubung';
+        if (configBadge) {
+          configBadge.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+          configBadge.innerText = '● Supabase Cloud Terhubung';
+        }
+      } else {
+        if (badge) badge.className = 'cursor-pointer px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 transition';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+        if (text) text.innerText = 'Supabase: Local Fallback';
+        if (configBadge) {
+          configBadge.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+          configBadge.innerText = '● Local / BroadcastChannel Mode';
+        }
+      }
+    }
 
     function refreshAdminData() {
       renderAdminOrders();
