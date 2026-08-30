@@ -147,7 +147,7 @@
           <i class="fa-solid fa-circle-notch fa-spin"></i>
           <span>Menyiapkan layanan OTW keun...</span>
         </div>
-        <button onclick="navigate('screen-home')" class="w-full py-3.5 bg-white text-brand-700 font-extrabold rounded-2xl shadow-lg hover:bg-brand-50 active:scale-95 transition">
+        <button onclick="handleSplashAdvance()" class="w-full py-3.5 bg-white text-brand-700 font-extrabold rounded-2xl shadow-lg hover:bg-brand-50 active:scale-95 transition">
           Mulai Sekarang <i class="fa-solid fa-arrow-right ml-1"></i>
         </button>
       </div>
@@ -296,7 +296,7 @@
     </div>
 
     <!-- ==================== SCREEN 4: HOME SCREEN ==================== -->
-    <div id="screen-home" class="screen flex-1 flex flex-col pb-24">
+    <div id="screen-home" class="screen hidden flex-1 flex flex-col pb-24">
       
       <!-- Top Header Gradient -->
       <div class="bg-gradient-to-br from-brand-600 via-brand-700 to-brand-800 text-white p-5 rounded-b-[32px] shadow-lg">
@@ -2062,12 +2062,30 @@
       }
     ];
 
-    // STATE VARIABLES
+    // ============================================================
+    // GLOBAL APP STATE & INSTANCES (Declared at top of script)
+    // ============================================================
     let currentScreen = 'screen-splash';
+    let leafletMapInstance = null;
+    let driverMapMarker = null;
+    let customerMapMarker = null;
+    let pickupMapMarker = null;
+    let routePolyline = null;
+    let gpsIntervalId = null;
+    let driverMapInstance = null;
+    let driverCurrentMarker = null;
+    let driverGPSWatchId = null;
+    let driverCurrentCoords = [-6.7360, 107.6570];
     let selectedFoodCategory = 'Masakan Sunda'; // default hint
     let foodBudget = 40000; // default budget estimate
     let activePromo = null;
     let userBalance = 85000;
+    let isDriverOnline = true;
+    let orderStep = 1; // 1: go to pickup, 2: pick up confirm, 3: deliver & finish
+    let incomingTimerInterval = null;
+    let currentHandlingOrder = null;
+    let currentActiveOrder = null;
+    let currentActiveDriver = null;
     
     // REAL USER GEOLOCATION STATE
     let currentUserLocation = {
@@ -2099,7 +2117,17 @@
         statusColor: 'emerald'
       }
     ];
-    let currentActiveOrder = null;
+
+    function handleSplashAdvance() {
+      const authRole = localStorage.getItem('otw_auth_role');
+      if (authRole === 'driver') {
+        navigate('driver-screen-dashboard');
+      } else if (authRole === 'customer') {
+        navigate('screen-home');
+      } else {
+        navigate('screen-auth');
+      }
+    }
 
     // REAL GPS DETECTION HELPER (Browser Geolocation API)
     function requestRealGPSLocation() {
@@ -2270,16 +2298,9 @@
       // Auto advance splash screen to corresponding authenticated role or auth screen
       setTimeout(() => {
         if (currentScreen === 'screen-splash') {
-          const authRole = localStorage.getItem('otw_auth_role');
-          if (authRole === 'driver') {
-            navigate('driver-screen-dashboard');
-          } else if (authRole === 'customer') {
-            navigate('screen-home');
-          } else {
-            navigate('screen-auth');
-          }
+          handleSplashAdvance();
         }
-      }, 1800);
+      }, 1000);
 
       // Handle OTP boxes auto focus
       const otpInputs = document.querySelectorAll('.otp-box');
@@ -2371,9 +2392,6 @@
           }
         }
         updateBottomNavActive(screenId);
-        if (screenId === 'screen-home' && homeMapInstance) {
-          setTimeout(() => homeMapInstance.invalidateSize(), 250);
-        }
       }
     }
 
@@ -2955,13 +2973,6 @@
     }
 
     // REAL LEAFLET MAP TRACKING WITH LIVE REAL-TIME GPS
-    let leafletMapInstance = null;
-    let driverMapMarker = null;
-    let customerMapMarker = null;
-    let pickupMapMarker = null;
-    let routePolyline = null;
-    let gpsIntervalId = null;
-
     function initCustomerLiveMap() {
       setTimeout(() => {
         const mapContainer = document.getElementById('customer-live-map');
@@ -3355,13 +3366,10 @@
     // ============================================================
     // MITRA DRIVER MODULE CONTROLLER & STATE
     // ============================================================
-    let currentActiveDriver = REGISTERED_DRIVERS.nova;
-    let isDriverOnline = true;
-    let orderStep = 1; // 1: go to pickup, 2: pick up confirm, 3: deliver & finish
-    let incomingTimerInterval = null;
-    let currentHandlingOrder = null;
-
     function initActiveDriver() {
+      if (!currentActiveDriver && typeof REGISTERED_DRIVERS !== 'undefined') {
+        currentActiveDriver = REGISTERED_DRIVERS.nova;
+      }
       try {
         const saved = localStorage.getItem('otw_active_driver');
         if (saved) {
@@ -3617,11 +3625,6 @@
     }
 
     // REAL LEAFLET MAP ON DRIVER SCREEN WITH REAL GPS
-    let driverMapInstance = null;
-    let driverCurrentMarker = null;
-    let driverGPSWatchId = null;
-    let driverCurrentCoords = [-6.7360, 107.6570];
-
     function startDriverGPSWatcher() {
       if (!('geolocation' in navigator)) return;
       if (driverGPSWatchId !== null) return;
